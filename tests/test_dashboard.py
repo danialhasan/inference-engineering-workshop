@@ -52,3 +52,34 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(c.history()[0]['status'],'cancelled')
 
 if __name__=='__main__':unittest.main()
+
+class HttpTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from dashboard import Handler,ThreadingHTTPServer
+        import threading
+        cls.tmp=tempfile.TemporaryDirectory();cls.server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        cls.server.control=Control(cls.tmp.name,provider=FakeProvider())
+        cls.base=f'http://127.0.0.1:{cls.server.server_port}'
+        cls.thread=threading.Thread(target=cls.server.serve_forever,daemon=True);cls.thread.start()
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown();cls.server.server_close();cls.thread.join();cls.tmp.cleanup()
+    def request(self,path,data=None,origin=None):
+        import urllib.request
+        headers={'Content-Type':'application/json'}
+        if origin:headers['Origin']=origin
+        return urllib.request.urlopen(urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers=headers))
+    def test_frontend_and_config(self):
+        with self.request('/') as r:self.assertIn(b'Inference lab',r.read())
+        with self.request('/api/config',{**DEFAULT,'count':8}) as r:self.assertEqual(json.load(r)['count'],8)
+        with self.request('/api/state') as r:self.assertEqual(json.load(r)['config']['count'],8)
+    def test_local_files_not_exposed(self):
+        from urllib.error import HTTPError
+        for path in ['/../dashboard.py','/.git/config','/.workshop/config.json']:
+            with self.assertRaises(HTTPError) as e:self.request(path)
+            self.assertEqual(e.exception.code,404)
+    def test_foreign_origin_cannot_change_config(self):
+        from urllib.error import HTTPError
+        with self.assertRaises(HTTPError) as e:self.request('/api/config',DEFAULT,'https://example.com')
+        self.assertEqual(e.exception.code,403)

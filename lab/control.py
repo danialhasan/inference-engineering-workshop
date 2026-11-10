@@ -122,6 +122,7 @@ class Control:
             manifest=dict(model='qwen2.5:1.5b',ollama=meta.get('version'),models=meta.get('models'),running=meta.get('running'),
                           runtime=dict(pid=meta.get('pid'),port=meta.get('port'),server_parallel=meta.get('parallel')),
                           platform=platform.platform(),python=platform.python_version(),prompt_sha256=prompt_hash,
+                          source_sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'lab').glob('*.py')},
                           cache_policy='Model warmed with one token; natural prefix reuse, not flushed between requests.',
                           cost_policy='Estimated occupied-run time × assumed hourly price; excludes warmup, idle capacity and power.',
                           timing_policy='Client end-to-end includes application queue. Other time includes unseparated server wait and transport; it is not a measured GPU queue.')
