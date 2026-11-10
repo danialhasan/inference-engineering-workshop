@@ -1,6 +1,6 @@
 OFFLINE INFERENCE ENGINEERING WORKSHOP SLIDES
 
-This snapshot contains the current 72-slide dark-mode lecture and workshop deck.
+This snapshot contains the current 73-slide dark-mode lecture and workshop deck.
 
 The simplest backup:
 Open inference-workshop.pdf in your PDF viewer. It needs no server, model, or internet.

@@ -183,6 +183,16 @@
     #workshop-shared h2{font-size:32px;margin:0 0 18px}
     #workshop-shared .field-columns{gap:50px;margin:28px 0}
     #workshop-shared .field-columns p{font-size:27px;line-height:1.45;margin-bottom:18px}
+    .closing-grid{display:grid;grid-template-columns:1fr 420px;gap:80px;align-items:center}
+    .reveal .closing-slide .closing-eyebrow{font-size:21px;text-transform:uppercase;letter-spacing:.16em;color:var(--green);margin-bottom:25px}
+    .reveal .closing-slide h1{font-size:86px;line-height:1.05;margin:0 0 24px}
+    .reveal .closing-name{font-size:34px;margin-bottom:38px;color:var(--muted)}
+    .closing-socials{display:grid;gap:20px}
+    .reveal .closing-socials a{display:block;color:var(--ink);font-size:28px;line-height:1.4;padding:0 0 17px;border-bottom:1px solid var(--line)}
+    .reveal .closing-socials small{display:block;font-size:18px;color:var(--green);margin-bottom:5px}
+    .closing-qr{background:#fff;padding:28px;border-radius:22px;text-align:center}
+    .reveal .closing-qr img{display:block;width:100%;height:auto;margin:0}
+    .reveal .closing-qr p{font-size:25px;font-weight:650;color:#18352f;margin-top:12px}
   </style>
 </head>
 <body>
@@ -227,15 +237,16 @@
           <li><a href="#/service-commitments">Service commitments ($$$)</a></li>
           <li><a href="#/ontologies">Ontologies</a></li>
           <li><a href="#/hardware">Hardware</a></li>
-        </ol>
-        <ol start="5">
           <li><a href="#/prefill-and-decode">Prefill and decode</a></li>
+        </ol>
+        <ol start="6">
           <li><a href="#/inference-engineering-levers">Inference engineering levers</a></li>
           <li><a href="#/applied-ai-levers">Applied AI levers</a></li>
           <li><a href="#/putting-it-together">Putting it together</a></li>
+          <li><a href="#/workshop">Workshop</a></li>
+          <li><a href="#/connect">Stay in touch</a></li>
         </ol>
       </div>
-      <p class="workshop-next">Then, we’ll apply these ideas in the workshop.</p>
     </section>
     <section id="workshop-setup" class="workshop-setup">
       <h1>Get ready before the lecture</h1>
@@ -1039,7 +1050,7 @@
       <p class="source-line">With a hosted model, we control the application and service choice; the provider controls the underlying model execution.<br>Kiely, <em>Inference Engineering</em> (2026), §1.3.1, pp. 31–32; §4.5, pp. 112–114.</p>
       <aside class="notes">The cost example changes the assumed typical input, not the contractual maximum: still support up to 16,000 input and 1,000 output tokens and 20 report jobs in progress. Load-test the full path, including retrieval, queueing, generation and validation, under realistic arrivals and cache reuse. If exactly 90% of requests hit cache, the remaining 10% can still determine whether the 95% latency target passes, so do not test only warm cache. Do not change the denominator by silently rejecting valid work. Count errors and retries, and add non-model costs before claiming total savings. On hosted Standard pricing, kernel fusion, hardware placement and provider batching do not automatically lower our per-token price; they affect our costs only through published pricing, service choice, or a different deployment model. In self-hosted serving, those provider-side levers instead affect capacity and infrastructure cost directly. A passing pre-release test is readiness evidence; monthly operational measurements establish whether the fictional agreement was met.</aside>
     </section>
-    <section class="section-divider" data-phase="Workshop">
+    <section id="workshop" class="section-divider" data-phase="Workshop">
       <h1>Workshop</h1>
       <p>Test a workload, change one lever, and measure the result.</p>
     </section>
@@ -1080,7 +1091,7 @@
           <tr><td>Two workloads share hardware</td><td>Finish the batch while keeping chat responsive.</td><td>Throughput, interference, and cost per correct result.</td></tr>
         </tbody>
       </table>
-      <p class="workload-note">Open the dashboard your agent started: <a href="http://127.0.0.1:8878/lab/index.html">127.0.0.1:8878/lab/index.html</a>.<br>Standard runs use 100 requests; the calendar experiment uses 40 tasks.</p>
+      <p class="workload-note">Open the dashboard your coding agent prepared. Use its complete local URL.<br>Standard runs use 100 requests; the calendar experiment uses 40 tasks.</p>
     </section>
     <section id="workshop-method" class="workload-examples requirements">
       <h1>Make one change, then measure</h1>
@@ -1140,6 +1151,23 @@
       <p class="workload-note">Explain your baseline, one change, and its tradeoff to the person next to you.</p>
     </section>
 
+    <section id="connect" class="closing-slide">
+      <div class="closing-grid">
+        <div>
+          <p class="closing-eyebrow">Thank you</p>
+          <h1>Stay in touch</h1>
+          <p class="closing-name">Danial Hasan</p>
+          <div class="closing-socials">
+            <a href="https://www.linkedin.com/in/dhasandev"><small>LinkedIn</small>linkedin.com/in/dhasandev</a>
+            <a href="https://x.com/danialhasan"><small>X / Twitter</small>x.com/danialhasan</a>
+          </div>
+        </div>
+        <div class="closing-qr">
+          <a href="https://danial-hasan-socials.dev717443.chatgpt.site" aria-label="Open Danial Hasan’s social links"><img src="assets/socials-qr.png" alt="QR code to Danial Hasan’s LinkedIn and X links"></a>
+          <p>Scan for both</p>
+        </div>
+      </div>
+    </section>
   </div></div>
   <div class="session-phase" aria-label="Current session portion" aria-live="polite">Lecture</div>
   <script src="vendor/reveal.js"></script>
