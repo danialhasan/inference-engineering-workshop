@@ -49,3 +49,19 @@ code are unchanged from the tested implementation.
 This establishes the fresh-checkout flow on the verified Mac. It does not establish
 native Windows/Linux compatibility, installer behavior on a clean OS, or performance
 on another attendee's hardware. No hosted repository or public deployment was made.
+
+## Teaching update — v0.1.1, 2026-11-10
+
+Expanded Exercises 2 and 3 with exact code edits, recorded-result tables,
+interpretation checkpoints and references to Kiely's *Inference Engineering*.
+The deck retains nine horizontal chapters and adds vertical edit/result/explanation
+sequences for those exercises within the existing hour. The instructor guide and
+worksheet now support those debriefs.
+
+Verified the guide's solution snippets against the reference implementations,
+every displayed timing/throughput value against data/runs.json, slide structure,
+and local asset/document links. Inspected all six exercise slides in the browser,
+checked vertical and horizontal navigation, and found no browser console errors.
+Moved the slide-number indicator away from the vertical navigation buttons after
+an overlap was observed. Runtime, starter, solution and recording files are
+unchanged, so the earlier live fresh-clone evidence remains applicable.
