@@ -6,8 +6,8 @@
   <title>Danial Hasan · Inference engineering</title>
   <link rel="stylesheet" href="vendor/reveal.css">
   <style>
-    :root{--paper:#f6f4ed;--ink:#18352f;--green:#1e6657}
-    body{background:var(--paper)}
+    :root{color-scheme:dark;--paper:#111815;--ink:#edf3ee;--green:#7ed9b2;--muted:#a9bcb0;--line:#344a3f;--surface:#1c2922;--strong-surface:#235641}
+    html,body,.reveal-viewport{background:var(--paper)}
     .reveal{font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);font-size:32px}
     .reveal .slides{text-align:left}
     .reveal h1{font-size:100px;line-height:1.05;font-weight:750;letter-spacing:-.055em;margin:0 0 35px}
@@ -16,7 +16,7 @@
     .reveal .website{font-size:23px;margin-top:70px}
     .reveal .controls{color:var(--green)}
     .reveal .progress{color:var(--green)}
-    .session-phase{position:fixed;left:24px;bottom:18px;z-index:20;color:#52645e;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;letter-spacing:.04em;pointer-events:none}
+    .session-phase{position:fixed;left:24px;bottom:18px;z-index:20;color:var(--muted);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;letter-spacing:.04em;pointer-events:none}
     @media print{.session-phase{display:none}}
     .reveal .slides section,.reveal .slide-background,.reveal .progress span,.reveal .fragment{transition-duration:100ms}
     .reveal .bio h1{font-size:64px;margin-bottom:34px}
@@ -38,99 +38,99 @@
     .reveal .fields .example{font-size:24px;color:var(--green);margin-top:32px}
     .reveal .workloads h1{font-size:58px;margin-bottom:28px}
     .reveal .workload-table{width:100%;border-collapse:collapse;font-size:23px;line-height:1.25}
-    .reveal .workload-table th{text-align:left;font-size:24px;font-weight:650;padding:0 16px 18px;border-bottom:2px solid #18352f}
-    .reveal .workload-table td{padding:9px 16px;border-bottom:1px solid #cdd5d0;vertical-align:middle}
+    .reveal .workload-table th{text-align:left;font-size:24px;font-weight:650;padding:0 16px 18px;border-bottom:2px solid var(--ink)}
+    .reveal .workload-table td{padding:9px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
     .reveal .workflow-companies .workload-table{font-size:23px;line-height:1.4;table-layout:fixed}
     .reveal .workflow-companies th:nth-child(1){width:18%}
     .reveal .workflow-companies th:nth-child(2){width:27%}
     .reveal .workflow-companies th:nth-child(3){width:27%}
     .reveal .workflow-companies th:nth-child(4){width:28%}
     .reveal .workflow-companies td{padding:16px 16px;vertical-align:top}
-    .reveal .workflow-companies td small{display:block;font-size:20px;line-height:1.35;color:#52645e;margin-top:7px}
+    .reveal .workflow-companies td small{display:block;font-size:20px;line-height:1.35;color:var(--muted);margin-top:7px}
     .company-brand{display:flex;align-items:center;gap:16px;font-weight:650;white-space:nowrap}
-    .reveal .company-brand img{width:28px;height:28px;object-fit:contain;margin:0}
-    .reveal .workload-note{font-size:21px;color:#52645e;margin-top:24px}
+    .reveal .company-brand img{width:32px;height:32px;box-sizing:border-box;padding:4px;object-fit:contain;margin:0;background:#edf3ee;border-radius:5px}
+    .reveal .workload-note{font-size:21px;color:var(--muted);margin-top:24px}
     .reveal .workload-bridge h1{font-size:68px;margin-bottom:48px}
     .bridge-flow{display:grid;grid-template-columns:1fr 50px 1fr 50px 1fr;gap:20px;align-items:start}
     .reveal .bridge-flow h2{font-size:34px;margin:0 0 22px;letter-spacing:-.025em}
     .reveal .bridge-flow p{font-size:28px;line-height:1.45}
     .bridge-arrow{font-size:40px;color:var(--green)}
-    .reveal .book-quote{margin:56px 0 0;padding-top:28px;border-top:1px solid #aebeb5;font-size:29px;line-height:1.5}
-    .reveal .book-cite{font-size:20px;margin-top:12px;color:#52645e}
+    .reveal .book-quote{margin:56px 0 0;padding-top:28px;border-top:1px solid var(--line);font-size:29px;line-height:1.5}
+    .reveal .book-cite{font-size:20px;margin-top:12px;color:var(--muted)}
     .reveal .workload-examples h1{font-size:62px;margin-bottom:28px}
     .reveal .examples-table{width:100%;border-collapse:collapse;font-size:24px;line-height:1.35}
     .reveal .examples-table th{text-align:left;font-size:23px;padding:10px 14px;border-bottom:2px solid var(--ink)}
-    .reveal .examples-table td{padding:15px 14px;vertical-align:top;border-bottom:1px solid #cdd5d0}
-    .reveal .examples-table small{display:block;font-size:19px;color:#52645e;margin-top:5px}
+    .reveal .examples-table td{padding:15px 14px;vertical-align:top;border-bottom:1px solid var(--line)}
+    .reveal .examples-table small{display:block;font-size:19px;color:var(--muted);margin-top:5px}
     .reveal .audience-examples td{padding:10px 14px}
     .reveal .requirements h1,.reveal .sla h1{font-size:60px;margin-bottom:30px}
     .reveal .sla h1{font-size:52px}
     .reveal .requirements td{padding:15px 14px}
-    .reveal .source-line{font-size:18px;color:#52645e;margin-top:24px;line-height:1.4}
+    .reveal .source-line{font-size:18px;color:var(--muted);margin-top:24px;line-height:1.4}
     .sla-columns{display:grid;grid-template-columns:1fr 1fr;gap:65px}
     .reveal .sla h2{font-size:31px;margin:0 0 20px}
     .reveal .sla p{font-size:27px;line-height:1.45;margin-bottom:20px}
-    .reveal .sla .scenario{font-size:24px;margin-bottom:30px;color:#52645e}
-    .reveal .sla .sla-foot{font-size:22px;margin-top:25px;padding-top:22px;border-top:1px solid #aebeb5}
+    .reveal .sla .scenario{font-size:24px;margin-bottom:30px;color:var(--muted)}
+    .reveal .sla .sla-foot{font-size:22px;margin-top:25px;padding-top:22px;border-top:1px solid var(--line)}
     .reveal .sla .source-line{font-size:18px;line-height:1.4}
     .time-budget{display:flex;height:52px;margin:24px 0 26px;gap:3px}
-    .time-budget span{display:flex;align-items:center;justify-content:center;background:#d9e5df;color:var(--ink);font-size:22px;font-weight:650}
-    .time-budget .model-time{background:#1e6657;color:white}
-    .time-budget .reserve-time{background:#eee9dc}
+    .time-budget span{display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--ink);font-size:22px;font-weight:650}
+    .time-budget .model-time{background:var(--strong-surface);color:#f2fff8}
+    .time-budget .reserve-time{background:#343125}
     .reveal .budget-table td{padding:8px 14px}
     .reveal .budget-caption{font-size:24px;line-height:1.4;margin-bottom:15px}
-    .workflow-scope{border:2px solid #8ba89b;padding:22px 24px 18px;margin:25px 0 35px}
+    .workflow-scope{border:2px solid #527361;padding:22px 24px 18px;margin:25px 0 35px}
     .reveal .workflow-scope h2{font-size:28px;margin:0 0 22px}
     .workflow-stages{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:stretch}
-    .workflow-stages>div{text-align:center;padding:20px 8px;background:#e9eeeb;font-size:25px}
-    .workflow-stages .inference-stage{background:#1e6657;color:white}
-    .inference-scope{grid-column:3 / 5;border-bottom:3px solid #1e6657;text-align:center;padding:12px 0 8px;font-size:24px;font-weight:650}
+    .workflow-stages>div{text-align:center;padding:20px 8px;background:var(--surface);font-size:25px}
+    .workflow-stages .inference-stage{background:var(--strong-surface);color:#f2fff8}
+    .inference-scope{grid-column:3 / 5;border-bottom:3px solid var(--green);text-align:center;padding:12px 0 8px;font-size:24px;font-weight:650}
     .reveal .scope-levers h2{font-size:29px;margin:0 0 15px}
     .reveal .scope-levers p{font-size:25px;line-height:1.45}
     .system-flow{display:flex;gap:12px;align-items:center;margin:25px 0 32px}
-    .system-flow .system-node{flex:1;border:1px solid #8ba89b;padding:20px 12px;text-align:center;font-size:26px;line-height:1.3}
+    .system-flow .system-node{flex:1;border:1px solid #527361;padding:20px 12px;text-align:center;font-size:26px;line-height:1.3}
     .system-flow .system-arrow{font-size:30px;color:var(--green)}
     .reveal .ontology-table td{padding:13px 14px}
     .reveal .levers-table{font-size:23px}
     .reveal .levers-table td{padding:11px 14px}
     .reveal .slide-subheader{font-size:25px;line-height:1.4;margin:-10px 0 28px;color:var(--green)}
     .reveal .lever-kind{position:absolute;top:-30px;left:0;font-size:18px;font-weight:650;line-height:1.2;color:var(--green)}
-    .reveal .lever-kind.applied-kind{color:#865d35}
+    .reveal .lever-kind.applied-kind{color:#f3bb8d}
     .reveal .lever-detail h1,.reveal .hardware-detail h1{font-size:58px;margin-bottom:28px}
     .reveal .lever-intro{font-size:28px;line-height:1.45;margin-bottom:30px}
-    .lever-panel{border:1px solid #aebeb5;padding:24px;margin:16px 0}
-    .reveal .lever-panel h2{font-size:25px;margin:0 0 20px;color:#52645e}
+    .lever-panel{border:1px solid var(--line);padding:24px;margin:16px 0}
+    .reveal .lever-panel h2{font-size:25px;margin:0 0 20px;color:var(--muted)}
     .operation-flow{display:flex;align-items:center;gap:14px;font-size:26px;line-height:1.35}
-    .operation-flow .operation{padding:16px 20px;background:#1e6657;color:white;text-align:center;flex:1}
-    .operation-flow .memory{padding:16px 18px;background:#e5ebe7;text-align:center;flex:1}
-    .operation-flow .arrow{color:#1e6657}
+    .operation-flow .operation{padding:16px 20px;background:var(--strong-surface);color:#f2fff8;text-align:center;flex:1}
+    .operation-flow .memory{padding:16px 18px;background:var(--surface);text-align:center;flex:1}
+    .operation-flow .arrow{color:var(--green)}
     .reveal .lever-result{font-size:27px;line-height:1.45;margin-top:26px}
-    .reveal .lever-tradeoff{font-size:23px;line-height:1.45;margin-top:15px;color:#52645e}
-    .precision-number{font-size:42px;font-weight:650;color:#1e6657;white-space:nowrap}
+    .reveal .lever-tradeoff{font-size:23px;line-height:1.45;margin-top:15px;color:var(--muted)}
+    .precision-number{font-size:42px;font-weight:650;color:var(--green);white-space:nowrap}
     .token-row{display:flex;gap:8px;align-items:center;font-size:28px;margin:14px 0;flex-wrap:wrap}
-    .token-row .token{padding:14px 20px;background:#e5ebe7}
-    .token-row .shared,.token-row .accepted{background:#1e6657;color:white}
-    .token-row .rejected{background:#efd9cd;color:#703b25}
-    .token-row .discarded{background:#efefeb;color:#77817c;text-decoration:line-through}
-    .reveal .diagram-label{font-size:23px;color:#52645e;margin:16px 0 8px}
+    .token-row .token{padding:14px 20px;background:var(--surface)}
+    .token-row .shared,.token-row .accepted{background:var(--strong-surface);color:#f2fff8}
+    .token-row .rejected{background:#59392c;color:#ffd2b6}
+    .token-row .discarded{background:#17221c;color:var(--muted);text-decoration:line-through}
+    .reveal .diagram-label{font-size:23px;color:var(--muted);margin:16px 0 8px}
     .batch-comparison{display:grid;grid-template-columns:1fr 1fr;gap:38px}
     .reveal .batch-comparison h2{font-size:29px;margin:0 0 15px}
     .batch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;font-size:25px;text-align:center}
-    .batch-grid span{padding:17px 6px;background:#e5ebe7}
-    .batch-grid .new-request{background:#1e6657;color:white}
-    .batch-grid .empty-slot{background:#f4f3ee;color:#8d9792}
+    .batch-grid span{padding:17px 6px;background:var(--surface)}
+    .batch-grid .new-request{background:var(--strong-surface);color:#f2fff8}
+    .batch-grid .empty-slot{background:#17221c;color:var(--muted)}
     .reveal .batch-caption{font-size:22px;margin-top:14px;line-height:1.4}
     .phase-budget td:nth-child(2){white-space:nowrap}
     .capacity-row{margin:22px 0}
     .reveal .capacity-label{font-size:25px;margin-bottom:12px}
     .capacity-bar{display:flex;height:60px;font-size:23px;text-align:center;align-items:stretch}
     .capacity-bar span{display:flex;align-items:center;justify-content:center}
-    .capacity-bar .weights{background:#1e6657;color:white}
-    .capacity-bar .free-memory{background:#e5ebe7}
-    .reveal .application-link{font-size:24px;line-height:1.45;padding-top:20px;margin-top:24px;border-top:1px solid #aebeb5;color:var(--green)}
+    .capacity-bar .weights{background:var(--strong-surface);color:#f2fff8}
+    .capacity-bar .free-memory{background:var(--surface)}
+    .reveal .application-link{font-size:24px;line-height:1.45;padding-top:20px;margin-top:24px;border-top:1px solid var(--line);color:var(--green)}
     .reveal .lever-panel .example-copy{font-size:27px;line-height:1.5}
     .parallel-branches{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
-    .parallel-branches span{padding:20px 10px;background:#1e6657;color:white;text-align:center;font-size:25px}
+    .parallel-branches span{padding:20px 10px;background:var(--strong-surface);color:#f2fff8;text-align:center;font-size:25px}
     .reveal .state-example{font-size:26px;line-height:1.6;margin:0}
     .reveal .contents h1{font-size:72px;margin-bottom:48px}
     .contents-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
@@ -139,7 +139,7 @@
     .reveal .contents li::marker{color:var(--green);font-weight:650}
     .reveal .contents a{color:inherit;text-decoration:none;text-underline-offset:6px}
     .reveal .contents a:hover,.reveal .contents a:focus-visible{color:var(--green);text-decoration:underline}
-    .reveal .contents .workshop-next{font-size:27px;margin-top:32px;padding-top:24px;border-top:1px solid #aebeb5}
+    .reveal .contents .workshop-next{font-size:27px;margin-top:32px;padding-top:24px;border-top:1px solid var(--line)}
     .reveal .metrics-slide h1,.reveal .ultrafast-question h1{font-size:60px;margin-bottom:30px}
     .reveal .metrics-definitions{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin-bottom:28px}
     .reveal .metrics-definitions h2{font-size:32px;margin:0 0 12px}
@@ -149,11 +149,11 @@
     .reveal .batch-why p{font-size:24px;line-height:1.4}
     .reveal .quiz-facts{font-size:27px;line-height:1.5;margin-bottom:34px}
     .reveal .quiz-line{font-size:30px;line-height:1.7;margin:18px 0}
-    .quiz-slot{display:inline-grid;min-width:160px;text-align:center;border-bottom:2px solid #1e6657;color:var(--green);font-weight:650}
+    .quiz-slot{display:inline-grid;min-width:160px;text-align:center;border-bottom:2px solid var(--green);color:var(--green);font-weight:650}
     .quiz-slot>span{grid-area:1/1}
-    .reveal .quiz-explanation{font-size:25px;line-height:1.4;margin-top:28px;padding-top:22px;border-top:1px solid #aebeb5}
+    .reveal .quiz-explanation{font-size:25px;line-height:1.4;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
     .request-chips{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:12px 0 22px}
-    .request-chips span{padding:12px 4px;background:#e5ebe7;text-align:center;font-size:23px}
+    .request-chips span{padding:12px 4px;background:var(--surface);text-align:center;font-size:23px}
     .reveal .hardware-batch h1,.reveal .disaggregation h1{font-size:56px}
     .reveal .hardware-batch .examples-table{font-size:23px}
     .reveal .disaggregation .lever-intro{font-size:26px;margin-bottom:22px}
@@ -169,15 +169,17 @@
     .reveal .bitter-lesson .bitter-principle{font-size:26px;line-height:1.4;margin-top:24px}
     .reveal .bitter-lesson h2{font-size:32px;letter-spacing:-.025em;margin:32px 0 20px}
     .reveal .bitter-lesson .system-flow{margin:0 0 26px;gap:10px}
-    .reveal .bitter-lesson .system-node{font-size:23px;padding:22px 10px;background:#e5ebe7;border:0}
+    .reveal .bitter-lesson .system-node{font-size:23px;padding:22px 10px;background:var(--surface);border:0}
     .reveal .bitter-lesson .bitter-example{font-size:26px;line-height:1.45}
     .reveal .bitter-lesson .source-line{margin-top:14px}
-    .reveal .bitter-lesson .bitter-role{font-size:27px;font-weight:650;color:var(--green);margin-top:22px;padding-top:18px;border-top:1px solid #aebeb5}
+    .reveal .bitter-lesson .bitter-role{font-size:27px;font-weight:650;color:var(--green);margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
     .reveal .workshop-setup h1{font-size:62px;margin-bottom:30px}
     .reveal .workshop-setup .repo-link{font-size:30px;font-weight:650;overflow-wrap:anywhere;margin-bottom:36px}
     .reveal .workshop-setup h2{font-size:28px;margin:0 0 18px}
-    .reveal .workshop-setup blockquote{font-size:29px;line-height:1.5;margin:0;padding:22px 26px;background:#e5ebe7;border-left:4px solid var(--green)}
+    .reveal .workshop-setup blockquote{font-size:29px;line-height:1.5;margin:0;padding:22px 26px;background:var(--surface);border-left:4px solid var(--green)}
     .reveal .workshop-setup .setup-ready{font-size:24px;margin-top:28px}
+      .reveal a:focus-visible{outline:2px solid var(--green);outline-offset:5px}
+    ::selection{background:#365c48;color:#ffffff}
   </style>
 </head>
 <body>
