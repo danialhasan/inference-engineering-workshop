@@ -83,3 +83,63 @@ class HttpTests(unittest.TestCase):
         from urllib.error import HTTPError
         with self.assertRaises(HTTPError) as e:self.request('/api/config',DEFAULT,'https://example.com')
         self.assertEqual(e.exception.code,403)
+
+class FuzzRegressionTests(unittest.TestCase):
+    def test_bad_scenario_and_request_do_not_change_configuration(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            c=Control(tmp,provider=FakeProvider())
+            for invalid in [None, [], {}, 0, '', 'missing']:
+                with self.assertRaises(ValueError):c.start(invalid,{**DEFAULT,'count':24})
+            self.assertEqual(c.config,DEFAULT)
+    def test_snapshot_cannot_mutate_server_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            c=Control(tmp,provider=FakeProvider());snapshot=c.state();snapshot['config']['count']=24
+            self.assertEqual(c.config['count'],DEFAULT['count'])
+    def test_corrupt_records_do_not_hide_good_records(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp);(root/'config.json').write_text('broken');(root/'runs').mkdir()
+            (root/'runs'/'broken.json').write_text('{')
+            c=Control(tmp,provider=FakeProvider());s=c.state()
+            self.assertEqual(s['config'],DEFAULT);self.assertEqual(len(s['warnings']),2)
+            self.assertEqual((root/'config.json').read_text(),'broken')
+    def test_full_export_and_pinned_history_survive_limit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp)/'runs';root.mkdir()
+            for i in range(45):
+                (root/f'{i:03}.json').write_text(json.dumps(dict(id=str(i),scenario='quality',config=DEFAULT,status='complete',started='2026-11-10T00:00:00Z',rows=[])))
+            c=Control(tmp,provider=FakeProvider());c.baseline('0')
+            self.assertEqual(len(c.history()),45);self.assertEqual(len(c.state()['history']),41)
+            self.assertIn('0',[x['id'] for x in c.state()['history']])
+    def test_save_failure_preserves_accepted_config(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as tmp:
+            c=Control(tmp,provider=FakeProvider())
+            with patch('lab.control.atomic',side_effect=OSError('no space')):
+                with self.assertRaises(OSError):c.save({**DEFAULT,'count':24})
+            self.assertEqual(c.config,DEFAULT)
+    def test_cancel_preparing_run_never_starts_workload(self):
+        import threading
+        class WaitingProvider(FakeProvider):
+            def __init__(self):super().__init__();self.entered=threading.Event();self.release=threading.Event();self.calls=0
+            def ensure(self,slots):self.entered.set();self.release.wait(3);super().ensure(slots)
+            def generate(self,*args):self.calls+=1;return super().generate(*args)
+        with tempfile.TemporaryDirectory() as tmp:
+            provider=WaitingProvider();c=Control(tmp,provider=provider);c.start('quality')
+            self.assertTrue(provider.entered.wait(2));c.stop_run();provider.release.set()
+            for _ in range(100):
+                if not c.busy():break
+                time.sleep(.02)
+            self.assertEqual(c.current['status'],'cancelled');self.assertEqual(c.current['rows'],[])
+            self.assertEqual(provider.calls,1)
+            self.assertEqual(c.history()[0]['status'],'cancelled')
+
+class HttpFuzzTests(HttpTests):
+    def test_unexpected_json_shapes_get_errors_not_disconnects(self):
+        from urllib.error import HTTPError
+        for body in [[],None,True,'text',{}, {'scenario':'missing'}, {'scenario':[]}, {'scenario':'quality','config':{'count':99}}]:
+            # None denotes JSON null rather than a GET here.
+            import urllib.request
+            data=json.dumps(body).encode()
+            with self.assertRaises(HTTPError) as e:
+                urllib.request.urlopen(urllib.request.Request(self.base+'/api/run',data=data,headers={'Content-Type':'application/json'}))
+            self.assertEqual(e.exception.code,400)

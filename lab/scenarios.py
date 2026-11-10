@@ -29,7 +29,9 @@ DEFAULT = dict(instructions='brief', context='focused', structured=True, max_tok
                server_parallel=1, device='auto', count=12, hourly_rate=1.2)
 
 def scenario(key):
-    return next(x for x in SCENARIOS if x['id'] == key)
+    found = next((x for x in SCENARIOS if x['id'] == key), None)
+    if found is None: raise ValueError('Choose a valid exercise.')
+    return found
 
 def document(i):
     agency = ['Northern Rivers Water Board', 'Lakeshore Transit Authority', 'Eastfield Health District', 'Pinecrest School Board'][i % 4]

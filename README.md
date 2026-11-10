@@ -4,6 +4,16 @@ A local workshop by Danial Hasan × Pillars Network. Use your coding agent to se
 
 **Model:** Qwen2.5 1.5B, approximately 986 MB to download. **Runtime:** Ollama. **Dashboard:** Python 3.10 or newer, standard library only. No API key, cloud inference, Python packages, or npm install is needed.
 
+## Before the lecture
+
+Start setup before the lecture so you can use the dashboard when the hands-on workshop begins. The setup must finish a real local model request and display its output and measurements. A successful web-page load alone is not readiness.
+
+Give your coding agent the repo URL and this prompt:
+
+> I’m at an inference engineering workshop. Read this repository and follow its setup instructions on this machine. Check that the local model and dashboard work, and fix any setup issues. Leave the exercises ready for me.
+
+Ready means: the correct 1.5B model is available, a small live run finishes without transport errors, results appear in the dashboard, and configuration survives a reload. Leave the dashboard open and the server running. A deliberately weak prompt can fail an exercise’s quality check; that is not a broken installation.
+
 ## Ask your coding agent
 
 Open this repository in Codex, Claude Code, Cursor, or another coding agent and send:

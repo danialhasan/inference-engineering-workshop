@@ -2,6 +2,12 @@
 
 The user is an attendee using their coding agent beside a dashboard. Help them operate and understand the workshop; do not complete all experiments or change their hypotheses without asking what they want to try.
 
+## Pre-lecture readiness
+
+The attendee may start setup before the lecture. Finish installation and a small live smoke run, fix machine-specific problems, and leave the dashboard open. Do not run every experiment or replace deliberately weak baseline prompts. A completed request with an incorrect field is an exercise finding; a missing model, failed request, broken dashboard or lost configuration is a setup issue.
+
+Readiness requires: Qwen2.5 1.5B available locally; four live requests complete without transport errors; outputs and timings appear; saved settings survive reload. Restore the requested document count after the smoke run. Report what hardware was actually used and any unresolved limits.
+
 ## Setup first
 
 1. Read README.md and docs/DASHBOARD.md. The active workshop is dashboard.py + lab/ + web/, using **qwen2.5:1.5b**. Ignore the older 0.6B CLI unless explicitly requested.

@@ -173,6 +173,11 @@
     .reveal .bitter-lesson .bitter-example{font-size:26px;line-height:1.45}
     .reveal .bitter-lesson .source-line{margin-top:14px}
     .reveal .bitter-lesson .bitter-role{font-size:27px;font-weight:650;color:var(--green);margin-top:22px;padding-top:18px;border-top:1px solid #aebeb5}
+    .reveal .workshop-setup h1{font-size:62px;margin-bottom:30px}
+    .reveal .workshop-setup .repo-link{font-size:30px;font-weight:650;overflow-wrap:anywhere;margin-bottom:36px}
+    .reveal .workshop-setup h2{font-size:28px;margin:0 0 18px}
+    .reveal .workshop-setup blockquote{font-size:29px;line-height:1.5;margin:0;padding:22px 26px;background:#e5ebe7;border-left:4px solid var(--green)}
+    .reveal .workshop-setup .setup-ready{font-size:24px;margin-top:28px}
   </style>
 </head>
 <body>
@@ -226,6 +231,13 @@
         </ol>
       </div>
       <p class="workshop-next">Then, we’ll apply these ideas in the workshop.</p>
+    </section>
+    <section id="workshop-setup" class="workshop-setup">
+      <h1>Get ready before the lecture</h1>
+      <p class="repo-link"><a href="https://github.com/danialhasan/inference-engineering-workshop">github.com/danialhasan/inference-engineering-workshop</a></p>
+      <h2>Give your coding agent the repo and this instruction:</h2>
+      <blockquote>“I’m at an inference engineering workshop. Read this repository and follow its setup instructions on this machine. Check that the local model and dashboard work, and fix any setup issues. Leave the exercises ready for me.”</blockquote>
+      <p class="setup-ready">Ready means: Qwen2.5 1.5B runs locally, a live test finishes, and the dashboard is open.</p>
     </section>
     <section class="section-divider" data-phase="Lecture">
       <h1>Lecture</h1>

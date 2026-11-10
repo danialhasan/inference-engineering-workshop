@@ -28,17 +28,16 @@ class Handler(BaseHTTPRequestHandler):
             size=int(self.headers.get('Content-Length','0'))
             if not 0<size<=65536:raise ValueError('Invalid request size.')
             value=json.loads(self.rfile.read(size));c=self.server.control
+            if not isinstance(value,dict):raise ValueError('Request must be a JSON object.')
             if self.path=='/api/config':result=c.save(value)
-            elif self.path=='/api/run':result={'id':c.start(value['scenario'])}
+            elif self.path=='/api/run':result={'id':c.start(value.get('scenario'),value.get('config'))}
             elif self.path=='/api/setup':c.setup();result={'ok':True}
-            elif self.path=='/api/cancel':
-                with c.lock:
-                    if c.current and c.busy():c.current.update(status='cancelling',message='Finishing active requests; queued work will be skipped.');c.cancel.set()
-                result={'ok':True}
+            elif self.path=='/api/cancel':c.stop_run();result={'ok':True}
             elif self.path=='/api/baseline':c.baseline(value['id']);result={'ok':True}
             else:return self.send_json({'error':'Not found'},404)
             return self.send_json(result)
         except (ValueError,KeyError,TypeError) as e:return self.send_json({'error':str(e)},400)
+        except OSError:return self.send_json({'error':'Could not save local data. Check free space and folder permissions.'},500)
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--port',type=int,default=8876);p.add_argument('--ollama-port',type=int,default=18731);p.add_argument('--state-dir');p.add_argument('--check',action='store_true');args=p.parse_args()

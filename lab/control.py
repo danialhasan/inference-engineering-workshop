@@ -1,4 +1,4 @@
-import concurrent.futures, datetime, hashlib, importlib, json, pathlib, platform, threading, time, uuid
+import copy, concurrent.futures, datetime, hashlib, importlib, json, pathlib, platform, threading, time, uuid
 from . import prompts
 from .provider import Ollama
 from .scenarios import DEFAULT, SCENARIOS, items, scenario
@@ -34,27 +34,48 @@ class Control:
     def __init__(self, state_dir=None, port=18731, provider=None):
         self.path=pathlib.Path(state_dir or ROOT/'.workshop');self.path.mkdir(parents=True,exist_ok=True)
         self.provider=provider or Ollama(self.path,port);self.lock=threading.RLock();self.current=None;self.cancel=threading.Event();self.setup_error=None
-        self.config=validate(json.loads((self.path/'config.json').read_text())) if (self.path/'config.json').exists() else dict(DEFAULT)
-        self.baselines=json.loads((self.path/'baselines.json').read_text()) if (self.path/'baselines.json').exists() else {}
+        self.warnings=[]
+        try:self.config=validate(json.loads((self.path/'config.json').read_text())) if (self.path/'config.json').exists() else dict(DEFAULT)
+        except (OSError,ValueError,TypeError):
+            self.config=dict(DEFAULT);self.warnings.append('Saved configuration could not be read; defaults are shown. The original file has been preserved.')
+        try:self.baselines=json.loads((self.path/'baselines.json').read_text()) if (self.path/'baselines.json').exists() else {}
+        except (OSError,ValueError):
+            self.baselines={};self.warnings.append('Saved baseline selection could not be read. Run files have been preserved.')
+        if not isinstance(self.baselines,dict):self.baselines={}
     def history(self):
-        return [json.loads(p.read_text()) for p in sorted((self.path/'runs').glob('*.json'),reverse=True)[:40]]
+        result=[]
+        for p in sorted((self.path/'runs').glob('*.json'),reverse=True):
+            try:
+                run=json.loads(p.read_text())
+                if not isinstance(run,dict) or not all(k in run for k in ('id','scenario','config','status','started','rows')):raise ValueError('Incomplete record')
+                validate(run['config']);scenario(run['scenario'])
+                if not isinstance(run['rows'],list) or not isinstance(run['started'],str):raise ValueError('Invalid record')
+                result.append(run)
+            except (OSError,ValueError,TypeError):
+                warning=f'Could not read run {p.name}; its file has been preserved.'
+                if warning not in self.warnings:self.warnings.append(warning)
+        return result
     def state(self):
         with self.lock:
-            return dict(config=self.config,scenarios=SCENARIOS,current=self.current,baselines=self.baselines,history=self.history(),setup_error=self.setup_error)
+            history=self.history()
+            pinned=set(self.baselines.values())
+            visible=[r for i,r in enumerate(history) if i<40 or r['id'] in pinned]
+            return copy.deepcopy(dict(config=self.config,scenarios=SCENARIOS,current=self.current,baselines=self.baselines,history=visible,history_total=len(history),warnings=self.warnings,setup_error=self.setup_error))
     def busy(self):return self.current and self.current['status'] in ['preparing','running','cancelling','downloading']
     def save(self,cfg):
         with self.lock:
             if self.busy():raise ValueError('Wait for this run to finish before changing configuration.')
-            self.config=validate(cfg);atomic(self.path/'config.json',self.config)
+            checked=validate(cfg);atomic(self.path/'config.json',checked);self.config=checked
             return self.config
     def baseline(self,id):
         with self.lock:
             run=next((x for x in self.history() if x['id']==id and x['status']=='complete'),None)
             if not run:raise ValueError('Choose a completed run to set a baseline.')
-            self.baselines[run['scenario']]=id;atomic(self.path/'baselines.json',self.baselines)
+            updated={**self.baselines,run['scenario']:id};atomic(self.path/'baselines.json',updated);self.baselines=updated
     def setup(self):
         with self.lock:
             if self.busy():raise ValueError('A run is already active.')
+            self.setup_error=None
             self.current=dict(id='setup',status='downloading',completed=0,total=0,rows=[],message='Preparing Ollama and Qwen2.5 1.5B…')
         def work():
             try:
@@ -64,10 +85,18 @@ class Control:
             except Exception as e:
                 with self.lock:self.current.update(status='error',message=str(e));self.setup_error=str(e)
         threading.Thread(target=work,daemon=True).start()
-    def start(self,key):
+    def stop_run(self):
+        with self.lock:
+            if not self.current or self.current.get('scenario') is None or not self.busy():raise ValueError('No active workload to cancel.')
+            self.current.update(status='cancelling',message='Finishing active requests; queued work will be skipped.')
+            self.cancel.set()
+
+    def start(self,key,config=None):
         scenario(key)
         with self.lock:
             if self.busy():raise ValueError('A run is already active.')
+            if config is not None:
+                checked=validate(config);atomic(self.path/'config.json',checked);self.config=checked
             cfg=dict(self.config);self.cancel.clear()
             run=dict(id=datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S')+'-'+uuid.uuid4().hex[:6],
                      scenario=key,config=cfg,status='preparing',started=datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -75,6 +104,16 @@ class Control:
             self.current=run
         threading.Thread(target=self.execute,args=(run,),daemon=True).start()
         return run['id']
+    def finish(self,run,**updates):
+        with self.lock:
+            result=copy.deepcopy({**run,**updates})
+            if result['status']=='cancelled' and result.get('summary'):
+                result['summary']['gates']={k:None for k in result['summary']['gates']}
+            result['skipped']=result['total']-len(result['rows'])
+            try:atomic(self.path/'runs'/f"{run['id']}.json",result)
+            except OSError as e:result.update(status='error',message=f'Could not save the run: {e}')
+            run.update(result)
+
     def execute(self,run):
         cfg=run['config'];rows=[]
         try:
@@ -82,9 +121,12 @@ class Control:
             before=self.provider.status()
             if not before['ready']:raise RuntimeError('Qwen2.5 1.5B is missing. Select Prepare model first.')
             self.provider.generate('','Ready',None,{**cfg,'max_tokens':1},lambda _:None)
+            if self.cancel.is_set():raise InterruptedError('Cancelled before workload requests started.')
             importlib.reload(prompts)
             prompt_hash=hashlib.sha256((ROOT/'lab/prompts.py').read_bytes()).hexdigest()
-            with self.lock:run.update(status='running',message='Running the workload. Metrics include application waiting time.')
+            with self.lock:
+                if self.cancel.is_set():raise InterruptedError('Cancelled before workload requests started.')
+                run.update(status='running',message='Running the workload. Metrics include application waiting time.')
             start=time.perf_counter()
             def task(item, arrival, delay=0):
                 if delay:self.cancel.wait(max(0,start+delay-time.perf_counter()))
@@ -126,7 +168,8 @@ class Control:
                           cache_policy='Model warmed with one token; natural prefix reuse, not flushed between requests.',
                           cost_policy='Estimated occupied-run time × assumed hourly price; excludes warmup, idle capacity and power.',
                           timing_policy='Client end-to-end includes application queue. Other time includes unseparated server wait and transport; it is not a measured GPU queue.')
-            with self.lock:run.update(status='cancelled' if self.cancel.is_set() else 'complete',message='Run saved.',rows=rows,summary=summarize(rows,seconds,cfg,scenario(run['scenario'])),manifest=manifest)
+            self.finish(run,status='cancelled' if self.cancel.is_set() else 'complete',message='Run saved.',rows=rows,summary=summarize(rows,seconds,cfg,scenario(run['scenario'])),manifest=manifest)
+        except InterruptedError as e:
+            self.finish(run,status='cancelled',message=str(e),rows=rows)
         except Exception as e:
-            with self.lock:run.update(status='error',message=str(e),rows=rows)
-        with self.lock:atomic(self.path/'runs'/f"{run['id']}.json",run)
+            self.finish(run,status='error',message=str(e),rows=rows)
