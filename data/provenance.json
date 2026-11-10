@@ -1,0 +1,41 @@
+{
+  "captured_at_utc": [
+    "2026-11-10T04:53:25.141632+00:00",
+    "2026-11-10T04:53:25.360799+00:00",
+    "2026-11-10T04:53:25.864346+00:00",
+    "2026-11-10T04:53:26.359622+00:00",
+    "2026-11-10T04:53:26.995244+00:00",
+    "2026-11-10T04:53:27.630588+00:00",
+    "2026-11-10T04:53:28.289825+00:00",
+    "2026-11-10T04:53:28.927298+00:00"
+  ],
+  "device": "Apple M2 Pro",
+  "ram_gb": 16,
+  "runtime": "Ollama 0.40.11",
+  "model": "qwen3:0.6b",
+  "quantization": "Q4_K_M",
+  "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+  "model_loaded_bytes_display": "580 MB reported by ollama ps",
+  "processor": "100% GPU as reported by ollama ps",
+  "num_ctx": 2048,
+  "server_parallelism": 1,
+  "temperature": 0,
+  "seed": 42,
+  "think": false,
+  "run_order": [
+    "baseline x2",
+    "longer x2",
+    "sequential x2",
+    "concurrent x2"
+  ],
+  "warmup": "8-token separate prompt before every measured workload; excluded",
+  "limitations": [
+    "Two repetitions per setting, not statistical significance.",
+    "Prefix caching remains active; order and identical prompts can affect results.",
+    "One host; not a performance guarantee for attendee devices.",
+    "No cold-start measurements.",
+    "Client first-text timing approximates TTFT using streamed chunks."
+  ],
+  "runs_sha256": "1af8589a5d243f7ca96bc3e8dff47032f4ed07cd2eb2add6f25578897caddeb9",
+  "recording_format": "Original captured JSON groups, unchanged. Warm-up excluded. Source is always recorded."
+}

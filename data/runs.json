@@ -1,0 +1,3690 @@
+[
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:25.141632+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 32,
+      "count": 1,
+      "concurrency": 1
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 211.80262499990476,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 1.151,
+        "end_ms": 211.66,
+        "first_text_ms": 27.305,
+        "wall_ms": 210.509,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 27.305,
+            "text": "1"
+          },
+          {
+            "ms": 34.696,
+            "text": "."
+          },
+          {
+            "ms": 39.779,
+            "text": " Start"
+          },
+          {
+            "ms": 44.403,
+            "text": " with"
+          },
+          {
+            "ms": 49.29,
+            "text": " a"
+          },
+          {
+            "ms": 53.734,
+            "text": " clear"
+          },
+          {
+            "ms": 58.264,
+            "text": " agenda"
+          },
+          {
+            "ms": 64.275,
+            "text": " and"
+          },
+          {
+            "ms": 69.473,
+            "text": " schedule"
+          },
+          {
+            "ms": 74.758,
+            "text": "."
+          },
+          {
+            "ms": 79.945,
+            "text": "  \n"
+          },
+          {
+            "ms": 84.607,
+            "text": "2"
+          },
+          {
+            "ms": 89.538,
+            "text": "."
+          },
+          {
+            "ms": 94.02,
+            "text": " Invite"
+          },
+          {
+            "ms": 100.985,
+            "text": " participants"
+          },
+          {
+            "ms": 106.242,
+            "text": " and"
+          },
+          {
+            "ms": 111.048,
+            "text": " set"
+          },
+          {
+            "ms": 119.498,
+            "text": " up"
+          },
+          {
+            "ms": 126.59,
+            "text": " a"
+          },
+          {
+            "ms": 132.964,
+            "text": " welcoming"
+          },
+          {
+            "ms": 139.287,
+            "text": " environment"
+          },
+          {
+            "ms": 144.504,
+            "text": "."
+          },
+          {
+            "ms": 150.875,
+            "text": "  \n"
+          },
+          {
+            "ms": 157.033,
+            "text": "3"
+          },
+          {
+            "ms": 162.586,
+            "text": "."
+          },
+          {
+            "ms": 167.966,
+            "text": " Provide"
+          },
+          {
+            "ms": 174.553,
+            "text": " necessary"
+          },
+          {
+            "ms": 184.842,
+            "text": " materials"
+          },
+          {
+            "ms": 191.076,
+            "text": " and"
+          },
+          {
+            "ms": 197.428,
+            "text": " equipment"
+          },
+          {
+            "ms": 202.794,
+            "text": "."
+          },
+          {
+            "ms": 208.993,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.78075,
+        "prefill_ms": 23.87,
+        "decode_ms": 181.852,
+        "server_total_ms": 208.46225,
+        "decode_tokens_s": 175.96727008776367,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 32,
+    "throughput_tokens_s": 151.0840576221111,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "baseline-1"
+  },
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:25.360799+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 32,
+      "count": 1,
+      "concurrency": 1
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 188.15066699994532,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 0.118,
+        "end_ms": 188.045,
+        "first_text_ms": 9.924,
+        "wall_ms": 187.927,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 9.924,
+            "text": "1"
+          },
+          {
+            "ms": 16.099,
+            "text": "."
+          },
+          {
+            "ms": 22.557,
+            "text": " Start"
+          },
+          {
+            "ms": 27.343,
+            "text": " with"
+          },
+          {
+            "ms": 34.425,
+            "text": " a"
+          },
+          {
+            "ms": 40.579,
+            "text": " clear"
+          },
+          {
+            "ms": 46.19,
+            "text": " agenda"
+          },
+          {
+            "ms": 51.532,
+            "text": " and"
+          },
+          {
+            "ms": 58.889,
+            "text": " schedule"
+          },
+          {
+            "ms": 65.068,
+            "text": "."
+          },
+          {
+            "ms": 69.552,
+            "text": "  \n"
+          },
+          {
+            "ms": 75.974,
+            "text": "2"
+          },
+          {
+            "ms": 82.175,
+            "text": "."
+          },
+          {
+            "ms": 87.325,
+            "text": " Invite"
+          },
+          {
+            "ms": 92.64,
+            "text": " participants"
+          },
+          {
+            "ms": 98.789,
+            "text": " and"
+          },
+          {
+            "ms": 104.216,
+            "text": " set"
+          },
+          {
+            "ms": 109.49,
+            "text": " up"
+          },
+          {
+            "ms": 115.667,
+            "text": " a"
+          },
+          {
+            "ms": 120.88,
+            "text": " welcoming"
+          },
+          {
+            "ms": 126.087,
+            "text": " environment"
+          },
+          {
+            "ms": 132.261,
+            "text": "."
+          },
+          {
+            "ms": 137.363,
+            "text": "  \n"
+          },
+          {
+            "ms": 142.626,
+            "text": "3"
+          },
+          {
+            "ms": 148.666,
+            "text": "."
+          },
+          {
+            "ms": 154.158,
+            "text": " Provide"
+          },
+          {
+            "ms": 159.277,
+            "text": " necessary"
+          },
+          {
+            "ms": 165.306,
+            "text": " materials"
+          },
+          {
+            "ms": 170.068,
+            "text": " and"
+          },
+          {
+            "ms": 176.066,
+            "text": " equipment"
+          },
+          {
+            "ms": 181.732,
+            "text": "."
+          },
+          {
+            "ms": 187.028,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.563917,
+        "prefill_ms": 6.421,
+        "decode_ms": 177.377,
+        "server_total_ms": 186.615667,
+        "decode_tokens_s": 180.40670436415093,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 32,
+    "throughput_tokens_s": 170.0764632421383,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "baseline-2"
+  },
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:25.864346+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 96,
+      "count": 1,
+      "concurrency": 1
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 475.0135420000561,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 0.112,
+        "end_ms": 474.917,
+        "first_text_ms": 8.257,
+        "wall_ms": 474.805,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n4. Keep the space organized and accessible.  \n5. Encourage collaboration and teamwork.  \n6. Offer time for questions and feedback.  \n7. Keep the workshop on track and adjust as needed.  \n8. Use technology to enhance engagement.  \n9. Provide resources and support for participants.  \n10.",
+        "chunks": [
+          {
+            "ms": 8.257,
+            "text": "1"
+          },
+          {
+            "ms": 13.441,
+            "text": "."
+          },
+          {
+            "ms": 18.059,
+            "text": " Start"
+          },
+          {
+            "ms": 23.884,
+            "text": " with"
+          },
+          {
+            "ms": 31.806,
+            "text": " a"
+          },
+          {
+            "ms": 36.801,
+            "text": " clear"
+          },
+          {
+            "ms": 41.202,
+            "text": " agenda"
+          },
+          {
+            "ms": 46.052,
+            "text": " and"
+          },
+          {
+            "ms": 50.682,
+            "text": " schedule"
+          },
+          {
+            "ms": 55.46,
+            "text": "."
+          },
+          {
+            "ms": 60.795,
+            "text": "  \n"
+          },
+          {
+            "ms": 64.976,
+            "text": "2"
+          },
+          {
+            "ms": 69.847,
+            "text": "."
+          },
+          {
+            "ms": 74.223,
+            "text": " Invite"
+          },
+          {
+            "ms": 79.272,
+            "text": " participants"
+          },
+          {
+            "ms": 83.95,
+            "text": " and"
+          },
+          {
+            "ms": 89.241,
+            "text": " set"
+          },
+          {
+            "ms": 93.763,
+            "text": " up"
+          },
+          {
+            "ms": 98.825,
+            "text": " a"
+          },
+          {
+            "ms": 103.386,
+            "text": " welcoming"
+          },
+          {
+            "ms": 108.587,
+            "text": " environment"
+          },
+          {
+            "ms": 113.262,
+            "text": "."
+          },
+          {
+            "ms": 118.642,
+            "text": "  \n"
+          },
+          {
+            "ms": 122.963,
+            "text": "3"
+          },
+          {
+            "ms": 127.896,
+            "text": "."
+          },
+          {
+            "ms": 132.808,
+            "text": " Provide"
+          },
+          {
+            "ms": 138.013,
+            "text": " necessary"
+          },
+          {
+            "ms": 142.71,
+            "text": " materials"
+          },
+          {
+            "ms": 147.985,
+            "text": " and"
+          },
+          {
+            "ms": 152.601,
+            "text": " equipment"
+          },
+          {
+            "ms": 157.739,
+            "text": "."
+          },
+          {
+            "ms": 162.389,
+            "text": "  \n"
+          },
+          {
+            "ms": 167.466,
+            "text": "4"
+          },
+          {
+            "ms": 172.147,
+            "text": "."
+          },
+          {
+            "ms": 177.297,
+            "text": " Keep"
+          },
+          {
+            "ms": 181.602,
+            "text": " the"
+          },
+          {
+            "ms": 186.72,
+            "text": " space"
+          },
+          {
+            "ms": 191.056,
+            "text": " organized"
+          },
+          {
+            "ms": 196.24,
+            "text": " and"
+          },
+          {
+            "ms": 200.622,
+            "text": " accessible"
+          },
+          {
+            "ms": 205.78,
+            "text": "."
+          },
+          {
+            "ms": 210.42,
+            "text": "  \n"
+          },
+          {
+            "ms": 215.622,
+            "text": "5"
+          },
+          {
+            "ms": 219.878,
+            "text": "."
+          },
+          {
+            "ms": 225.542,
+            "text": " Enc"
+          },
+          {
+            "ms": 230.34,
+            "text": "ourage"
+          },
+          {
+            "ms": 235.294,
+            "text": " collaboration"
+          },
+          {
+            "ms": 239.92,
+            "text": " and"
+          },
+          {
+            "ms": 245.119,
+            "text": " teamwork"
+          },
+          {
+            "ms": 249.412,
+            "text": "."
+          },
+          {
+            "ms": 254.632,
+            "text": "  \n"
+          },
+          {
+            "ms": 259.37,
+            "text": "6"
+          },
+          {
+            "ms": 264.66,
+            "text": "."
+          },
+          {
+            "ms": 269.107,
+            "text": " Offer"
+          },
+          {
+            "ms": 274.561,
+            "text": " time"
+          },
+          {
+            "ms": 279.724,
+            "text": " for"
+          },
+          {
+            "ms": 284.931,
+            "text": " questions"
+          },
+          {
+            "ms": 289.498,
+            "text": " and"
+          },
+          {
+            "ms": 294.656,
+            "text": " feedback"
+          },
+          {
+            "ms": 298.955,
+            "text": "."
+          },
+          {
+            "ms": 303.916,
+            "text": "  \n"
+          },
+          {
+            "ms": 308.731,
+            "text": "7"
+          },
+          {
+            "ms": 313.908,
+            "text": "."
+          },
+          {
+            "ms": 318.591,
+            "text": " Keep"
+          },
+          {
+            "ms": 323.783,
+            "text": " the"
+          },
+          {
+            "ms": 328.165,
+            "text": " workshop"
+          },
+          {
+            "ms": 333.368,
+            "text": " on"
+          },
+          {
+            "ms": 337.991,
+            "text": " track"
+          },
+          {
+            "ms": 343.101,
+            "text": " and"
+          },
+          {
+            "ms": 347.445,
+            "text": " adjust"
+          },
+          {
+            "ms": 352.608,
+            "text": " as"
+          },
+          {
+            "ms": 357.0,
+            "text": " needed"
+          },
+          {
+            "ms": 362.074,
+            "text": "."
+          },
+          {
+            "ms": 366.423,
+            "text": "  \n"
+          },
+          {
+            "ms": 371.385,
+            "text": "8"
+          },
+          {
+            "ms": 375.948,
+            "text": "."
+          },
+          {
+            "ms": 381.125,
+            "text": " Use"
+          },
+          {
+            "ms": 385.561,
+            "text": " technology"
+          },
+          {
+            "ms": 390.779,
+            "text": " to"
+          },
+          {
+            "ms": 395.431,
+            "text": " enhance"
+          },
+          {
+            "ms": 400.691,
+            "text": " engagement"
+          },
+          {
+            "ms": 404.976,
+            "text": "."
+          },
+          {
+            "ms": 410.102,
+            "text": "  \n"
+          },
+          {
+            "ms": 414.538,
+            "text": "9"
+          },
+          {
+            "ms": 419.775,
+            "text": "."
+          },
+          {
+            "ms": 424.098,
+            "text": " Provide"
+          },
+          {
+            "ms": 429.19,
+            "text": " resources"
+          },
+          {
+            "ms": 433.603,
+            "text": " and"
+          },
+          {
+            "ms": 438.77,
+            "text": " support"
+          },
+          {
+            "ms": 443.229,
+            "text": " for"
+          },
+          {
+            "ms": 448.413,
+            "text": " participants"
+          },
+          {
+            "ms": 453.141,
+            "text": "."
+          },
+          {
+            "ms": 458.044,
+            "text": "  \n"
+          },
+          {
+            "ms": 464.065,
+            "text": "1"
+          },
+          {
+            "ms": 468.86,
+            "text": "0"
+          },
+          {
+            "ms": 473.703,
+            "text": "."
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 96,
+        "load_ms": 0.600625,
+        "prefill_ms": 5.283,
+        "decode_ms": 465.548,
+        "server_total_ms": 473.316209,
+        "decode_tokens_s": 206.20859718009743,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 96,
+    "throughput_tokens_s": 202.09950140745391,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "longer-1"
+  },
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:26.359622+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 96,
+      "count": 1,
+      "concurrency": 1
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 468.80433399996946,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 0.1,
+        "end_ms": 468.69,
+        "first_text_ms": 8.029,
+        "wall_ms": 468.59,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n4. Keep the space organized and accessible.  \n5. Encourage collaboration and teamwork.  \n6. Offer time for questions and feedback.  \n7. Keep the workshop on track and adjust as needed.  \n8. Use technology to enhance engagement.  \n9. Provide resources and support for participants.  \n10.",
+        "chunks": [
+          {
+            "ms": 8.029,
+            "text": "1"
+          },
+          {
+            "ms": 12.88,
+            "text": "."
+          },
+          {
+            "ms": 17.216,
+            "text": " Start"
+          },
+          {
+            "ms": 22.326,
+            "text": " with"
+          },
+          {
+            "ms": 26.741,
+            "text": " a"
+          },
+          {
+            "ms": 31.813,
+            "text": " clear"
+          },
+          {
+            "ms": 36.135,
+            "text": " agenda"
+          },
+          {
+            "ms": 41.244,
+            "text": " and"
+          },
+          {
+            "ms": 45.724,
+            "text": " schedule"
+          },
+          {
+            "ms": 50.983,
+            "text": "."
+          },
+          {
+            "ms": 55.648,
+            "text": "  \n"
+          },
+          {
+            "ms": 60.232,
+            "text": "2"
+          },
+          {
+            "ms": 64.609,
+            "text": "."
+          },
+          {
+            "ms": 69.548,
+            "text": " Invite"
+          },
+          {
+            "ms": 73.899,
+            "text": " participants"
+          },
+          {
+            "ms": 79.21,
+            "text": " and"
+          },
+          {
+            "ms": 83.489,
+            "text": " set"
+          },
+          {
+            "ms": 88.644,
+            "text": " up"
+          },
+          {
+            "ms": 93.042,
+            "text": " a"
+          },
+          {
+            "ms": 98.491,
+            "text": " welcoming"
+          },
+          {
+            "ms": 102.745,
+            "text": " environment"
+          },
+          {
+            "ms": 107.826,
+            "text": "."
+          },
+          {
+            "ms": 112.2,
+            "text": "  \n"
+          },
+          {
+            "ms": 117.321,
+            "text": "3"
+          },
+          {
+            "ms": 121.735,
+            "text": "."
+          },
+          {
+            "ms": 126.835,
+            "text": " Provide"
+          },
+          {
+            "ms": 131.206,
+            "text": " necessary"
+          },
+          {
+            "ms": 136.226,
+            "text": " materials"
+          },
+          {
+            "ms": 140.613,
+            "text": " and"
+          },
+          {
+            "ms": 145.819,
+            "text": " equipment"
+          },
+          {
+            "ms": 150.157,
+            "text": "."
+          },
+          {
+            "ms": 155.349,
+            "text": "  \n"
+          },
+          {
+            "ms": 159.62,
+            "text": "4"
+          },
+          {
+            "ms": 164.747,
+            "text": "."
+          },
+          {
+            "ms": 169.14,
+            "text": " Keep"
+          },
+          {
+            "ms": 174.328,
+            "text": " the"
+          },
+          {
+            "ms": 178.664,
+            "text": " space"
+          },
+          {
+            "ms": 183.862,
+            "text": " organized"
+          },
+          {
+            "ms": 188.203,
+            "text": " and"
+          },
+          {
+            "ms": 193.461,
+            "text": " accessible"
+          },
+          {
+            "ms": 197.828,
+            "text": "."
+          },
+          {
+            "ms": 202.975,
+            "text": "  \n"
+          },
+          {
+            "ms": 207.372,
+            "text": "5"
+          },
+          {
+            "ms": 212.548,
+            "text": "."
+          },
+          {
+            "ms": 216.865,
+            "text": " Enc"
+          },
+          {
+            "ms": 222.088,
+            "text": "ourage"
+          },
+          {
+            "ms": 226.451,
+            "text": " collaboration"
+          },
+          {
+            "ms": 231.666,
+            "text": " and"
+          },
+          {
+            "ms": 235.977,
+            "text": " teamwork"
+          },
+          {
+            "ms": 241.202,
+            "text": "."
+          },
+          {
+            "ms": 245.537,
+            "text": "  \n"
+          },
+          {
+            "ms": 250.706,
+            "text": "6"
+          },
+          {
+            "ms": 255.197,
+            "text": "."
+          },
+          {
+            "ms": 260.439,
+            "text": " Offer"
+          },
+          {
+            "ms": 264.801,
+            "text": " time"
+          },
+          {
+            "ms": 269.979,
+            "text": " for"
+          },
+          {
+            "ms": 274.28,
+            "text": " questions"
+          },
+          {
+            "ms": 279.489,
+            "text": " and"
+          },
+          {
+            "ms": 283.838,
+            "text": " feedback"
+          },
+          {
+            "ms": 289.074,
+            "text": "."
+          },
+          {
+            "ms": 293.44,
+            "text": "  \n"
+          },
+          {
+            "ms": 298.422,
+            "text": "7"
+          },
+          {
+            "ms": 307.467,
+            "text": "."
+          },
+          {
+            "ms": 311.913,
+            "text": " Keep"
+          },
+          {
+            "ms": 317.177,
+            "text": " the"
+          },
+          {
+            "ms": 321.516,
+            "text": " workshop"
+          },
+          {
+            "ms": 326.678,
+            "text": " on"
+          },
+          {
+            "ms": 331.045,
+            "text": " track"
+          },
+          {
+            "ms": 336.376,
+            "text": " and"
+          },
+          {
+            "ms": 340.798,
+            "text": " adjust"
+          },
+          {
+            "ms": 346.092,
+            "text": " as"
+          },
+          {
+            "ms": 350.477,
+            "text": " needed"
+          },
+          {
+            "ms": 355.807,
+            "text": "."
+          },
+          {
+            "ms": 360.181,
+            "text": "  \n"
+          },
+          {
+            "ms": 365.816,
+            "text": "8"
+          },
+          {
+            "ms": 369.791,
+            "text": "."
+          },
+          {
+            "ms": 374.988,
+            "text": " Use"
+          },
+          {
+            "ms": 379.409,
+            "text": " technology"
+          },
+          {
+            "ms": 384.598,
+            "text": " to"
+          },
+          {
+            "ms": 389.091,
+            "text": " enhance"
+          },
+          {
+            "ms": 394.382,
+            "text": " engagement"
+          },
+          {
+            "ms": 399.462,
+            "text": "."
+          },
+          {
+            "ms": 404.958,
+            "text": "  \n"
+          },
+          {
+            "ms": 409.048,
+            "text": "9"
+          },
+          {
+            "ms": 414.14,
+            "text": "."
+          },
+          {
+            "ms": 418.621,
+            "text": " Provide"
+          },
+          {
+            "ms": 423.757,
+            "text": " resources"
+          },
+          {
+            "ms": 428.248,
+            "text": " and"
+          },
+          {
+            "ms": 433.52,
+            "text": " support"
+          },
+          {
+            "ms": 438.235,
+            "text": " for"
+          },
+          {
+            "ms": 443.694,
+            "text": " participants"
+          },
+          {
+            "ms": 448.052,
+            "text": "."
+          },
+          {
+            "ms": 453.329,
+            "text": "  \n"
+          },
+          {
+            "ms": 457.777,
+            "text": "1"
+          },
+          {
+            "ms": 463.045,
+            "text": "0"
+          },
+          {
+            "ms": 467.538,
+            "text": "."
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 96,
+        "load_ms": 0.52075,
+        "prefill_ms": 4.766,
+        "decode_ms": 459.459,
+        "server_total_ms": 467.274583,
+        "decode_tokens_s": 208.94138541197364,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 96,
+    "throughput_tokens_s": 204.77626386450228,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "longer-2"
+  },
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:26.995244+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 32,
+      "count": 4,
+      "concurrency": 1
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 609.6255000001065,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 0.089,
+        "end_ms": 148.552,
+        "first_text_ms": 7.289,
+        "wall_ms": 148.463,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 7.289,
+            "text": "1"
+          },
+          {
+            "ms": 12.96,
+            "text": "."
+          },
+          {
+            "ms": 18.365,
+            "text": " Start"
+          },
+          {
+            "ms": 22.995,
+            "text": " with"
+          },
+          {
+            "ms": 27.626,
+            "text": " a"
+          },
+          {
+            "ms": 32.049,
+            "text": " clear"
+          },
+          {
+            "ms": 37.105,
+            "text": " agenda"
+          },
+          {
+            "ms": 41.342,
+            "text": " and"
+          },
+          {
+            "ms": 45.819,
+            "text": " schedule"
+          },
+          {
+            "ms": 50.388,
+            "text": "."
+          },
+          {
+            "ms": 54.985,
+            "text": "  \n"
+          },
+          {
+            "ms": 59.243,
+            "text": "2"
+          },
+          {
+            "ms": 63.931,
+            "text": "."
+          },
+          {
+            "ms": 68.269,
+            "text": " Invite"
+          },
+          {
+            "ms": 72.66,
+            "text": " participants"
+          },
+          {
+            "ms": 76.99,
+            "text": " and"
+          },
+          {
+            "ms": 81.381,
+            "text": " set"
+          },
+          {
+            "ms": 85.803,
+            "text": " up"
+          },
+          {
+            "ms": 90.302,
+            "text": " a"
+          },
+          {
+            "ms": 94.656,
+            "text": " welcoming"
+          },
+          {
+            "ms": 99.087,
+            "text": " environment"
+          },
+          {
+            "ms": 103.456,
+            "text": "."
+          },
+          {
+            "ms": 107.837,
+            "text": "  \n"
+          },
+          {
+            "ms": 112.32,
+            "text": "3"
+          },
+          {
+            "ms": 116.752,
+            "text": "."
+          },
+          {
+            "ms": 121.11,
+            "text": " Provide"
+          },
+          {
+            "ms": 125.623,
+            "text": " necessary"
+          },
+          {
+            "ms": 129.99,
+            "text": " materials"
+          },
+          {
+            "ms": 134.414,
+            "text": " and"
+          },
+          {
+            "ms": 138.657,
+            "text": " equipment"
+          },
+          {
+            "ms": 143.277,
+            "text": "."
+          },
+          {
+            "ms": 147.659,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.463625,
+        "prefill_ms": 4.905,
+        "decode_ms": 140.363,
+        "server_total_ms": 147.475041,
+        "decode_tokens_s": 227.98030820087916,
+        "done_reason": "length"
+      },
+      {
+        "id": 2,
+        "start_ms": 148.58,
+        "end_ms": 304.972,
+        "first_text_ms": 6.801,
+        "wall_ms": 156.392,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 6.801,
+            "text": "1"
+          },
+          {
+            "ms": 11.516,
+            "text": "."
+          },
+          {
+            "ms": 15.826,
+            "text": " Start"
+          },
+          {
+            "ms": 20.725,
+            "text": " with"
+          },
+          {
+            "ms": 25.719,
+            "text": " a"
+          },
+          {
+            "ms": 31.225,
+            "text": " clear"
+          },
+          {
+            "ms": 35.824,
+            "text": " agenda"
+          },
+          {
+            "ms": 40.914,
+            "text": " and"
+          },
+          {
+            "ms": 45.184,
+            "text": " schedule"
+          },
+          {
+            "ms": 50.266,
+            "text": "."
+          },
+          {
+            "ms": 54.522,
+            "text": "  \n"
+          },
+          {
+            "ms": 59.783,
+            "text": "2"
+          },
+          {
+            "ms": 63.981,
+            "text": "."
+          },
+          {
+            "ms": 69.281,
+            "text": " Invite"
+          },
+          {
+            "ms": 73.641,
+            "text": " participants"
+          },
+          {
+            "ms": 78.881,
+            "text": " and"
+          },
+          {
+            "ms": 83.245,
+            "text": " set"
+          },
+          {
+            "ms": 88.54,
+            "text": " up"
+          },
+          {
+            "ms": 92.876,
+            "text": " a"
+          },
+          {
+            "ms": 98.381,
+            "text": " welcoming"
+          },
+          {
+            "ms": 102.491,
+            "text": " environment"
+          },
+          {
+            "ms": 107.751,
+            "text": "."
+          },
+          {
+            "ms": 112.1,
+            "text": "  \n"
+          },
+          {
+            "ms": 117.415,
+            "text": "3"
+          },
+          {
+            "ms": 121.647,
+            "text": "."
+          },
+          {
+            "ms": 126.15,
+            "text": " Provide"
+          },
+          {
+            "ms": 130.944,
+            "text": " necessary"
+          },
+          {
+            "ms": 135.895,
+            "text": " materials"
+          },
+          {
+            "ms": 140.235,
+            "text": " and"
+          },
+          {
+            "ms": 145.208,
+            "text": " equipment"
+          },
+          {
+            "ms": 150.193,
+            "text": "."
+          },
+          {
+            "ms": 155.229,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.478375,
+        "prefill_ms": 4.833,
+        "decode_ms": 148.559,
+        "server_total_ms": 155.014042,
+        "decode_tokens_s": 215.40263464347498,
+        "done_reason": "length"
+      },
+      {
+        "id": 3,
+        "start_ms": 304.998,
+        "end_ms": 462.185,
+        "first_text_ms": 6.743,
+        "wall_ms": 157.187,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 6.743,
+            "text": "1"
+          },
+          {
+            "ms": 11.734,
+            "text": "."
+          },
+          {
+            "ms": 16.08,
+            "text": " Start"
+          },
+          {
+            "ms": 21.097,
+            "text": " with"
+          },
+          {
+            "ms": 25.392,
+            "text": " a"
+          },
+          {
+            "ms": 30.975,
+            "text": " clear"
+          },
+          {
+            "ms": 34.955,
+            "text": " agenda"
+          },
+          {
+            "ms": 40.419,
+            "text": " and"
+          },
+          {
+            "ms": 44.465,
+            "text": " schedule"
+          },
+          {
+            "ms": 49.74,
+            "text": "."
+          },
+          {
+            "ms": 54.075,
+            "text": "  \n"
+          },
+          {
+            "ms": 59.339,
+            "text": "2"
+          },
+          {
+            "ms": 63.753,
+            "text": "."
+          },
+          {
+            "ms": 68.957,
+            "text": " Invite"
+          },
+          {
+            "ms": 74.026,
+            "text": " participants"
+          },
+          {
+            "ms": 79.212,
+            "text": " and"
+          },
+          {
+            "ms": 83.581,
+            "text": " set"
+          },
+          {
+            "ms": 88.878,
+            "text": " up"
+          },
+          {
+            "ms": 93.136,
+            "text": " a"
+          },
+          {
+            "ms": 98.464,
+            "text": " welcoming"
+          },
+          {
+            "ms": 102.799,
+            "text": " environment"
+          },
+          {
+            "ms": 108.417,
+            "text": "."
+          },
+          {
+            "ms": 112.486,
+            "text": "  \n"
+          },
+          {
+            "ms": 117.794,
+            "text": "3"
+          },
+          {
+            "ms": 122.128,
+            "text": "."
+          },
+          {
+            "ms": 127.324,
+            "text": " Provide"
+          },
+          {
+            "ms": 131.688,
+            "text": " necessary"
+          },
+          {
+            "ms": 137.185,
+            "text": " materials"
+          },
+          {
+            "ms": 141.181,
+            "text": " and"
+          },
+          {
+            "ms": 146.8,
+            "text": " equipment"
+          },
+          {
+            "ms": 151.439,
+            "text": "."
+          },
+          {
+            "ms": 156.528,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.462875,
+        "prefill_ms": 4.819,
+        "decode_ms": 149.873,
+        "server_total_ms": 156.241291,
+        "decode_tokens_s": 213.51410861195816,
+        "done_reason": "length"
+      },
+      {
+        "id": 4,
+        "start_ms": 462.209,
+        "end_ms": 609.532,
+        "first_text_ms": 8.183,
+        "wall_ms": 147.323,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 8.183,
+            "text": "1"
+          },
+          {
+            "ms": 12.65,
+            "text": "."
+          },
+          {
+            "ms": 17.253,
+            "text": " Start"
+          },
+          {
+            "ms": 21.63,
+            "text": " with"
+          },
+          {
+            "ms": 26.232,
+            "text": " a"
+          },
+          {
+            "ms": 30.525,
+            "text": " clear"
+          },
+          {
+            "ms": 35.399,
+            "text": " agenda"
+          },
+          {
+            "ms": 39.816,
+            "text": " and"
+          },
+          {
+            "ms": 44.291,
+            "text": " schedule"
+          },
+          {
+            "ms": 48.66,
+            "text": "."
+          },
+          {
+            "ms": 53.145,
+            "text": "  \n"
+          },
+          {
+            "ms": 57.53,
+            "text": "2"
+          },
+          {
+            "ms": 62.073,
+            "text": "."
+          },
+          {
+            "ms": 66.375,
+            "text": " Invite"
+          },
+          {
+            "ms": 71.197,
+            "text": " participants"
+          },
+          {
+            "ms": 75.494,
+            "text": " and"
+          },
+          {
+            "ms": 79.916,
+            "text": " set"
+          },
+          {
+            "ms": 84.307,
+            "text": " up"
+          },
+          {
+            "ms": 88.752,
+            "text": " a"
+          },
+          {
+            "ms": 93.142,
+            "text": " welcoming"
+          },
+          {
+            "ms": 97.581,
+            "text": " environment"
+          },
+          {
+            "ms": 101.943,
+            "text": "."
+          },
+          {
+            "ms": 106.599,
+            "text": "  \n"
+          },
+          {
+            "ms": 110.967,
+            "text": "3"
+          },
+          {
+            "ms": 115.504,
+            "text": "."
+          },
+          {
+            "ms": 119.91,
+            "text": " Provide"
+          },
+          {
+            "ms": 124.37,
+            "text": " necessary"
+          },
+          {
+            "ms": 128.782,
+            "text": " materials"
+          },
+          {
+            "ms": 133.272,
+            "text": " and"
+          },
+          {
+            "ms": 137.691,
+            "text": " equipment"
+          },
+          {
+            "ms": 142.152,
+            "text": "."
+          },
+          {
+            "ms": 146.616,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.444541,
+        "prefill_ms": 6.064,
+        "decode_ms": 138.752,
+        "server_total_ms": 146.356625,
+        "decode_tokens_s": 230.62730627306271,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 128,
+    "throughput_tokens_s": 209.9649702973016,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "sequential-1"
+  },
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:27.630588+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 32,
+      "count": 4,
+      "concurrency": 1
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 612.0132080000076,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 0.094,
+        "end_ms": 146.719,
+        "first_text_ms": 7.936,
+        "wall_ms": 146.625,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 7.936,
+            "text": "1"
+          },
+          {
+            "ms": 13.006,
+            "text": "."
+          },
+          {
+            "ms": 17.741,
+            "text": " Start"
+          },
+          {
+            "ms": 22.176,
+            "text": " with"
+          },
+          {
+            "ms": 26.549,
+            "text": " a"
+          },
+          {
+            "ms": 30.996,
+            "text": " clear"
+          },
+          {
+            "ms": 35.34,
+            "text": " agenda"
+          },
+          {
+            "ms": 39.708,
+            "text": " and"
+          },
+          {
+            "ms": 44.19,
+            "text": " schedule"
+          },
+          {
+            "ms": 48.579,
+            "text": "."
+          },
+          {
+            "ms": 52.993,
+            "text": "  \n"
+          },
+          {
+            "ms": 57.439,
+            "text": "2"
+          },
+          {
+            "ms": 61.892,
+            "text": "."
+          },
+          {
+            "ms": 66.302,
+            "text": " Invite"
+          },
+          {
+            "ms": 70.734,
+            "text": " participants"
+          },
+          {
+            "ms": 75.116,
+            "text": " and"
+          },
+          {
+            "ms": 79.562,
+            "text": " set"
+          },
+          {
+            "ms": 83.986,
+            "text": " up"
+          },
+          {
+            "ms": 88.45,
+            "text": " a"
+          },
+          {
+            "ms": 92.868,
+            "text": " welcoming"
+          },
+          {
+            "ms": 97.31,
+            "text": " environment"
+          },
+          {
+            "ms": 101.749,
+            "text": "."
+          },
+          {
+            "ms": 106.16,
+            "text": "  \n"
+          },
+          {
+            "ms": 110.54,
+            "text": "3"
+          },
+          {
+            "ms": 114.96,
+            "text": "."
+          },
+          {
+            "ms": 119.377,
+            "text": " Provide"
+          },
+          {
+            "ms": 123.773,
+            "text": " necessary"
+          },
+          {
+            "ms": 128.208,
+            "text": " materials"
+          },
+          {
+            "ms": 132.578,
+            "text": " and"
+          },
+          {
+            "ms": 137.047,
+            "text": " equipment"
+          },
+          {
+            "ms": 141.469,
+            "text": "."
+          },
+          {
+            "ms": 145.873,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 1.2035,
+        "prefill_ms": 4.791,
+        "decode_ms": 138.045,
+        "server_total_ms": 145.743333,
+        "decode_tokens_s": 231.80846825310587,
+        "done_reason": "length"
+      },
+      {
+        "id": 2,
+        "start_ms": 146.742,
+        "end_ms": 294.269,
+        "first_text_ms": 6.735,
+        "wall_ms": 147.527,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 6.735,
+            "text": "1"
+          },
+          {
+            "ms": 11.595,
+            "text": "."
+          },
+          {
+            "ms": 17.045,
+            "text": " Start"
+          },
+          {
+            "ms": 21.682,
+            "text": " with"
+          },
+          {
+            "ms": 26.128,
+            "text": " a"
+          },
+          {
+            "ms": 30.574,
+            "text": " clear"
+          },
+          {
+            "ms": 35.081,
+            "text": " agenda"
+          },
+          {
+            "ms": 39.511,
+            "text": " and"
+          },
+          {
+            "ms": 43.966,
+            "text": " schedule"
+          },
+          {
+            "ms": 48.422,
+            "text": "."
+          },
+          {
+            "ms": 52.977,
+            "text": "  \n"
+          },
+          {
+            "ms": 57.407,
+            "text": "2"
+          },
+          {
+            "ms": 61.804,
+            "text": "."
+          },
+          {
+            "ms": 66.271,
+            "text": " Invite"
+          },
+          {
+            "ms": 70.721,
+            "text": " participants"
+          },
+          {
+            "ms": 75.099,
+            "text": " and"
+          },
+          {
+            "ms": 79.629,
+            "text": " set"
+          },
+          {
+            "ms": 84.086,
+            "text": " up"
+          },
+          {
+            "ms": 88.58,
+            "text": " a"
+          },
+          {
+            "ms": 93.056,
+            "text": " welcoming"
+          },
+          {
+            "ms": 97.602,
+            "text": " environment"
+          },
+          {
+            "ms": 102.023,
+            "text": "."
+          },
+          {
+            "ms": 106.498,
+            "text": "  \n"
+          },
+          {
+            "ms": 110.745,
+            "text": "3"
+          },
+          {
+            "ms": 115.615,
+            "text": "."
+          },
+          {
+            "ms": 120.006,
+            "text": " Provide"
+          },
+          {
+            "ms": 124.488,
+            "text": " necessary"
+          },
+          {
+            "ms": 128.849,
+            "text": " materials"
+          },
+          {
+            "ms": 133.319,
+            "text": " and"
+          },
+          {
+            "ms": 137.793,
+            "text": " equipment"
+          },
+          {
+            "ms": 142.202,
+            "text": "."
+          },
+          {
+            "ms": 146.769,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.47925,
+        "prefill_ms": 4.795,
+        "decode_ms": 140.075,
+        "server_total_ms": 146.548375,
+        "decode_tokens_s": 228.44904515438162,
+        "done_reason": "length"
+      },
+      {
+        "id": 3,
+        "start_ms": 294.294,
+        "end_ms": 452.178,
+        "first_text_ms": 7.277,
+        "wall_ms": 157.884,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 7.277,
+            "text": "1"
+          },
+          {
+            "ms": 12.146,
+            "text": "."
+          },
+          {
+            "ms": 16.43,
+            "text": " Start"
+          },
+          {
+            "ms": 21.592,
+            "text": " with"
+          },
+          {
+            "ms": 25.813,
+            "text": " a"
+          },
+          {
+            "ms": 30.96,
+            "text": " clear"
+          },
+          {
+            "ms": 35.571,
+            "text": " agenda"
+          },
+          {
+            "ms": 40.912,
+            "text": " and"
+          },
+          {
+            "ms": 45.963,
+            "text": " schedule"
+          },
+          {
+            "ms": 50.295,
+            "text": "."
+          },
+          {
+            "ms": 55.54,
+            "text": "  \n"
+          },
+          {
+            "ms": 59.807,
+            "text": "2"
+          },
+          {
+            "ms": 65.024,
+            "text": "."
+          },
+          {
+            "ms": 69.963,
+            "text": " Invite"
+          },
+          {
+            "ms": 75.257,
+            "text": " participants"
+          },
+          {
+            "ms": 79.508,
+            "text": " and"
+          },
+          {
+            "ms": 84.666,
+            "text": " set"
+          },
+          {
+            "ms": 89.164,
+            "text": " up"
+          },
+          {
+            "ms": 94.485,
+            "text": " a"
+          },
+          {
+            "ms": 98.787,
+            "text": " welcoming"
+          },
+          {
+            "ms": 104.421,
+            "text": " environment"
+          },
+          {
+            "ms": 108.353,
+            "text": "."
+          },
+          {
+            "ms": 113.62,
+            "text": "  \n"
+          },
+          {
+            "ms": 118.61,
+            "text": "3"
+          },
+          {
+            "ms": 123.89,
+            "text": "."
+          },
+          {
+            "ms": 128.161,
+            "text": " Provide"
+          },
+          {
+            "ms": 133.306,
+            "text": " necessary"
+          },
+          {
+            "ms": 137.608,
+            "text": " materials"
+          },
+          {
+            "ms": 143.269,
+            "text": " and"
+          },
+          {
+            "ms": 147.383,
+            "text": " equipment"
+          },
+          {
+            "ms": 152.695,
+            "text": "."
+          },
+          {
+            "ms": 157.24,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.511291,
+        "prefill_ms": 4.787,
+        "decode_ms": 149.894,
+        "server_total_ms": 156.938208,
+        "decode_tokens_s": 213.48419549815202,
+        "done_reason": "length"
+      },
+      {
+        "id": 4,
+        "start_ms": 452.201,
+        "end_ms": 611.911,
+        "first_text_ms": 6.718,
+        "wall_ms": 159.71,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 6.718,
+            "text": "1"
+          },
+          {
+            "ms": 12.191,
+            "text": "."
+          },
+          {
+            "ms": 16.259,
+            "text": " Start"
+          },
+          {
+            "ms": 21.647,
+            "text": " with"
+          },
+          {
+            "ms": 25.895,
+            "text": " a"
+          },
+          {
+            "ms": 31.167,
+            "text": " clear"
+          },
+          {
+            "ms": 37.03,
+            "text": " agenda"
+          },
+          {
+            "ms": 41.652,
+            "text": " and"
+          },
+          {
+            "ms": 46.818,
+            "text": " schedule"
+          },
+          {
+            "ms": 51.124,
+            "text": "."
+          },
+          {
+            "ms": 56.186,
+            "text": "  \n"
+          },
+          {
+            "ms": 60.643,
+            "text": "2"
+          },
+          {
+            "ms": 65.822,
+            "text": "."
+          },
+          {
+            "ms": 70.22,
+            "text": " Invite"
+          },
+          {
+            "ms": 75.378,
+            "text": " participants"
+          },
+          {
+            "ms": 79.802,
+            "text": " and"
+          },
+          {
+            "ms": 85.105,
+            "text": " set"
+          },
+          {
+            "ms": 89.457,
+            "text": " up"
+          },
+          {
+            "ms": 95.085,
+            "text": " a"
+          },
+          {
+            "ms": 99.043,
+            "text": " welcoming"
+          },
+          {
+            "ms": 104.374,
+            "text": " environment"
+          },
+          {
+            "ms": 108.719,
+            "text": "."
+          },
+          {
+            "ms": 114.444,
+            "text": "  \n"
+          },
+          {
+            "ms": 119.25,
+            "text": "3"
+          },
+          {
+            "ms": 124.325,
+            "text": "."
+          },
+          {
+            "ms": 128.981,
+            "text": " Provide"
+          },
+          {
+            "ms": 134.209,
+            "text": " necessary"
+          },
+          {
+            "ms": 138.589,
+            "text": " materials"
+          },
+          {
+            "ms": 143.812,
+            "text": " and"
+          },
+          {
+            "ms": 148.359,
+            "text": " equipment"
+          },
+          {
+            "ms": 153.651,
+            "text": "."
+          },
+          {
+            "ms": 159.064,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.480458,
+        "prefill_ms": 4.736,
+        "decode_ms": 152.134,
+        "server_total_ms": 158.60425,
+        "decode_tokens_s": 210.34088369463763,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 128,
+    "throughput_tokens_s": 209.1458130753257,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "sequential-2"
+  },
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:28.289825+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 32,
+      "count": 4,
+      "concurrency": 4
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 634.2559579999261,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 0.1,
+        "end_ms": 634.071,
+        "first_text_ms": 480.244,
+        "wall_ms": 633.971,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 480.244,
+            "text": "1"
+          },
+          {
+            "ms": 485.703,
+            "text": "."
+          },
+          {
+            "ms": 489.596,
+            "text": " Start"
+          },
+          {
+            "ms": 495.11,
+            "text": " with"
+          },
+          {
+            "ms": 500.873,
+            "text": " a"
+          },
+          {
+            "ms": 505.528,
+            "text": " clear"
+          },
+          {
+            "ms": 510.974,
+            "text": " agenda"
+          },
+          {
+            "ms": 515.222,
+            "text": " and"
+          },
+          {
+            "ms": 520.485,
+            "text": " schedule"
+          },
+          {
+            "ms": 524.732,
+            "text": "."
+          },
+          {
+            "ms": 529.955,
+            "text": "  \n"
+          },
+          {
+            "ms": 534.386,
+            "text": "2"
+          },
+          {
+            "ms": 539.56,
+            "text": "."
+          },
+          {
+            "ms": 543.986,
+            "text": " Invite"
+          },
+          {
+            "ms": 549.319,
+            "text": " participants"
+          },
+          {
+            "ms": 553.709,
+            "text": " and"
+          },
+          {
+            "ms": 559.115,
+            "text": " set"
+          },
+          {
+            "ms": 564.035,
+            "text": " up"
+          },
+          {
+            "ms": 569.585,
+            "text": " a"
+          },
+          {
+            "ms": 573.561,
+            "text": " welcoming"
+          },
+          {
+            "ms": 579.108,
+            "text": " environment"
+          },
+          {
+            "ms": 583.179,
+            "text": "."
+          },
+          {
+            "ms": 588.507,
+            "text": "  \n"
+          },
+          {
+            "ms": 592.885,
+            "text": "3"
+          },
+          {
+            "ms": 598.19,
+            "text": "."
+          },
+          {
+            "ms": 603.296,
+            "text": " Provide"
+          },
+          {
+            "ms": 608.663,
+            "text": " necessary"
+          },
+          {
+            "ms": 612.946,
+            "text": " materials"
+          },
+          {
+            "ms": 618.667,
+            "text": " and"
+          },
+          {
+            "ms": 623.287,
+            "text": " equipment"
+          },
+          {
+            "ms": 628.981,
+            "text": "."
+          },
+          {
+            "ms": 633.238,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 1.37925,
+        "prefill_ms": 4.877,
+        "decode_ms": 152.994,
+        "server_total_ms": 632.599417,
+        "decode_tokens_s": 209.15852909264416,
+        "done_reason": "length"
+      },
+      {
+        "id": 2,
+        "start_ms": 0.25,
+        "end_ms": 474.615,
+        "first_text_ms": 321.417,
+        "wall_ms": 474.365,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 321.417,
+            "text": "1"
+          },
+          {
+            "ms": 326.921,
+            "text": "."
+          },
+          {
+            "ms": 331.297,
+            "text": " Start"
+          },
+          {
+            "ms": 336.787,
+            "text": " with"
+          },
+          {
+            "ms": 341.056,
+            "text": " a"
+          },
+          {
+            "ms": 346.638,
+            "text": " clear"
+          },
+          {
+            "ms": 350.65,
+            "text": " agenda"
+          },
+          {
+            "ms": 356.452,
+            "text": " and"
+          },
+          {
+            "ms": 360.767,
+            "text": " schedule"
+          },
+          {
+            "ms": 366.329,
+            "text": "."
+          },
+          {
+            "ms": 370.629,
+            "text": "  \n"
+          },
+          {
+            "ms": 375.879,
+            "text": "2"
+          },
+          {
+            "ms": 380.919,
+            "text": "."
+          },
+          {
+            "ms": 386.164,
+            "text": " Invite"
+          },
+          {
+            "ms": 390.56,
+            "text": " participants"
+          },
+          {
+            "ms": 396.059,
+            "text": " and"
+          },
+          {
+            "ms": 400.437,
+            "text": " set"
+          },
+          {
+            "ms": 405.732,
+            "text": " up"
+          },
+          {
+            "ms": 410.08,
+            "text": " a"
+          },
+          {
+            "ms": 415.424,
+            "text": " welcoming"
+          },
+          {
+            "ms": 419.798,
+            "text": " environment"
+          },
+          {
+            "ms": 425.099,
+            "text": "."
+          },
+          {
+            "ms": 429.427,
+            "text": "  \n"
+          },
+          {
+            "ms": 434.838,
+            "text": "3"
+          },
+          {
+            "ms": 439.256,
+            "text": "."
+          },
+          {
+            "ms": 444.719,
+            "text": " Provide"
+          },
+          {
+            "ms": 449.12,
+            "text": " necessary"
+          },
+          {
+            "ms": 454.443,
+            "text": " materials"
+          },
+          {
+            "ms": 458.896,
+            "text": " and"
+          },
+          {
+            "ms": 464.491,
+            "text": " equipment"
+          },
+          {
+            "ms": 468.642,
+            "text": "."
+          },
+          {
+            "ms": 473.711,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 1.00375,
+        "prefill_ms": 4.8,
+        "decode_ms": 152.413,
+        "server_total_ms": 473.117458,
+        "decode_tokens_s": 209.9558436616299,
+        "done_reason": "length"
+      },
+      {
+        "id": 3,
+        "start_ms": 0.369,
+        "end_ms": 316.22,
+        "first_text_ms": 163.37,
+        "wall_ms": 315.852,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 163.37,
+            "text": "1"
+          },
+          {
+            "ms": 168.902,
+            "text": "."
+          },
+          {
+            "ms": 174.641,
+            "text": " Start"
+          },
+          {
+            "ms": 179.35,
+            "text": " with"
+          },
+          {
+            "ms": 184.632,
+            "text": " a"
+          },
+          {
+            "ms": 188.888,
+            "text": " clear"
+          },
+          {
+            "ms": 194.248,
+            "text": " agenda"
+          },
+          {
+            "ms": 198.449,
+            "text": " and"
+          },
+          {
+            "ms": 203.595,
+            "text": " schedule"
+          },
+          {
+            "ms": 208.065,
+            "text": "."
+          },
+          {
+            "ms": 213.454,
+            "text": "  \n"
+          },
+          {
+            "ms": 217.839,
+            "text": "2"
+          },
+          {
+            "ms": 223.094,
+            "text": "."
+          },
+          {
+            "ms": 227.576,
+            "text": " Invite"
+          },
+          {
+            "ms": 232.831,
+            "text": " participants"
+          },
+          {
+            "ms": 237.301,
+            "text": " and"
+          },
+          {
+            "ms": 243.037,
+            "text": " set"
+          },
+          {
+            "ms": 247.043,
+            "text": " up"
+          },
+          {
+            "ms": 252.701,
+            "text": " a"
+          },
+          {
+            "ms": 256.759,
+            "text": " welcoming"
+          },
+          {
+            "ms": 262.098,
+            "text": " environment"
+          },
+          {
+            "ms": 266.451,
+            "text": "."
+          },
+          {
+            "ms": 271.786,
+            "text": "  \n"
+          },
+          {
+            "ms": 276.13,
+            "text": "3"
+          },
+          {
+            "ms": 281.373,
+            "text": "."
+          },
+          {
+            "ms": 285.75,
+            "text": " Provide"
+          },
+          {
+            "ms": 291.121,
+            "text": " necessary"
+          },
+          {
+            "ms": 295.49,
+            "text": " materials"
+          },
+          {
+            "ms": 300.838,
+            "text": " and"
+          },
+          {
+            "ms": 305.176,
+            "text": " equipment"
+          },
+          {
+            "ms": 310.891,
+            "text": "."
+          },
+          {
+            "ms": 314.947,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.6315,
+        "prefill_ms": 4.803,
+        "decode_ms": 151.651,
+        "server_total_ms": 314.618917,
+        "decode_tokens_s": 211.01080770980738,
+        "done_reason": "length"
+      },
+      {
+        "id": 4,
+        "start_ms": 0.482,
+        "end_ms": 158.134,
+        "first_text_ms": 7.68,
+        "wall_ms": 157.652,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 7.68,
+            "text": "1"
+          },
+          {
+            "ms": 12.482,
+            "text": "."
+          },
+          {
+            "ms": 17.055,
+            "text": " Start"
+          },
+          {
+            "ms": 22.174,
+            "text": " with"
+          },
+          {
+            "ms": 26.537,
+            "text": " a"
+          },
+          {
+            "ms": 31.647,
+            "text": " clear"
+          },
+          {
+            "ms": 36.027,
+            "text": " agenda"
+          },
+          {
+            "ms": 41.072,
+            "text": " and"
+          },
+          {
+            "ms": 45.456,
+            "text": " schedule"
+          },
+          {
+            "ms": 50.72,
+            "text": "."
+          },
+          {
+            "ms": 55.105,
+            "text": "  \n"
+          },
+          {
+            "ms": 60.292,
+            "text": "2"
+          },
+          {
+            "ms": 64.668,
+            "text": "."
+          },
+          {
+            "ms": 69.825,
+            "text": " Invite"
+          },
+          {
+            "ms": 74.204,
+            "text": " participants"
+          },
+          {
+            "ms": 79.303,
+            "text": " and"
+          },
+          {
+            "ms": 83.799,
+            "text": " set"
+          },
+          {
+            "ms": 88.968,
+            "text": " up"
+          },
+          {
+            "ms": 93.347,
+            "text": " a"
+          },
+          {
+            "ms": 98.554,
+            "text": " welcoming"
+          },
+          {
+            "ms": 102.938,
+            "text": " environment"
+          },
+          {
+            "ms": 108.405,
+            "text": "."
+          },
+          {
+            "ms": 112.668,
+            "text": "  \n"
+          },
+          {
+            "ms": 117.956,
+            "text": "3"
+          },
+          {
+            "ms": 122.358,
+            "text": "."
+          },
+          {
+            "ms": 127.794,
+            "text": " Provide"
+          },
+          {
+            "ms": 132.152,
+            "text": " necessary"
+          },
+          {
+            "ms": 137.538,
+            "text": " materials"
+          },
+          {
+            "ms": 141.743,
+            "text": " and"
+          },
+          {
+            "ms": 147.132,
+            "text": " equipment"
+          },
+          {
+            "ms": 151.564,
+            "text": "."
+          },
+          {
+            "ms": 156.771,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.449334,
+        "prefill_ms": 4.528,
+        "decode_ms": 149.17,
+        "server_total_ms": 156.45575,
+        "decode_tokens_s": 214.5203459140578,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 128,
+    "throughput_tokens_s": 201.8112693866329,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "concurrent-1"
+  },
+  {
+    "schema": 1,
+    "source": "recorded",
+    "created_at": "2026-11-10T04:53:28.927298+00:00",
+    "model": "qwen3:0.6b",
+    "ollama_version": "0.40.11",
+    "model_digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+    "config": {
+      "cap": 32,
+      "count": 4,
+      "concurrency": 4
+    },
+    "prompt": "Write a numbered list of 100 practical tips for organizing a community workshop. Use one short sentence per item. Start at 1. Continue the list without an introduction.",
+    "settings": {
+      "temperature": 0,
+      "seed": 42,
+      "think": false,
+      "num_ctx": 2048
+    },
+    "group_ms": 610.9690420000788,
+    "requests": [
+      {
+        "id": 1,
+        "start_ms": 0.096,
+        "end_ms": 462.474,
+        "first_text_ms": 313.393,
+        "wall_ms": 462.378,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 313.393,
+            "text": "1"
+          },
+          {
+            "ms": 318.371,
+            "text": "."
+          },
+          {
+            "ms": 322.672,
+            "text": " Start"
+          },
+          {
+            "ms": 327.701,
+            "text": " with"
+          },
+          {
+            "ms": 331.742,
+            "text": " a"
+          },
+          {
+            "ms": 337.248,
+            "text": " clear"
+          },
+          {
+            "ms": 341.257,
+            "text": " agenda"
+          },
+          {
+            "ms": 346.805,
+            "text": " and"
+          },
+          {
+            "ms": 350.874,
+            "text": " schedule"
+          },
+          {
+            "ms": 356.02,
+            "text": "."
+          },
+          {
+            "ms": 360.242,
+            "text": "  \n"
+          },
+          {
+            "ms": 365.388,
+            "text": "2"
+          },
+          {
+            "ms": 369.686,
+            "text": "."
+          },
+          {
+            "ms": 375.157,
+            "text": " Invite"
+          },
+          {
+            "ms": 379.218,
+            "text": " participants"
+          },
+          {
+            "ms": 384.473,
+            "text": " and"
+          },
+          {
+            "ms": 388.821,
+            "text": " set"
+          },
+          {
+            "ms": 394.158,
+            "text": " up"
+          },
+          {
+            "ms": 398.481,
+            "text": " a"
+          },
+          {
+            "ms": 404.072,
+            "text": " welcoming"
+          },
+          {
+            "ms": 408.099,
+            "text": " environment"
+          },
+          {
+            "ms": 413.333,
+            "text": "."
+          },
+          {
+            "ms": 417.768,
+            "text": "  \n"
+          },
+          {
+            "ms": 423.066,
+            "text": "3"
+          },
+          {
+            "ms": 427.441,
+            "text": "."
+          },
+          {
+            "ms": 432.659,
+            "text": " Provide"
+          },
+          {
+            "ms": 437.016,
+            "text": " necessary"
+          },
+          {
+            "ms": 442.787,
+            "text": " materials"
+          },
+          {
+            "ms": 446.789,
+            "text": " and"
+          },
+          {
+            "ms": 452.081,
+            "text": " equipment"
+          },
+          {
+            "ms": 456.386,
+            "text": "."
+          },
+          {
+            "ms": 461.587,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 1.263625,
+        "prefill_ms": 4.722,
+        "decode_ms": 148.294,
+        "server_total_ms": 461.0645,
+        "decode_tokens_s": 215.78755714998582,
+        "done_reason": "length"
+      },
+      {
+        "id": 2,
+        "start_ms": 0.25,
+        "end_ms": 162.021,
+        "first_text_ms": 7.847,
+        "wall_ms": 161.771,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 7.847,
+            "text": "1"
+          },
+          {
+            "ms": 12.95,
+            "text": "."
+          },
+          {
+            "ms": 17.313,
+            "text": " Start"
+          },
+          {
+            "ms": 22.894,
+            "text": " with"
+          },
+          {
+            "ms": 26.863,
+            "text": " a"
+          },
+          {
+            "ms": 32.005,
+            "text": " clear"
+          },
+          {
+            "ms": 37.022,
+            "text": " agenda"
+          },
+          {
+            "ms": 42.261,
+            "text": " and"
+          },
+          {
+            "ms": 46.484,
+            "text": " schedule"
+          },
+          {
+            "ms": 52.102,
+            "text": "."
+          },
+          {
+            "ms": 56.287,
+            "text": "  \n"
+          },
+          {
+            "ms": 61.414,
+            "text": "2"
+          },
+          {
+            "ms": 66.401,
+            "text": "."
+          },
+          {
+            "ms": 71.736,
+            "text": " Invite"
+          },
+          {
+            "ms": 76.069,
+            "text": " participants"
+          },
+          {
+            "ms": 81.298,
+            "text": " and"
+          },
+          {
+            "ms": 85.578,
+            "text": " set"
+          },
+          {
+            "ms": 91.277,
+            "text": " up"
+          },
+          {
+            "ms": 95.923,
+            "text": " a"
+          },
+          {
+            "ms": 101.158,
+            "text": " welcoming"
+          },
+          {
+            "ms": 105.434,
+            "text": " environment"
+          },
+          {
+            "ms": 110.765,
+            "text": "."
+          },
+          {
+            "ms": 115.075,
+            "text": "  \n"
+          },
+          {
+            "ms": 120.625,
+            "text": "3"
+          },
+          {
+            "ms": 124.765,
+            "text": "."
+          },
+          {
+            "ms": 130.738,
+            "text": " Provide"
+          },
+          {
+            "ms": 135.086,
+            "text": " necessary"
+          },
+          {
+            "ms": 140.696,
+            "text": " materials"
+          },
+          {
+            "ms": 144.803,
+            "text": " and"
+          },
+          {
+            "ms": 150.524,
+            "text": " equipment"
+          },
+          {
+            "ms": 156.085,
+            "text": "."
+          },
+          {
+            "ms": 161.044,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.703583,
+        "prefill_ms": 4.782,
+        "decode_ms": 153.165,
+        "server_total_ms": 160.594083,
+        "decode_tokens_s": 208.9250155061535,
+        "done_reason": "length"
+      },
+      {
+        "id": 3,
+        "start_ms": 0.365,
+        "end_ms": 610.817,
+        "first_text_ms": 467.77,
+        "wall_ms": 610.452,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 467.77,
+            "text": "1"
+          },
+          {
+            "ms": 473.262,
+            "text": "."
+          },
+          {
+            "ms": 477.915,
+            "text": " Start"
+          },
+          {
+            "ms": 483.44,
+            "text": " with"
+          },
+          {
+            "ms": 488.991,
+            "text": " a"
+          },
+          {
+            "ms": 493.613,
+            "text": " clear"
+          },
+          {
+            "ms": 498.162,
+            "text": " agenda"
+          },
+          {
+            "ms": 502.804,
+            "text": " and"
+          },
+          {
+            "ms": 507.294,
+            "text": " schedule"
+          },
+          {
+            "ms": 511.716,
+            "text": "."
+          },
+          {
+            "ms": 516.23,
+            "text": "  \n"
+          },
+          {
+            "ms": 520.61,
+            "text": "2"
+          },
+          {
+            "ms": 525.113,
+            "text": "."
+          },
+          {
+            "ms": 529.479,
+            "text": " Invite"
+          },
+          {
+            "ms": 533.884,
+            "text": " participants"
+          },
+          {
+            "ms": 538.145,
+            "text": " and"
+          },
+          {
+            "ms": 543.139,
+            "text": " set"
+          },
+          {
+            "ms": 547.393,
+            "text": " up"
+          },
+          {
+            "ms": 551.893,
+            "text": " a"
+          },
+          {
+            "ms": 556.214,
+            "text": " welcoming"
+          },
+          {
+            "ms": 560.798,
+            "text": " environment"
+          },
+          {
+            "ms": 565.125,
+            "text": "."
+          },
+          {
+            "ms": 569.539,
+            "text": "  \n"
+          },
+          {
+            "ms": 573.958,
+            "text": "3"
+          },
+          {
+            "ms": 578.392,
+            "text": "."
+          },
+          {
+            "ms": 582.768,
+            "text": " Provide"
+          },
+          {
+            "ms": 587.189,
+            "text": " necessary"
+          },
+          {
+            "ms": 591.641,
+            "text": " materials"
+          },
+          {
+            "ms": 596.604,
+            "text": " and"
+          },
+          {
+            "ms": 601.015,
+            "text": " equipment"
+          },
+          {
+            "ms": 605.432,
+            "text": "."
+          },
+          {
+            "ms": 609.891,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 1.569666,
+        "prefill_ms": 4.804,
+        "decode_ms": 142.162,
+        "server_total_ms": 609.562833,
+        "decode_tokens_s": 225.09531379693587,
+        "done_reason": "length"
+      },
+      {
+        "id": 4,
+        "start_ms": 0.49,
+        "end_ms": 308.003,
+        "first_text_ms": 167.93,
+        "wall_ms": 307.513,
+        "text": "1. Start with a clear agenda and schedule.  \n2. Invite participants and set up a welcoming environment.  \n3. Provide necessary materials and equipment.  \n",
+        "chunks": [
+          {
+            "ms": 167.93,
+            "text": "1"
+          },
+          {
+            "ms": 172.467,
+            "text": "."
+          },
+          {
+            "ms": 176.945,
+            "text": " Start"
+          },
+          {
+            "ms": 181.328,
+            "text": " with"
+          },
+          {
+            "ms": 185.842,
+            "text": " a"
+          },
+          {
+            "ms": 190.166,
+            "text": " clear"
+          },
+          {
+            "ms": 194.657,
+            "text": " agenda"
+          },
+          {
+            "ms": 199.037,
+            "text": " and"
+          },
+          {
+            "ms": 203.469,
+            "text": " schedule"
+          },
+          {
+            "ms": 207.857,
+            "text": "."
+          },
+          {
+            "ms": 212.331,
+            "text": "  \n"
+          },
+          {
+            "ms": 216.711,
+            "text": "2"
+          },
+          {
+            "ms": 221.448,
+            "text": "."
+          },
+          {
+            "ms": 225.869,
+            "text": " Invite"
+          },
+          {
+            "ms": 230.637,
+            "text": " participants"
+          },
+          {
+            "ms": 235.042,
+            "text": " and"
+          },
+          {
+            "ms": 239.473,
+            "text": " set"
+          },
+          {
+            "ms": 243.937,
+            "text": " up"
+          },
+          {
+            "ms": 248.44,
+            "text": " a"
+          },
+          {
+            "ms": 252.832,
+            "text": " welcoming"
+          },
+          {
+            "ms": 257.301,
+            "text": " environment"
+          },
+          {
+            "ms": 261.674,
+            "text": "."
+          },
+          {
+            "ms": 266.124,
+            "text": "  \n"
+          },
+          {
+            "ms": 270.579,
+            "text": "3"
+          },
+          {
+            "ms": 275.459,
+            "text": "."
+          },
+          {
+            "ms": 279.945,
+            "text": " Provide"
+          },
+          {
+            "ms": 284.772,
+            "text": " necessary"
+          },
+          {
+            "ms": 289.2,
+            "text": " materials"
+          },
+          {
+            "ms": 293.797,
+            "text": " and"
+          },
+          {
+            "ms": 298.12,
+            "text": " equipment"
+          },
+          {
+            "ms": 302.524,
+            "text": "."
+          },
+          {
+            "ms": 306.905,
+            "text": "  \n"
+          }
+        ],
+        "prompt_tokens": 52,
+        "output_tokens": 32,
+        "load_ms": 0.83675,
+        "prefill_ms": 5.689,
+        "decode_ms": 139.047,
+        "server_total_ms": 306.658875,
+        "decode_tokens_s": 230.13801088840464,
+        "done_reason": "length"
+      }
+    ],
+    "total_output_tokens": 128,
+    "throughput_tokens_s": 209.50325008445105,
+    "recording": {
+      "device": "Apple Silicon Mac; exact chip recorded in provenance.json",
+      "runtime": "Ollama 0.40.11",
+      "server_parallelism": 1,
+      "notes": "Warm model, context 2048, temperature 0, seed42, thinking disabled. Runs recorded on one host; not a laptop performance guarantee. Concurrency is client-side; server may queue requests. Prefix caching is not disabled."
+    },
+    "fixture_id": "concurrent-2"
+  }
+]
