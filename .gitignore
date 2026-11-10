@@ -9,3 +9,9 @@ results/*
 
 # Local workshop measurements and model-server logs
 .workshop/
+
+# Guided lab local state and owned runtime evidence
+guided-lab/.lab/
+guided-lab/.workshop/
+guided-lab/.state/
+guided-lab/node_modules/

@@ -1,96 +1,72 @@
 # Inference Engineering × Applied AI
 
-A local workshop by Danial Hasan × Pillars Network. Use your coding agent to set up the project, then use the dashboard to operate a small model, change real settings, and compare results against a business promise.
+A local workshop by Danial Hasan × Pillars Network. Use your coding agent to prepare the project, then follow three guided experiments that connect useful customer outcomes to real model performance. Predict what will happen, record a baseline, change one setting and compare the measured result.
 
-**Model:** Qwen2.5 1.5B, approximately 986 MB to download. **Runtime:** Ollama. **Dashboard:** Python 3.10 or newer, standard library only. No API key, cloud inference, Python packages, or npm install is needed.
+The active workshop is in **`guided-lab/`**. It runs **Qwen2.5 1.5B** on your own laptop through **Ollama**, with real requests and sandboxed local calendar tools. No cloud inference or API key is needed. Prepare the model before leaving reliable internet so the workshop can run offline. Cloud coding agents may still need a connection, so finish agent-assisted setup beforehand; the lab controls and recorded path work independently afterwards.
 
-## Before the lecture
+## Prepare before the lecture
 
-Start setup before the lecture so you can use the dashboard when the hands-on workshop begins. The setup must finish a real local model request and display its output and measurements. A successful web-page load alone is not readiness.
+Give your coding agent this repository URL and the following prompt:
 
-Give your coding agent the repo URL and this prompt:
+> Read AGENTS.md and the guided-lab setup instructions. Detect my operating system and available runtime tools, set up Qwen2.5 1.5B, and start the guided workshop on this laptop. Preserve my existing services and model cache. Verify a small real local request, the output and timing display, and saved settings after reload. Leave the workshop open and the exercises ready for me. Do not run every experiment or replace the baseline prompts.
 
-> I’m at an inference engineering workshop. Read this repository and follow its setup instructions on this machine. Check that the local model and dashboard work, and fix any setup issues. Leave the exercises ready for me.
+The agent should report the exact local URL, actual device placement and effective serving slots. Keep that prepared tab open. If the agent started a private model server, use its complete URL including the `?base=` address rather than opening a fresh generic tab. Loading the page alone is not readiness. A completed response that fails a quality check can be an intended exercise finding.
 
-Ready means: the correct 1.5B model is available, a small live run finishes without transport errors, results appear in the dashboard, and configuration survives a reload. Leave the dashboard open and the server running. A deliberately weak prompt can fail an exercise’s quality check; that is not a broken installation.
+For manual installation and launch, follow [the guided lab instructions](guided-lab/README.md) and [platform setup](guided-lab/docs/SETUP.md). Install dependencies for your actual operating system; Windows does not require WSL. CPU mode is supported when GPU acceleration is unavailable. More serving slots can use more memory, so start with one on a limited laptop.
 
-## Ask your coding agent
+For unreliable venue Wi-Fi, follow [offline preparation and fallback](docs/OFFLINE.md). Open the [self-contained lecture](offline/inference-workshop-offline.html) or [PDF backup](offline/inference-workshop.pdf) without the model runtime. The portable source package does not include model weights.
 
-Open this repository in Codex, Claude Code, Cursor, or another coding agent and send:
+## Start the guided lab manually
 
-> Read AGENTS.md and docs/DASHBOARD.md. Set up and start this workshop on my machine. Detect my operating system and available Python/Ollama first. Prepare Qwen2.5 1.5B, preserve my existing services, verify the dashboard and model health, and give me the local dashboard URL. Do not change the exercise targets or fake results. Help me understand the measurements as I make one change at a time.
+After installing Python 3 and Ollama and preparing `qwen2.5:1.5b`, run this from the repository root:
 
-The agent uses [AGENTS.md](AGENTS.md) as the setup entry point. If it cannot install software under your machine's permissions, follow the manual steps below.
+```sh
+python3 guided-lab/tools/serve.py 8878
+```
 
-## Start manually
+On Windows PowerShell, use:
 
-1. Install [Python 3.10+](https://www.python.org/downloads/) and [Ollama](https://ollama.com/download) for your operating system. Reopen your terminal after installation so both are on PATH.
-2. Clone the repository and enter it:
+```powershell
+py -3 guided-lab/tools/serve.py 8878
+```
 
-   ```sh
-   git clone https://github.com/danialhasan/inference-engineering-workshop.git
-   cd inference-engineering-workshop
-   ```
+Open [the guided lab](http://127.0.0.1:8878/lab/index.html), choose **Setup**, and complete the live setup check. If port 8878 is occupied, the server chooses the next available port and prints the actual URL. Keep the terminal open while working; Ctrl+C stops this page server and the model servers it owns.
 
-3. Check and start the dashboard:
+The Python page server enables the lab's controls for starting private Ollama servers with different serving-slot counts. It preserves existing servers. The Node page-server fallback can serve the lab but does not provide that private-process control.
 
-   **macOS / Linux**
-   ```sh
-   python3 dashboard.py --check
-   python3 dashboard.py
-   ```
+## The three experiments
 
-   **Windows PowerShell**
-   ```powershell
-   py -3 dashboard.py --check
-   py -3 dashboard.py
-   ```
-
-   If `py` is unavailable but `python --version` reports 3.10+, use `python` instead.
-
-4. Open **http://127.0.0.1:8876/** and click **Prepare model**. It downloads Qwen2.5 1.5B only if it is missing. Prepare before leaving reliable internet; live exercises then run offline.
-5. Run the default configuration, inspect the outputs, and click **Use as baseline**. Change one lever and run again.
-
-Keep the terminal open. Ctrl+C stops the dashboard and its own model-server child. It does not stop your normal Ollama service.
-
-## Three business scenarios
-
-| Exercise | Business problem | Levers to investigate |
+| Lab | Useful outcome and promise | What you investigate |
 |---|---|---|
-| Make the report correct | Extract the correct reference, agency, date and source | Context, JSON schema, output token budget |
-| Keep up with the morning rush | Complete correct reports during a burst | Client concurrency versus real Ollama server slots |
-| Protect the waiting user | Run a background batch while answering live questions | Background concurrency, shared capacity, per-user versus total throughput |
+| What counts as done? | Chat starts, a complete code suggestion arrives, or a requested meeting actually exists | First-token time, complete-response time and verified task completion; prompt and validation changes |
+| Does the promise hold under load? | Chat keeps its response promise while more users ask questions | Client demand versus real serving slots and device placement |
+| Two workloads, one server? | Correct fields are extracted before a deadline while chat remains usable | Batch workers, structured output and shared capacity |
 
-Every exercise shows its fictional contract, quality requirement and cost objective. The targets are teaching examples, not vendor guarantees. They stay fixed while you change configuration.
+Each experiment preserves a baseline and changed run so you can compare the same work under different settings. The worksheet then helps you define a useful outcome, measurement, objective and any contractual consequence for your own application.
 
-## What actually changes
+The fictional targets are teaching examples, not vendor guarantees. A short readiness check cannot validate a percentile, and a finite measured run cannot establish a monthly SLA. Cost uses an explicit hypothetical machine rate rather than a measured bill.
 
-The dashboard writes `.workshop/config.json`. Each run snapshots it into `.workshop/runs/`, then makes real local model requests. Server slots change `OLLAMA_NUM_PARALLEL` on a **private child process**. The CPU setting sends `num_gpu=0`; automatic mode uses Ollama's hardware selection. Inspect Runtime details and each run's manifest to see actual placement, not just the selected preference.
+## Live and recorded results
 
-There is no simulated speed multiplier. Correctness, complete-response time, first-token time and total throughput are calculated from actual outputs and timestamps. Machine cost is an explicitly hypothetical estimate, not an electricity measurement or bill. Short runs are not proof that an agreement will be met all month.
+Live results come from the laptop running the experiment. The recorded reference systems use the same Qwen2.5 1.5B model on one M2 Pro with 16 GB of memory:
 
-## Laptop compatibility
+- **A: GPU, one serving slot**.
+- **B: GPU, four serving slots**.
+- **C: CPU, one serving slot**.
 
-- macOS: Apple silicon can use Metal; Intel Macs may run on CPU. Both can use the dashboard.
-- Windows: native Python and Ollama work without WSL. GPU support depends on your installed hardware/drivers; CPU mode is available.
-- Linux: use native Python and Ollama. GPU support depends on your installed hardware/drivers; CPU mode is available.
-- A ThinkPad is a laptop family, not a runtime type: check whether it runs Windows or Linux and inspect its actual hardware.
-- On low-memory machines start with **one client, one server slot, 128 output tokens, four documents**. More slots require more memory. Avoid four-slot mode if the machine is under memory pressure.
-- If the machine cannot run the model, open the **Recorded reference lab** link. Its captured outputs are labeled recorded; it cannot measure a new configuration on your laptop.
+Your laptop is a separate system. Inspect its observed configuration rather than assuming it matches a reference. Recorded results remain available when live inference is unavailable, and their provenance and evaluator limits must stay visible.
 
-Only macOS has been physically rehearsed by the presenter. Windows/Linux commands are included, but native execution on those systems is not claimed as tested.
+## Other material in this repository
 
-## Files for you and your agent
+- [AGENTS.md](AGENTS.md) is the active setup entry point for coding agents.
+- [guided-lab/](guided-lab/) contains the sequential workshop and its setup and verification instructions.
+- [slides/index.html](slides/index.html) contains the lecture.
+- [docs/DASHBOARD-SETUP.md](docs/DASHBOARD-SETUP.md) preserves instructions for the separate Python document-processing dashboard. Its existing `python3 dashboard.py` command and port 8876 remain available.
+- [docs/DASHBOARD.md](docs/DASHBOARD.md) describes that dashboard's controls and APIs.
+- [reference/](reference/) preserves the earlier recorded lab.
+- [docs/LEGACY-CLI.md](docs/LEGACY-CLI.md) documents the older 0.6B CLI exercises.
 
-- [AGENTS.md](AGENTS.md): setup, verification and safe operating instructions.
-- [docs/DASHBOARD.md](docs/DASHBOARD.md): control mapping, metrics, API and code map.
-- [lab/prompts.py](lab/prompts.py): the prompt-building function your coding agent can edit; reloaded before each run.
-- [lab/scenarios.py](lab/scenarios.py): fictional workloads and business requirements.
-- [slides/index.html](slides/index.html): the current lecture, also linked in the dashboard.
-- [docs/REHEARSAL.md](docs/REHEARSAL.md): what was actually checked and known limitations.
-- [docs/LEGACY-CLI.md](docs/LEGACY-CLI.md): older, separate 0.6B CLI exercises; not required for this dashboard.
-
-Run the checks with `python3 -m unittest discover -s tests -v` (Windows: `py -3 -m unittest discover -s tests -v`). These tests use fixtures; the rehearsal separately exercises the real local model.
+Only macOS has been physically rehearsed by the presenter. Windows and Linux setup instructions do not imply those platforms have completed native inference verification.
 
 ## Sources
 
