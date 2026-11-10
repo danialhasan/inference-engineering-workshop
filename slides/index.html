@@ -243,6 +243,10 @@
       <h1>Lecture</h1>
       <p>Workloads, systems, and engineering decisions.</p>
     </section>
+    <section id="workloads" class="section-divider" data-subsection="Workloads">
+      <h1>Workloads</h1>
+      <p>The work people need done determines what the system must deliver.</p>
+    </section>
     <section class="fields">
       <h1>Inference engineering and applied AI</h1>
       <div class="field-columns">
@@ -279,10 +283,6 @@
       </table>
       <p class="workload-note">Selected workloads. One company can work in both areas.</p>
       <aside class="notes">Classify the illustrated workloads, not every activity in each company. Managed model access can route to external inference providers; it does not establish ownership of GPU infrastructure. OpenCode Zen describes itself as a gateway working with providers. Sources: https://opencode.ai/docs/zen/ ; https://docs.factory.com/models ; https://docs.factory.com/droid-cli/settings ; https://cursor.com/resources/Composer2.pdf ; https://www.baseten.co/ ; https://modal.com/ . Additional sources: https://groq.com/ ; https://www.together.ai/serverless-inference ; https://fireworks.ai/inference ; https://www.coderabbit.ai/ide ; https://www.harvey.ai/ . A dash means no workload example is shown in that column, not that the company does no work in that area. Logos are from the official company sites. Reviewed November 10, 2026.</aside>
-    </section>
-    <section id="workloads" class="section-divider" data-subsection="Workloads">
-      <h1>Workloads</h1>
-      <p>The work people need done determines what the system must deliver.</p>
     </section>
     <section class="workload-bridge">
       <h1>It's all about the workload</h1>
@@ -327,58 +327,6 @@
       </table>
       <p class="workload-note">MCP servers and the 900 GB streaming platform provide infrastructure.<br>Any model calls they make create an inference workload.</p>
       <aside class="notes">Source: organizer-provided audience summary, WhatsApp Image 2026-11-03 at 10.30.23.jpeg, based on 41 registrations. Project names are reported by the organizer. Model workloads and requirements here are proposed examples for discussion, not verified implementations. In particular the contract scraper may be deterministic, IDS need not use a language model, and a streaming platform or MCP server does not necessarily perform inference. Ask participants how their actual systems work. The reported $3k/month saving is not independently verified and is not reproduced here.</aside>
-    </section>
-    <section id="latency-throughput" class="metrics-slide">
-      <h1>Latency and throughput</h1>
-      <div class="metrics-definitions">
-        <div><h2>Latency</h2><p>How long one request takes.<br>For streaming, also measure when tokens arrive.</p></div>
-        <div><h2>Throughput</h2><p>How much work the whole system completes per second.</p></div>
-      </div>
-      <table class="examples-table">
-        <thead><tr><th>Same processor capacity</th><th>Tokens per second, per user</th><th>Tokens per second, total</th></tr></thead>
-        <tbody>
-          <tr><td>Serve 1 request at a time</td><td>100</td><td>100</td></tr>
-          <tr><td>Serve 8 requests together</td><td>40</td><td>320</td></tr>
-        </tbody>
-      </table>
-      <div class="batch-why">
-        <div><h2>Why each user gets tokens more slowly</h2><p>A larger batch does more work in each generation step, so the step can take longer.</p></div>
-        <div><h2>Why the system produces more tokens</h2><p>One read of the model weights serves several requests. Each step produces a token for each request.</p></div>
-      </div>
-      <p class="source-line">Illustrative numbers, not a benchmark. Kiely, <em>Inference Engineering</em> (2026), §1.2.2, pp. 29–30; §1.4, pp. 35–37.</p>
-      <aside class="notes">The same allocated processor capacity is assumed in both constructed examples. Compare generation rate after the first token: one active request at 100 tokens/s versus eight active requests at 40 each, totaling 320. This is a teaching example, not a guarantee that batching produces this ratio. With the same output length, slower per-user generation increases generation time, but total request latency also includes queueing, prefill and application work. More batching can improve weight reuse and aggregate throughput while increasing per-user delay; hardware, runtime, model and workload determine the result. At a fixed processor cost, higher useful throughput can reduce infrastructure cost per token. Faster kernels can improve both latency and throughput, so they are not always opposing outcomes. Requests in flight is concurrency, not requests per second. Connect the definitions to the 30-second complete-report requirement.</aside>
-    </section>
-    <section class="workload-examples requirements">
-      <h1>One user: response time and quality</h1>
-      <p class="budget-caption">Does this person get a useful result soon enough?</p>
-      <table class="examples-table">
-        <thead><tr><th>Workload</th><th>What the user needs</th><th>What we measure</th></tr></thead>
-        <tbody>
-          <tr><td>Code completion</td><td>A useful suggestion before they type past it.</td><td>Time to a complete suggestion; acceptance rate.</td></tr>
-          <tr><td>Chat</td><td>A correct answer that starts promptly and streams smoothly.</td><td>Time to first token; gaps between tokens; answer quality.</td></tr>
-          <tr><td>Coding agent</td><td>A correct code change that passes the checks.</td><td>Total task time; task success.</td></tr>
-          <tr><td>Document research</td><td>A supported report within 30 seconds.</td><td>Complete-report time; source support.</td></tr>
-        </tbody>
-      </table>
-      <p class="workload-note">Follow one request from start to useful result.</p>
-      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.4, pp. 35–37. Examples adapted to our workloads.</p>
-      <aside class="notes">This slide takes the user's perspective on the same four workloads that appear on the next slide. Latency can mean time to first token, gaps between tokens, or time to a complete useful result, depending on the task. Quality still matters: a fast incorrect result is not success. The 30-second report is our illustrative service requirement, not a measured vendor guarantee. A coding task can contain several model and tool calls.</aside>
-    </section>
-    <section class="workload-examples requirements">
-      <h1 style="font-size:52px">Many users: throughput, reliability, and cost</h1>
-      <p class="budget-caption">Can we deliver the same experience as demand grows?</p>
-      <table class="examples-table">
-        <thead><tr><th>Same workload</th><th>What the service must do</th><th>What we measure across requests</th></tr></thead>
-        <tbody>
-          <tr><td>Code completion</td><td>Keep suggestions fast during busy periods.</td><td>Useful suggestions per second; response-time percentiles; cost.</td></tr>
-          <tr><td>Chat</td><td>Keep many conversations responsive at once.</td><td>Total output tokens per second; delays; errors; cost per conversation.</td></tr>
-          <tr><td>Coding agent</td><td>Complete many tasks without long queues.</td><td>Successful tasks per hour; queue time; failure rate; cost per task.</td></tr>
-          <tr><td>Document research</td><td>Keep the 30-second promise as requests arrive.</td><td>Reports per minute; share within 30 seconds; failure rate; cost per report.</td></tr>
-        </tbody>
-      </table>
-      <p class="workload-note">More work per second helps only if users still get correct results on time.</p>
-      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.2.2, pp. 29–30; §1.4, pp. 35–37; §4.5, pp. 112–114.</p>
-      <aside class="notes">Use exactly the same four workloads as the previous slide to change perspective, not topic. Throughput is completed work per unit of time; concurrency is work in progress and is not a throughput measurement. Measure throughput together with per-request response-time distributions, quality, failures and cost under representative load. Percentiles describe a distribution across requests; one fast request does not prove service performance. Useful suggestions, successful tasks and supported reports are application outcomes, while total output tokens per second is a model-serving measure. Increasing batching may increase total token throughput while increasing individual delays. This leads into business promises and the illustrative enterprise service level agreement.</aside>
     </section>
     <section id="service-commitments" class="section-divider" data-subsection="Service commitments">
       <h1>Service commitments</h1>
@@ -587,41 +535,6 @@
       <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §3.1.2, pp. 76–77; §3.2.1, p. 79.<br>Book configuration specifications, not measured model speeds. GB = gigabytes; TB = terabytes.</p>
       <aside class="notes">These numbers reproduce the book's H100/H200 table for 8-bit floating-point dense tensor compute, not every hardware variant sold under these names. Peak memory bandwidth is distinct from achieved bandwidth, and neither is network bandwidth. The table intentionally shows equal listed compute alongside higher capacity and bandwidth. That can help a workload limited by memory movement, but does not guarantee an application speedup. A faster connection does not enlarge memory, and larger memory does not necessarily make that connection faster.</aside>
     </section>
-    <section id="hardware-batching" class="hardware-detail hardware-batch">
-      <h1>One GPU, many requests</h1>
-      <p class="lever-intro">Batching lets one graphics processing unit (GPU) work on several requests together.</p>
-      <div class="lever-panel">
-        <h2>One generation step for eight active requests</h2>
-        <div class="request-chips"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span></div>
-        <div class="operation-flow"><span class="memory">Read shared<br>model weights</span><span class="arrow">→</span><span class="operation">Compute for<br>all eight requests</span><span class="arrow">→</span><span class="memory">One next token<br>per request</span></div>
-      </div>
-      <table class="examples-table">
-        <thead><tr><th>Hardware resource</th><th>What batching changes</th><th>Effect on the service</th></tr></thead>
-        <tbody>
-          <tr><td>Compute and bandwidth</td><td>Reuse weights across more calculations.</td><td>More total tokens per second.</td></tr>
-          <tr><td>Memory capacity</td><td>Keep separate state for every request.</td><td>Limits how large the batch can be.</td></tr>
-          <tr><td>Time per step</td><td>Do more work before the step finishes.</td><td>Each user can receive tokens more slowly.</td></tr>
-        </tbody>
-      </table>
-      <p class="source-line">Simplified decode example, not a benchmark. Kiely, <em>Inference Engineering</em> (2026), §2.4, pp. 61–66; §7.2.1, pp. 186–188.</p>
-      <aside class="notes">This batches requests on one GPU; it does not mean combining GPUs. The same principle applies inside a multi-GPU serving group. Ordinary autoregressive decode produces one next token for each active sequence in a step; speculative decoding is a later exception. Model weights are shared, while attention state and outputs belong to each sequence. Batched matrix operations can reuse weight data and improve arithmetic intensity, increasing aggregate throughput. Reads are a conceptual simplification, not a claim that all weights are loaded in one physical transaction. Step time can rise with batch size; it need not rise in direct proportion, and small increases in batch size may barely change it. Separate waiting to form a batch from execution time. More context and more active sequences increase memory pressure. Measure throughput at the required per-request latency and quality; maximum throughput alone does not satisfy our 30-second report promise.</aside>
-    </section>
-    <section class="hardware-detail">
-      <h1>Find what the processor is waiting for</h1>
-      <p class="lever-intro">The useful lever depends on whether the workload needs more calculation, faster data movement, or more space.</p>
-      <table class="examples-table">
-        <thead><tr><th>Limit</th><th>What happens</th><th>Relevant levers</th></tr></thead>
-        <tbody>
-          <tr><td>Compute</td><td>The arithmetic units are busy.</td><td>Efficient kernels, lower precision, or more suitable compute.</td></tr>
-          <tr><td>Memory bandwidth</td><td>Arithmetic waits for data to arrive.</td><td>Reduce data movement, reuse work, or improve bandwidth.</td></tr>
-          <tr><td>Memory capacity</td><td>Weights and active requests do not fit.</td><td>Reduce memory use or spread the model across devices.</td></tr>
-        </tbody>
-      </table>
-      <div class="lever-panel"><div class="operation-flow"><span class="memory">Process input<br><strong>Prefill</strong></span><span class="arrow">→</span><span class="operation">Generate output<br><strong>Decode</strong></span></div><p class="batch-caption">Prefill often needs substantial compute. Decode at low batch sizes often waits on memory bandwidth.</p></div>
-      <p class="lever-tradeoff">These are starting hypotheses. Measure the actual model, hardware, context, and request load.</p>
-      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §2.4, pp. 61–66; §3.1, pp. 74–77.</p>
-      <aside class="notes">The book connects typical prefill to compute limits and typical low-to-moderate-batch decode to memory-bandwidth limits. These are not universal laws. Input length, model architecture, batch size, cache hits, hardware and implementation can change the bottleneck. Increasing batching may improve reuse and make computation more limiting while increasing per-request delay or memory requirements. Queueing, network and tool waits are separate service-level bottlenecks: if the processor is idle while a request waits elsewhere, buying a faster processor may not address the cause. This slide supplies the causal foundation for the levers that follow.</aside>
-    </section>
     <section id="prefill-and-decode" class="section-divider" data-subsection="Prefill and decode">
       <h1>Prefill and decode</h1>
       <p>How the model processes an input and produces an answer.</p>
@@ -663,6 +576,41 @@
       <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §2.2, pp. 48–49; §2.4.2, pp. 63–66.<br>Batching and speculative decoding change how much useful work each execution step does.</p>
       <aside class="notes">For one ordinary autoregressive sequence, a newly chosen token becomes input to the next generation step, creating a sequential dependency. The model's learned weights remain unchanged. Cached attention state lets it avoid recomputing the entire earlier sequence, but reading that state still costs bandwidth. Repeated weight reads refer to accelerator memory traffic, not downloading or reloading the model from disk for each token. Batching shares execution across sequences and improves reuse; speculation can commit several verified output tokens per target-model pass. The claim about bandwidth applies especially to low-batch steady-state decode, not every model or hardware configuration.</aside>
     </section>
+    <section id="hardware-batching" class="hardware-detail hardware-batch">
+      <h1>One GPU, many requests</h1>
+      <p class="lever-intro">Batching lets one graphics processing unit (GPU) work on several requests together.</p>
+      <div class="lever-panel">
+        <h2>One generation step for eight active requests</h2>
+        <div class="request-chips"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span></div>
+        <div class="operation-flow"><span class="memory">Read shared<br>model weights</span><span class="arrow">→</span><span class="operation">Compute for<br>all eight requests</span><span class="arrow">→</span><span class="memory">One next token<br>per request</span></div>
+      </div>
+      <table class="examples-table">
+        <thead><tr><th>Hardware resource</th><th>What batching changes</th><th>Effect on the service</th></tr></thead>
+        <tbody>
+          <tr><td>Compute and bandwidth</td><td>Reuse weights across more calculations.</td><td>More total tokens per second.</td></tr>
+          <tr><td>Memory capacity</td><td>Keep separate state for every request.</td><td>Limits how large the batch can be.</td></tr>
+          <tr><td>Time per step</td><td>Do more work before the step finishes.</td><td>Each user can receive tokens more slowly.</td></tr>
+        </tbody>
+      </table>
+      <p class="source-line">Simplified decode example, not a benchmark. Kiely, <em>Inference Engineering</em> (2026), §2.4, pp. 61–66; §7.2.1, pp. 186–188.</p>
+      <aside class="notes">This batches requests on one GPU; it does not mean combining GPUs. The same principle applies inside a multi-GPU serving group. Ordinary autoregressive decode produces one next token for each active sequence in a step; speculative decoding is a later exception. Model weights are shared, while attention state and outputs belong to each sequence. Batched matrix operations can reuse weight data and improve arithmetic intensity, increasing aggregate throughput. Reads are a conceptual simplification, not a claim that all weights are loaded in one physical transaction. Step time can rise with batch size; it need not rise in direct proportion, and small increases in batch size may barely change it. Separate waiting to form a batch from execution time. More context and more active sequences increase memory pressure. Measure throughput at the required per-request latency and quality; maximum throughput alone does not satisfy our 30-second report promise.</aside>
+    </section>
+    <section class="hardware-detail">
+      <h1>Find what the processor is waiting for</h1>
+      <p class="lever-intro">The useful lever depends on whether the workload needs more calculation, faster data movement, or more space.</p>
+      <table class="examples-table">
+        <thead><tr><th>Limit</th><th>What happens</th><th>Relevant levers</th></tr></thead>
+        <tbody>
+          <tr><td>Compute</td><td>The arithmetic units are busy.</td><td>Efficient kernels, lower precision, or more suitable compute.</td></tr>
+          <tr><td>Memory bandwidth</td><td>Arithmetic waits for data to arrive.</td><td>Reduce data movement, reuse work, or improve bandwidth.</td></tr>
+          <tr><td>Memory capacity</td><td>Weights and active requests do not fit.</td><td>Reduce memory use or spread the model across devices.</td></tr>
+        </tbody>
+      </table>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">Process input<br><strong>Prefill</strong></span><span class="arrow">→</span><span class="operation">Generate output<br><strong>Decode</strong></span></div><p class="batch-caption">Prefill often needs substantial compute. Decode at low batch sizes often waits on memory bandwidth.</p></div>
+      <p class="lever-tradeoff">These are starting hypotheses. Measure the actual model, hardware, context, and request load.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §2.4, pp. 61–66; §3.1, pp. 74–77.</p>
+      <aside class="notes">The book connects typical prefill to compute limits and typical low-to-moderate-batch decode to memory-bandwidth limits. These are not universal laws. Input length, model architecture, batch size, cache hits, hardware and implementation can change the bottleneck. Increasing batching may improve reuse and make computation more limiting while increasing per-request delay or memory requirements. Queueing, network and tool waits are separate service-level bottlenecks: if the processor is idle while a request waits elsewhere, buying a faster processor may not address the cause. This slide supplies the causal foundation for the levers that follow.</aside>
+    </section>
     <section class="workload-examples requirements">
       <h1>Both phases sit inside our 30 seconds</h1>
       <table class="examples-table phase-budget">
@@ -682,6 +630,73 @@
       <h1>Inference engineering levers</h1>
       <p>Change how the model runs while preserving useful results.</p>
     </section>
+    <section id="inference-optimization" class="workload-examples requirements">
+      <h1>Optimize model serving</h1>
+      <p class="slide-subheader">This is called inference optimization, and it is in high demand.<br>As AI usage grows, products need fast, reliable responses at a sustainable cost.</p>
+      <table class="examples-table">
+        <thead><tr><th>Where time is spent</th><th>What we can change</th><th>What we must check</th></tr></thead>
+        <tbody>
+          <tr><td>Waiting for capacity</td><td>Keep workers ready; tune routing and batching.</td><td>Queue delay under normal and peak demand.</td></tr>
+          <tr><td>Processing the input</td><td>Reuse cached prefixes; improve input-processing efficiency.</td><td>Input-processing time on cache hits and misses.</td></tr>
+          <tr><td>Generating the report</td><td>Test efficient runtimes, precision, and speculative decoding.</td><td>Generation time and quality at the agreed load.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">1,000 output tokens in 14 seconds requires about <strong>71 tokens per second per response</strong>.<br>We must test that rate while serving the agreed workload.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), preface, pp. 12–13; §1.4, pp. 35–37; §4.5, pp. 112–114.<br>These are changes to test, not guaranteed savings.</p>
+      <aside class="notes">The demand statement is our qualitative interpretation of the book, not a measured hiring statistic. In the preface, pp.12–13, Kiely connects wider production adoption of AI to the need for control over latency, availability and economics. Page 25 states: “Inference engineering adds speed and scale to AI products by optimizing production serving of generative models.” Do not repeat the preface’s vendor-specific uptime or percentage cost comparisons as universal current facts. Inference engineering directly addresses model processing, serving queues, runtime efficiency and capacity. The examples on this slide are serving-side changes. Selecting sources, defining the output, retrieval and application validation are covered under applied AI levers. Reuse of prompt computation refers to prefix caching, not returning a previous answer to a different question. It only helps when the exact reusable prefix is available in cache; test cold and warm paths. 1,000 / 14 = 71.43 output tokens per second for an individual response, not total server throughput. Do not assume 20 requests in flight means 20 simultaneous decode streams, or multiply this rate into a proven capacity claim. Measure mixed prefill and decode under realistic arrivals. Tune batching against both throughput and queueing, preserving per-response latency. More hardware is not automatically the first intervention; use the measured bottleneck and cost budget. Compare full-request traces before and after each change, including slow requests. Do not sum per-stage 95th percentiles and claim the sum is the end-to-end 95th percentile.</aside>
+    </section>
+    <section id="latency-throughput" class="metrics-slide">
+      <h1>Latency and throughput</h1>
+      <div class="metrics-definitions">
+        <div><h2>Latency</h2><p>How long one request takes.<br>For streaming, also measure when tokens arrive.</p></div>
+        <div><h2>Throughput</h2><p>How much work the whole system completes per second.</p></div>
+      </div>
+      <table class="examples-table">
+        <thead><tr><th>Same processor capacity</th><th>Tokens per second, per user</th><th>Tokens per second, total</th></tr></thead>
+        <tbody>
+          <tr><td>Serve 1 request at a time</td><td>100</td><td>100</td></tr>
+          <tr><td>Serve 8 requests together</td><td>40</td><td>320</td></tr>
+        </tbody>
+      </table>
+      <div class="batch-why">
+        <div><h2>Why each user gets tokens more slowly</h2><p>A larger batch does more work in each generation step, so the step can take longer.</p></div>
+        <div><h2>Why the system produces more tokens</h2><p>One read of the model weights serves several requests. Each step produces a token for each request.</p></div>
+      </div>
+      <p class="source-line">Illustrative numbers, not a benchmark. Kiely, <em>Inference Engineering</em> (2026), §1.2.2, pp. 29–30; §1.4, pp. 35–37.</p>
+      <aside class="notes">The same allocated processor capacity is assumed in both constructed examples. Compare generation rate after the first token: one active request at 100 tokens/s versus eight active requests at 40 each, totaling 320. This is a teaching example, not a guarantee that batching produces this ratio. With the same output length, slower per-user generation increases generation time, but total request latency also includes queueing, prefill and application work. More batching can improve weight reuse and aggregate throughput while increasing per-user delay; hardware, runtime, model and workload determine the result. At a fixed processor cost, higher useful throughput can reduce infrastructure cost per token. Faster kernels can improve both latency and throughput, so they are not always opposing outcomes. Requests in flight is concurrency, not requests per second. Connect the definitions to the 30-second complete-report requirement.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>One user: response time and quality</h1>
+      <p class="budget-caption">Does this person get a useful result soon enough?</p>
+      <table class="examples-table">
+        <thead><tr><th>Workload</th><th>What the user needs</th><th>What we measure</th></tr></thead>
+        <tbody>
+          <tr><td>Code completion</td><td>A useful suggestion before they type past it.</td><td>Time to a complete suggestion; acceptance rate.</td></tr>
+          <tr><td>Chat</td><td>A correct answer that starts promptly and streams smoothly.</td><td>Time to first token; gaps between tokens; answer quality.</td></tr>
+          <tr><td>Coding agent</td><td>A correct code change that passes the checks.</td><td>Total task time; task success.</td></tr>
+          <tr><td>Document research</td><td>A supported report within 30 seconds.</td><td>Complete-report time; source support.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Follow one request from start to useful result.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.4, pp. 35–37. Examples adapted to our workloads.</p>
+      <aside class="notes">This slide takes the user's perspective on the same four workloads that appear on the next slide. Latency can mean time to first token, gaps between tokens, or time to a complete useful result, depending on the task. Quality still matters: a fast incorrect result is not success. The 30-second report is our illustrative service requirement, not a measured vendor guarantee. A coding task can contain several model and tool calls.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1 style="font-size:52px">Many users: throughput, reliability, and cost</h1>
+      <p class="budget-caption">Can we deliver the same experience as demand grows?</p>
+      <table class="examples-table">
+        <thead><tr><th>Same workload</th><th>What the service must do</th><th>What we measure across requests</th></tr></thead>
+        <tbody>
+          <tr><td>Code completion</td><td>Keep suggestions fast during busy periods.</td><td>Useful suggestions per second; response-time percentiles; cost.</td></tr>
+          <tr><td>Chat</td><td>Keep many conversations responsive at once.</td><td>Total output tokens per second; delays; errors; cost per conversation.</td></tr>
+          <tr><td>Coding agent</td><td>Complete many tasks without long queues.</td><td>Successful tasks per hour; queue time; failure rate; cost per task.</td></tr>
+          <tr><td>Document research</td><td>Keep the 30-second promise as requests arrive.</td><td>Reports per minute; share within 30 seconds; failure rate; cost per report.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">More work per second helps only if users still get correct results on time.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.2.2, pp. 29–30; §1.4, pp. 35–37; §4.5, pp. 112–114.</p>
+      <aside class="notes">Use exactly the same four workloads as the previous slide to change perspective, not topic. Throughput is completed work per unit of time; concurrency is work in progress and is not a throughput measurement. Measure throughput together with per-request response-time distributions, quality, failures and cost under representative load. Percentiles describe a distribution across requests; one fast request does not prove service performance. Useful suggestions, successful tasks and supported reports are application outcomes, while total output tokens per second is a model-serving measure. Increasing batching may increase total token throughput while increasing individual delays. This leads into business promises and the illustrative enterprise service level agreement.</aside>
+    </section>
     <section class="workload-examples requirements">
       <h1>The levers of inference engineering</h1>
       <table class="examples-table levers-table">
@@ -699,22 +714,6 @@
       </table>
       <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), chapters 3–5 and 7.<br>Choose a lever for a measured bottleneck, then check quality, time, and cost again.</p>
       <aside class="notes">Introduce names and purposes here; deeper token mechanics can follow when needed to explain one lever. Quantization reduces precision and may reduce memory and execution cost, but quality and actual speed must be measured. Prefix caching reuses matching prompt computation, not arbitrary answers. Speculative decoding drafts candidates and verifies them with the target model; it may not accelerate every workload. Model parallelism splits a model across devices; replicas run separate copies for capacity. Disaggregation can place input processing and generation on different workers, introducing another placement and communication tradeoff. Batching can improve aggregate throughput while harming per-request waiting time. Model selection, prompt/context design and output length span the applied AI and inference boundary rather than belonging exclusively to one. Source sections: §4.1 kernels, §4.3 runtimes, §5.1 quantization, §5.2 speculative decoding, §5.3 caching, §5.4 parallelism, §5.5 disaggregation, chapter 7 production. No universal speedup is claimed.</aside>
-    </section>
-    <section class="workload-examples requirements">
-      <h1>Which parts can we improve?</h1>
-      <p class="slide-subheader">This is called inference optimization, and it is in high demand.<br>As AI usage grows, products need fast, reliable responses at a sustainable cost.</p>
-      <table class="examples-table">
-        <thead><tr><th>Where time is spent</th><th>What we can change</th><th>What we must check</th></tr></thead>
-        <tbody>
-          <tr><td>Waiting for capacity</td><td>Keep workers ready; adjust capacity and batching.</td><td>Queue delay under normal and peak demand.</td></tr>
-          <tr><td>Processing the input</td><td>Reuse shared prompt computation; send only relevant sources.</td><td>Cache misses and answer quality with less context.</td></tr>
-          <tr><td>Generating the report</td><td>Test a faster model or runtime; reduce unnecessary output.</td><td>Complete-report time and quality at the agreed load.</td></tr>
-          <tr><td>Retrieving, validating, sending</td><td>Improve search, application code, and network paths.</td><td>The complete service trace, not just model time.</td></tr>
-        </tbody>
-      </table>
-      <p class="workload-note">1,000 output tokens in 14 seconds requires about <strong>71 tokens per second per response</strong>.<br>We must test that rate while serving the agreed workload.</p>
-      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), preface, pp. 12–13; §1.4, pp. 35–37; §4.5, pp. 112–114.<br>These are changes to test, not guaranteed savings.</p>
-      <aside class="notes">The demand statement is our qualitative interpretation of the book, not a measured hiring statistic. In the preface, pp.12–13, Kiely connects wider production adoption of AI to the need for control over latency, availability and economics. Page 25 states: “Inference engineering adds speed and scale to AI products by optimizing production serving of generative models.” Do not repeat the preface’s vendor-specific uptime or percentage cost comparisons as universal current facts. Inference engineering directly addresses model processing, serving queues, runtime efficiency and capacity. Prompt selection and output design overlap with applied AI; search and transport require broader systems work. Reuse of prompt computation refers to prefix caching, not returning a previous answer to a different question. It only helps when the exact reusable prefix is available in cache; test cold and warm paths. Reducing sources or output must preserve the product's quality requirements. 1,000 / 14 = 71.43 output tokens per second for an individual response, not total server throughput. Do not assume 20 requests in flight means 20 simultaneous decode streams, or multiply this rate into a proven capacity claim. Measure mixed prefill and decode under realistic arrivals. Tune batching against both throughput and queueing, preserving per-response latency. More hardware is not automatically the first intervention; use the measured bottleneck and cost budget. Compare full-request traces before and after each change, including slow requests. Do not sum per-stage 95th percentiles and claim the sum is the end-to-end 95th percentile.</aside>
     </section>
     <section class="lever-detail">
       <p class="lever-kind">Levers of inference engineering</p>
@@ -839,6 +838,27 @@
     </section>
     <section class="lever-detail">
       <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Evaluation: check the useful outcome</h1>
+      <p class="lever-intro">Define what success means, then test changes against it before judging speed or cost.</p>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">Representative<br>tasks</span><span class="arrow">→</span><span class="operation">Candidate<br>application</span><span class="arrow">→</span><span class="memory">Check results<br>and evidence</span><span class="arrow">→</span><span class="memory">Compare with<br>baseline</span></div></div>
+      <table class="examples-table ontology-table"><thead><tr><th>Task</th><th>What success requires</th></tr></thead><tbody><tr><td>Contract research</td><td>The correct deadline, supported by the applicable clause.</td></tr><tr><td>Book a meeting</td><td>The intended event exists with the correct people and time.</td></tr><tr><td>Review code</td><td>Real issues found, with acceptable false alarms.</td></tr></tbody></table>
+      <p class="application-link">Inference connection: a quality baseline lets us test smaller models, quantization, and other optimizations without silently breaking the task.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.3.1, pp. 31–32; §5.1.3, p. 128.<br>Task criteria are workshop examples; a successful response alone is not proof of a successful action.</p>
+      <aside class="notes">Evaluate on representative and difficult cases, keeping held-out cases separate from prompt development where possible. Use the appropriate evidence: source review for a claim, tests and human assessment for code, and authoritative system readback for actions. Format checks are useful but do not establish semantic correctness. Production controls can block invalid actions or route uncertain cases for review; those controls must be enforced in application code, not only requested in the prompt. Count retries, failed attempts and review work in task time and cost. Compare quality as well as latency distributions at representative load.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Model choice: match the task</h1>
+      <p class="lever-intro">Choose a model that meets the quality requirement, then compare how much it costs to run.</p>
+      <div class="lever-panel"><h2>The book's example: turn a question into a database query</h2><div class="operation-flow"><span class="memory">Question +<br>database structure</span><span class="arrow">→</span><span class="operation">Task-specific<br>model</span><span class="arrow">→</span><span class="memory">Database query</span></div></div>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">General model</span><span class="arrow">→</span><span class="operation">Same task tests</span><span class="arrow">←</span><span class="memory">Smaller model<br>tuned for the task</span></div><p class="batch-caption">Compare both candidates on representative questions and difficult cases.</p></div>
+      <p class="lever-result">The book describes a small, fine-tuned model matching a much larger model on a narrow text-to-query task.</p>
+      <p class="application-link">Inference connection: model size and architecture change memory needs, compute, and available optimizations.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §§1.3–1.3.2, pp. 31–33.<br>The book's narrow-task example does not establish that a small model fits every workload.</p>
+      <aside class="notes">The book uses text-to-SQL, where SQL means Structured Query Language. Fine-tuning adapts model weights using task data; it is different from adding examples to a prompt and different from serving-time quantization. Use separate training and evaluation examples to test generalization. The model-choice lever belongs at the boundary between application quality and inference cost. If a smaller candidate fails the quality requirement, faster serving does not make it an acceptable replacement. For actions against a real database, read-only access and query validation would be separate application controls.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
       <h1>Context: send the useful evidence</h1>
       <p class="lever-intro">Choose which information reaches the model. Retrieval finds relevant material before the model writes its answer.</p>
       <div class="lever-panel"><h2>Send everything</h2><div class="operation-flow"><span class="memory">50 contracts</span><span class="arrow">→</span><span class="operation">Model</span><span class="arrow">→</span><span class="memory">Answer</span></div></div>
@@ -860,28 +880,6 @@
       <p class="application-link">Inference connection: output length changes generation work. Stable instructions can also form a reusable prompt prefix.</p>
       <p class="source-line">Illustrative prompts. Anthropic, <a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a>.<br>Prefix reuse: Kiely, <em>Inference Engineering</em> (2026), §5.3.1, pp. 136–138.</p>
       <aside class="notes">This example makes an already chosen task explicit; it does not claim the two prompts serve identical user intentions. If the customer needs a full report, a short field extraction is not a substitute. Examples and output structures can clarify expected behavior, but task-specific evaluation must confirm the effect. Structured-output constraints can enforce a schema; neither a schema nor a citation field establishes factual correctness. An output token cap should prevent runaway generation without cutting off necessary content. Stable instructions only benefit prefix caching when matching computation is available on the selected serving path.</aside>
-    </section>
-    <section class="lever-detail">
-      <p class="lever-kind applied-kind">Levers of applied AI</p>
-      <h1>Model choice: match the task</h1>
-      <p class="lever-intro">Choose a model that meets the quality requirement, then compare how much it costs to run.</p>
-      <div class="lever-panel"><h2>The book's example: turn a question into a database query</h2><div class="operation-flow"><span class="memory">Question +<br>database structure</span><span class="arrow">→</span><span class="operation">Task-specific<br>model</span><span class="arrow">→</span><span class="memory">Database query</span></div></div>
-      <div class="lever-panel"><div class="operation-flow"><span class="memory">General model</span><span class="arrow">→</span><span class="operation">Same task tests</span><span class="arrow">←</span><span class="memory">Smaller model<br>tuned for the task</span></div><p class="batch-caption">Compare both candidates on representative questions and difficult cases.</p></div>
-      <p class="lever-result">The book describes a small, fine-tuned model matching a much larger model on a narrow text-to-query task.</p>
-      <p class="application-link">Inference connection: model size and architecture change memory needs, compute, and available optimizations.</p>
-      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §§1.3–1.3.2, pp. 31–33.<br>The book's narrow-task example does not establish that a small model fits every workload.</p>
-      <aside class="notes">The book uses text-to-SQL, where SQL means Structured Query Language. Fine-tuning adapts model weights using task data; it is different from adding examples to a prompt and different from serving-time quantization. Use separate training and evaluation examples to test generalization. The model-choice lever belongs at the boundary between application quality and inference cost. If a smaller candidate fails the quality requirement, faster serving does not make it an acceptable replacement. For actions against a real database, read-only access and query validation would be separate application controls.</aside>
-    </section>
-    <section class="lever-detail">
-      <p class="lever-kind applied-kind">Levers of applied AI</p>
-      <h1>Orchestration: change the order of work</h1>
-      <p class="lever-intro">Run independent steps together. Keep a step sequential when it needs an earlier result.</p>
-      <div class="lever-panel"><h2>Sequential document summaries</h2><div class="operation-flow"><span class="operation">Document A</span><span class="arrow">→</span><span class="operation">Document B</span><span class="arrow">→</span><span class="operation">Document C</span><span class="arrow">→</span><span class="memory">Combine</span></div></div>
-      <div class="lever-panel"><h2>Independent summaries in parallel</h2><div class="parallel-branches"><span>Document A</span><span>Document B</span><span>Document C</span></div><div class="operation-flow"><span class="arrow">↓</span><span class="memory">Combine after all three finish</span><span class="arrow">↓</span></div></div>
-      <p class="lever-result">What changes: the longest chain of dependent work, not necessarily the number of model calls.</p>
-      <p class="application-link">Inference connection: parallel calls create more simultaneous demand. Queueing can consume the time you hoped to save.</p>
-      <p class="source-line">Illustrative document workflow. Pattern: Anthropic, <a href="https://www.anthropic.com/research/building-effective-agents">Building effective agents</a>, “Parallelization.”<br>Serving tradeoff: Kiely, <em>Inference Engineering</em> (2026), §7.2.1, pp. 186–188.</p>
-      <aside class="notes">Independent model calls can run in parallel, with their outputs combined afterwards. This example assumes each document can be summarized independently before cross-document synthesis; tasks requiring intermediate results cannot be parallelized this way. Without contention, the sequential summary time is approximately the sum of the three calls while parallel summary time follows the slowest, before combination and coordination costs. There is no promised speedup. Both workflows still make three summary calls and a combination call. Test under the same serving capacity and quality criteria. Bound concurrency to avoid overload.</aside>
     </section>
     <section class="lever-detail">
       <p class="lever-kind applied-kind">Levers of applied AI</p>
@@ -909,30 +907,18 @@
     </section>
     <section class="lever-detail">
       <p class="lever-kind applied-kind">Levers of applied AI</p>
-      <h1>Evaluation: check the useful outcome</h1>
-      <p class="lever-intro">Define what success means, then test changes against it before judging speed or cost.</p>
-      <div class="lever-panel"><div class="operation-flow"><span class="memory">Representative<br>tasks</span><span class="arrow">→</span><span class="operation">Candidate<br>application</span><span class="arrow">→</span><span class="memory">Check results<br>and evidence</span><span class="arrow">→</span><span class="memory">Compare with<br>baseline</span></div></div>
-      <table class="examples-table ontology-table"><thead><tr><th>Task</th><th>What success requires</th></tr></thead><tbody><tr><td>Contract research</td><td>The correct deadline, supported by the applicable clause.</td></tr><tr><td>Book a meeting</td><td>The intended event exists with the correct people and time.</td></tr><tr><td>Review code</td><td>Real issues found, with acceptable false alarms.</td></tr></tbody></table>
-      <p class="application-link">Inference connection: a quality baseline lets us test smaller models, quantization, and other optimizations without silently breaking the task.</p>
-      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.3.1, pp. 31–32; §5.1.3, p. 128.<br>Task criteria are workshop examples; a successful response alone is not proof of a successful action.</p>
-      <aside class="notes">Evaluate on representative and difficult cases, keeping held-out cases separate from prompt development where possible. Use the appropriate evidence: source review for a claim, tests and human assessment for code, and authoritative system readback for actions. Format checks are useful but do not establish semantic correctness. Production controls can block invalid actions or route uncertain cases for review; those controls must be enforced in application code, not only requested in the prompt. Count retries, failed attempts and review work in task time and cost. Compare quality as well as latency distributions at representative load.</aside>
+      <h1>Orchestration: change the order of work</h1>
+      <p class="lever-intro">Run independent steps together. Keep a step sequential when it needs an earlier result.</p>
+      <div class="lever-panel"><h2>Sequential document summaries</h2><div class="operation-flow"><span class="operation">Document A</span><span class="arrow">→</span><span class="operation">Document B</span><span class="arrow">→</span><span class="operation">Document C</span><span class="arrow">→</span><span class="memory">Combine</span></div></div>
+      <div class="lever-panel"><h2>Independent summaries in parallel</h2><div class="parallel-branches"><span>Document A</span><span>Document B</span><span>Document C</span></div><div class="operation-flow"><span class="arrow">↓</span><span class="memory">Combine after all three finish</span><span class="arrow">↓</span></div></div>
+      <p class="lever-result">What changes: the longest chain of dependent work, not necessarily the number of model calls.</p>
+      <p class="application-link">Inference connection: parallel calls create more simultaneous demand. Queueing can consume the time you hoped to save.</p>
+      <p class="source-line">Illustrative document workflow. Pattern: Anthropic, <a href="https://www.anthropic.com/research/building-effective-agents">Building effective agents</a>, “Parallelization.”<br>Serving tradeoff: Kiely, <em>Inference Engineering</em> (2026), §7.2.1, pp. 186–188.</p>
+      <aside class="notes">Independent model calls can run in parallel, with their outputs combined afterwards. This example assumes each document can be summarized independently before cross-document synthesis; tasks requiring intermediate results cannot be parallelized this way. Without contention, the sequential summary time is approximately the sum of the three calls while parallel summary time follows the slowest, before combination and coordination costs. There is no promised speedup. Both workflows still make three summary calls and a combination call. Test under the same serving capacity and quality criteria. Bound concurrency to avoid overload.</aside>
     </section>
     <section id="putting-it-together" class="section-divider" data-subsection="Putting it together">
       <h1>Putting it together</h1>
       <p>Use both sets of levers to meet the same time, quality, and cost requirements.</p>
-    </section>
-    <section class="workload-examples requirements">
-      <h1>The two sets of levers work together</h1>
-      <table class="examples-table"><thead><tr><th>Applied AI decision</th><th>Changes the workload</th><th>Inference engineering response</th></tr></thead><tbody>
-        <tr><td>Retrieve focused evidence</td><td>Input length and repeated context.</td><td>Measure input processing and cache hits.</td></tr>
-        <tr><td>Request a useful output format</td><td>Output length and completion rules.</td><td>Measure generation time and memory use.</td></tr>
-        <tr><td>Run independent calls together</td><td>Concurrent requests and arrival patterns.</td><td>Tune capacity, batching, and queueing.</td></tr>
-        <tr><td>Choose a task-qualified model</td><td>Architecture and model size.</td><td>Select hardware, runtime, and precision.</td></tr>
-        <tr><td>Check task success</td><td>Which results count as useful.</td><td>Optimize time and cost per successful task.</td></tr>
-      </tbody></table>
-      <p class="workload-note">For our 30-second promise, measure the full workflow again after changing either layer.</p>
-      <p class="source-line">Synthesis for this workshop. Kiely, <em>Inference Engineering</em> (2026), §§1.2–1.4 and §4.5.</p>
-      <aside class="notes">This table reconnects application decisions to the serving system and the business promise. The dependency runs both ways: measured capacity and latency can constrain which application workflow is viable. Avoid optimizing each layer in isolation and assuming the gains add together. More focused prompts can change cache hit rates; parallel calls can create queueing; added quality checks can introduce more model calls. Test full-task quality, end-to-end time, failures and total cost under the agreed demand. These are causal relationships and proposed measurement points, not benchmark results.</aside>
     </section>
     <section class="workload-examples requirements">
       <h1>Back to the 30-second promise</h1>
@@ -951,8 +937,9 @@
       <p class="source-line">Illustrative timings, not benchmark data. Same service limits: 16,000 input tokens, 1,000 output tokens, 20 requests in flight.<br>Kiely, <em>Inference Engineering</em> (2026), §1.4, pp. 35–37; §4.5, pp. 112–114.</p>
       <aside class="notes">This is a constructed trace for teaching, not a measurement from the local labs or a real customer. It totals 32 seconds: 3+7+6+15+1. The earlier 24-second allocation remains our candidate operating budget with six seconds of headroom. Under the fictional SLA, 95% of all eligible requests must complete within 30 seconds each month and 99.9% must succeed within 60 seconds. A single 32-second success is a latency miss, not an availability failure. We first capture traces across the workload, including slow requests, before concluding which stage is a recurring bottleneck. Do not add independently calculated stage percentiles to infer an end-to-end percentile.</aside>
     </section>
-    <section class="workload-examples requirements">
+    <section id="paired-levers" class="workload-examples requirements">
       <h1>Pair the two sets of levers</h1>
+      <p class="budget-caption">Applied AI shapes the workload; inference engineering changes how it runs.</p>
       <table class="examples-table">
         <thead><tr><th>Problem</th><th>Applied AI change</th><th>Inference engineering change</th></tr></thead>
         <tbody>
@@ -962,9 +949,9 @@
           <tr><td>Fast but unreliable answers</td><td>Check source support, missing facts, and actual task success.</td><td>Reject optimizations that break the quality baseline.</td></tr>
         </tbody>
       </table>
-      <p class="workload-note">Change one cause at a time, then test the selected changes together.</p>
+      <p class="workload-note">Change one cause at a time, then test quality, time, and cost across the full workflow.</p>
       <p class="source-line">Worked example using Kiely, <em>Inference Engineering</em> (2026), §§1.3–1.4, chapters 4–5, and §7.2.</p>
-      <aside class="notes">The application determines the useful work and the serving system executes it. Context selection and prefix reuse interact, so their savings are not independent. Internal fan-out is the number of downstream calls spawned by an application request; bounding it must not evade the contract's external concurrency commitment. This example still admits the same 20 eligible requests in flight. If the current application makes only one model call, removing internal fan-out is not an available improvement; use the measured trace, not every lever listed. A concise report must still meet the same customer need. Model changes require evaluation of the same task, and precision or speculation requires matching runtime support. Parallel work may worsen serving contention. Candidate changes are hypotheses until measured.</aside>
+      <aside class="notes">This table reconnects application decisions to the serving system and the business promise. The dependency runs both ways: measured capacity and latency can constrain which application workflow is viable. Avoid optimizing each layer in isolation and assuming the gains add together. More focused prompts can change cache hit rates; parallel calls can create queueing; added quality checks can introduce more model calls. Test full-task quality, end-to-end time, failures and total cost under the agreed demand. These are causal relationships and proposed measurement points, not benchmark results. The application determines the useful work and the serving system executes it. Context selection and prefix reuse interact, so their savings are not independent. Internal fan-out is the number of downstream calls spawned by an application request; bounding it must not evade the contract's external concurrency commitment. This example still admits the same 20 eligible requests in flight. If the current application makes only one model call, removing internal fan-out is not an available improvement; use the measured trace, not every lever listed. A concise report must still meet the same customer need. Model changes require evaluation of the same task, and precision or speculation requires matching runtime support. Parallel work may worsen serving contention. Candidate changes are hypotheses until measured.</aside>
     </section>
     <section id="batching-sla" class="workload-examples requirements serving-sla">
       <h1>Batching within the 30-second promise</h1>
