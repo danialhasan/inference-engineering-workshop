@@ -182,6 +182,9 @@
     .reveal .workshop-setup .setup-ready{font-size:24px;margin-top:28px}
       .reveal a:focus-visible{outline:2px solid var(--green);outline-offset:5px}
     ::selection{background:#365c48;color:#ffffff}
+    #workshop-shared h2{font-size:32px;margin:0 0 18px}
+    #workshop-shared .field-columns{gap:50px;margin:28px 0}
+    #workshop-shared .field-columns p{font-size:27px;line-height:1.45;margin-bottom:18px}
   </style>
 <style>html.reveal-print .reveal .fragment.fade-out{display:none!important}</style>
 </head>
@@ -1068,6 +1071,78 @@
       <p class="source-line">Published speed and usage: <a href="https://learn.chatgpt.com/docs/agent-configuration/speed">OpenAI, Speed</a> · <a href="https://learn.chatgpt.com/docs/pricing">Pricing</a>, checked November 10, 2026.</p>
       <aside class="notes">Ask the audience why the same model can be faster and more expensive, then invite answers for the three blanks. Advance once to reveal decrease, decrease, increase; advance again for the mechanism and limitation. The smaller-batch scenario is conditional: in bandwidth-limited decode, each step can distribute weight-reading cost over fewer sequences, giving a request a faster step but reducing total tokens per processor-second. This is lower serving efficiency per token, not necessarily a less busy GPU. Faster hardware, optimized kernels, speculative decoding, different parallelism and reserved headroom are other possible contributors. Do not claim OpenAI uses a particular batching or GPU strategy: the cited public documentation does not establish its implementation or cost breakdown. Price is not proof of provider cost. OpenAI publishes up to 8x token generation speed for GPT-6 Astra, not a guarantee of 8x faster whole tasks or the same speedup for GPT-6.1 Sol. Both support Ultrafast; included usage multiplier is 8x, purchased credits and Enterprise pay-as-you-go 6x; API rates are separate and also 6x Standard for these models. General tradeoff source: Kiely, Inference Engineering, §1.2.2 pp.29–30, §1.4 pp.35–37, §7.2.1 pp.186–188.</aside>
     </section>
+<!-- Workshop exercise contracts from the revised guided lab. -->
+    <section id="workshop-plan" class="workload-examples requirements">
+      <h1>Three experiments, real measurements</h1>
+      <p class="budget-caption">Run Qwen2.5 1.5B on your own hardware. Use your coding agent to inspect and change the system.</p>
+      <table class="examples-table">
+        <thead><tr><th>Experiment</th><th>Customer need</th><th>What we investigate</th></tr></thead>
+        <tbody>
+          <tr><td>What counts as done?</td><td>A useful answer, suggestion, or completed action.</td><td>Speed and correctness are separate checks.</td></tr>
+          <tr><td>The service gets busy</td><td>The same experience as more people arrive.</td><td>Request concurrency, serving capacity, and queues.</td></tr>
+          <tr><td>Two workloads share hardware</td><td>Finish the batch while keeping chat responsive.</td><td>Throughput, interference, and cost per correct result.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Open the dashboard your agent started: <a href="http://127.0.0.1:8878/lab/index.html">127.0.0.1:8878/lab/index.html</a>.<br>Standard runs use 100 requests; the calendar experiment uses 40 tasks.</p>
+    </section>
+    <section id="workshop-method" class="workload-examples requirements">
+      <h1>Make one change, then measure</h1>
+      <div class="system-flow">
+        <div class="system-node">Read the promise</div><span class="system-arrow">→</span><div class="system-node">Predict the result</div><span class="system-arrow">→</span><div class="system-node">Run a baseline</div>
+      </div>
+      <div class="system-flow">
+        <div class="system-node">Change one lever</div><span class="system-arrow">→</span><div class="system-node">Run the same work</div><span class="system-arrow">→</span><div class="system-node">Compare and explain</div>
+      </div>
+      <p class="lever-result">Check the output as well as the timing. A faster wrong result still fails the task.</p>
+      <p class="workload-note">Keep the model and workload fixed when testing a serving change. Save the baseline so you can explain what improved and what got worse.</p>
+    </section>
+    <section id="workshop-done" class="workload-examples requirements">
+      <h1>What counts as done?</h1>
+      <table class="examples-table">
+        <thead><tr><th>Workload</th><th>Time target</th><th>Quality target</th></tr></thead>
+        <tbody>
+          <tr><td>Support chat</td><td>95% start within 1 second.</td><td>At least 90% use the correct source fact.</td></tr>
+          <tr><td>Code completion</td><td>95% finish within 250 milliseconds.</td><td>At least 90% contain the correct code.</td></tr>
+          <tr><td>Calendar agent</td><td>90% finish within 3.5 seconds.</td><td>At least 90% save the correct calendar event.</td></tr>
+        </tbody>
+      </table>
+      <p class="lever-result">Run a baseline. Change the agent prompt or enable the final-state check, then compare the actual calendar outcomes.</p>
+      <p class="workload-note">These are targets across the run. A model saying “done” is not proof that the event exists.</p>
+    </section>
+    <section id="workshop-load" class="workload-examples requirements">
+      <h1>The service gets busy</h1>
+      <p class="lever-intro">At four users, 95% of answers should start within 1 second, and at least 90% should contain the correct source fact.</p>
+      <div class="system-flow"><div class="system-node">One user</div><span class="system-arrow">→</span><div class="system-node">Two users</div><span class="system-arrow">→</span><div class="system-node">Four users</div></div>
+      <table class="examples-table">
+        <thead><tr><th>Change one thing</th><th>Compare</th></tr></thead>
+        <tbody><tr><td>Increase users from one to four.</td><td>First-token time and complete-answer time.</td></tr><tr><td>Keep four users; increase serving slots from one to four.</td><td>Response times, total throughput, and correctness.</td></tr></tbody>
+      </table>
+      <p class="workload-note">Client concurrency sends more work. Server slots determine how much work can run together. They are different controls.</p>
+    </section>
+    <section id="workshop-shared" class="workload-examples requirements">
+      <h1>Two workloads share the hardware</h1>
+      <div class="field-columns">
+        <div><h2>Procurement team</h2><p>Extract the reference, agency, and deadline from 100 notices.</p><p>Finish within 30 seconds, with at least 90% fully correct.</p></div>
+        <div><h2>Chat user</h2><p>Keep 95% of answers starting within 1 second.</p><p>The promise still applies while the batch runs.</p></div>
+      </div>
+      <p class="lever-result">Change worker count, shared versus separate work, or JSON output. Change one control per run and compare both workloads.</p>
+      <p class="workload-note">Cost target: at most US$0.12 per 1,000 correct notices, using an assumed US$1.20 per machine-hour. Check cost and both service promises.</p>
+    </section>
+    <section id="workshop-your-promise" class="workload-examples requirements">
+      <h1>Write the promise for your project</h1>
+      <table class="examples-table">
+        <thead><tr><th>Define</th><th>Make it specific</th></tr></thead>
+        <tbody>
+          <tr><td>The useful outcome</td><td>Who needs it, and what counts as correct?</td></tr>
+          <tr><td>The workload</td><td>Inputs, outputs, calls per task, and demand.</td></tr>
+          <tr><td>The target</td><td>What is measured, where, over what period, and under what load?</td></tr>
+          <tr><td>The agreement</td><td>Who receives the promise, and what happens if it is missed?</td></tr>
+          <tr><td>The next experiment</td><td>Which lever will you change, and what would show that it helped?</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Explain your baseline, one change, and its tradeoff to the person next to you.</p>
+    </section>
+
   </div></div>
   <div class="session-phase" aria-label="Current session portion" aria-live="polite">Lecture</div>
   <script>/*!
@@ -2089,7 +2164,6 @@ Please report this to https://github.com/markedjs/marked.`,e){let e=`<p>An error
       const sectionStart = slides.slice(0, slides.indexOf(currentSlide) + 1).reverse().find(slide => slide.dataset.phase);
       phaseLabel.textContent = currentSlide?.closest('[data-phase]')?.dataset.phase || sectionStart?.dataset.phase || 'Lecture';
     }
-
     // Keep every printed slide and its citations inside its own PDF page.
     Reveal.on('pdf-ready', () => {
       document.querySelectorAll('.pdf-page').forEach(page => {
