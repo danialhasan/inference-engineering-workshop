@@ -1,32 +1,1084 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Inference workshop · from request to decision</title><link rel="stylesheet" href="vendor/reveal.css"><style>
-:root{--paper:#f6f3e9;--ink:#192a26;--green:#12614d}.reveal-viewport{background:var(--paper)}.reveal{color:var(--ink);font:30px/1.4 system-ui,sans-serif}.reveal .slides{text-align:left}.reveal h1{font-size:2.25em;line-height:1.12}.reveal h2{font-size:1.65em;line-height:1.2}.reveal h3{font-size:.8em;color:var(--green);letter-spacing:.1em;text-transform:uppercase}.reveal p{margin:.6em 0}.reveal pre{box-shadow:none;background:#e5ebe3;border-left:5px solid var(--green);padding:18px;font-size:.62em;white-space:pre-wrap}.reveal code{font-family:ui-monospace,monospace}.reveal a{color:var(--green);text-underline-offset:.15em}.reveal small{font-size:.65em}.reveal .reference{display:block;margin-top:24px;font-size:.58em;color:#36564b}.reveal table{width:100%;border-collapse:collapse;font-size:.76em;margin:24px 0}.reveal th,.reveal td{text-align:left;padding:12px 16px;border-bottom:1px solid #aabbb0}.reveal th{color:var(--green)}.reveal .progress{color:var(--green)}.reveal .controls{color:var(--green)}.reveal .slide-number{font-size:18px;background:var(--ink);left:12px;right:auto}.flow{display:flex;align-items:center;gap:24px;margin:40px 0}.flow span{border:2px solid var(--green);padding:20px}.reveal :focus-visible{outline:3px solid #9c4b19;outline-offset:5px}@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}@media print{.reveal section{page-break-after:always}}
-</style></head><body><div class="reveal"><div class="slides">
-<section><h3>Inference engineering · 60 minutes</h3><h1>What happens after your agent calls the model?</h1><p>Make one change, inspect the evidence, explain a decision.</p><aside class="notes">Ask: when you say faster, do you mean first useful text, one completed task, or finishing a batch? Invite two answers. This repo is a command-linked teaching companion; do not discuss candidate authors.</aside></section>
-<section><h3>00–05 · Ready to work</h3><h2>Prove the small path first.</h2><pre>python3 workshop.py doctor
-python3 workshop.py run 0 --repeat 1</pre><p>Open your editor and the saved JSON.</p><small>Windows: use <code>py -3</code> instead of <code>python3</code>.<br>Default: recorded data. Add <code>--source live</code> only when local setup passes.</small><aside class="notes">README and docs/SETUP.md contain installation and exact success criteria. Recorded mode does not require Ollama. Keep the room moving while any affected attendee switches tracks.</aside></section>
-<section><h3>05–13 · Exercise 0</h3><h2>Follow one request.</h2><div class="flow"><span>Python client</span>→<span>Local Ollama</span>→<span>Text + counters</span></div><p>Read <code>generate()</code> in <code>workshop/runtime.py</code>.</p><pre>python3 workshop.py run 0 --source live --repeat 1</pre><small>Locate source, prompt, chunks, actual tokens and completion reason.</small><aside class="notes">If offline, omit --source live and explicitly describe the historic source. Point out that text chunks are not token counters. The final event establishes completion; a disconnected stream is a failed request.</aside></section>
-<section><h3>13–23 · Exercise 1</h3><h2>When did useful text begin?</h2><p>Edit <code>exercises/ex01_stream.py</code>.</p><pre>python3 workshop.py check 1
-python3 workshop.py run 1</pre><p>First nonempty text → first-text time.<br>Completed stream → request duration.</p><aside class="notes">The starter shows unfinished first-text timing. Find the first nonempty chunk and keep a zero timestamp. Compare participant_metrics with raw events. First-text time can include queueing and model loading; it is not GPU-only prefill.</aside></section>
-<section>
-<section><h3>23–33 · Exercise 2 · Edit</h3><h2>How much answer is useful?</h2><p>In <code>exercises/ex02_budget.py</code>, change only the second cap.</p><pre>def output_caps():
-    return [32, 96]  # starter: [32, 32]</pre><pre>python3 workshop.py check 2
-python3 workshop.py run 2</pre><p>Predict first-text time, completion time and useful output.</p><small>Quality floor: three complete, actionable, nonduplicate tips.</small><aside class="notes">Use the right arrow for the next chapter; use down for results and reading context. Give participants time to predict before revealing the observations. The unchanged starter compares 32 with 32. In recorded mode this repeats the same saved data, not new evidence. A cap is a ceiling, not an exact length. Add --source live for measurements on the attendee's machine. Expected checkpoint: PASS Exercise 2. The full walkthrough and recovery path are in docs/EXERCISES.md.</aside></section>
-<section><h3>Exercise 2 · Recorded results</h3><h2>More text takes longer to finish.</h2><table><thead><tr><th>Cap / actual tokens</th><th>First text (ms)</th><th>Completion (ms)</th></tr></thead><tbody><tr><td>32 / 32</td><td>27.30 / 9.92</td><td>210.51 / 187.93</td></tr><tr><td>96 / 96</td><td>8.26 / 8.03</td><td>474.81 / 468.59</td></tr></tbody></table><p>32 tokens: three complete tips.<br>96 tokens: nine tips, then an unfinished “10.”</p><small>Two saved repetitions per setting; both stopped at the cap.<br>Choose against the quality floor, then compare completion time.</small><aside class="notes">These are historical observations from data/runs.json, not target timings or fresh measurements. Both have done_reason length. A longer list may be valuable for a broader task, but the final item is incomplete. With a three-tip quality floor, the smaller budget meets the task sooner. Do not infer that raising the cap improved startup time: fixed order and prefix caching confound that interpretation. The table uses request wall_ms, not group_ms.</aside></section>
-<section><h3>Exercise 2 · Explain the result</h3><h2>Separate generation work from startup.</h2><p>More output can add successive decoding steps.</p><p>Reused input can reduce prefill work.</p><p>Which cap meets your task, and what remains uncertain?</p><small class="reference">Kiely, <em>Inference Engineering</em> (2026)<br>Ch. 2 §2.2, pp. 46–48: LLM Inference Mechanics<br>Ch. 5 §5.3.1, pp. 136–137: Prefix Caching and KV Cache Re-Use</small><aside class="notes">These are printed pages; the examined PDF counter is two ahead. Paraphrase: prefill processes the input while ordinary autoregressive decode generates successive tokens. The output cap changes the allowed generation work. Prefix reuse can reduce prefill work, so cache state and fixed order need investigation before assigning causality to a first-text difference. Ask attendees to state their required output and recommend a cap using actual text and both runs. Example: three useful tips are enough, so keep the smaller budget for this task; do not claim the cap caused the first-text change.</aside></section>
-</section>
-<section>
-<section><h3>33–45 · Exercise 3 · Edit</h3><h2>Submit the jobs before waiting.</h2><p>Edit <code>exercises/ex03_concurrency.py</code>.</p><pre>from concurrent.futures import ThreadPoolExecutor
-
-def schedule(jobs, workers):
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = [pool.submit(job) for job in jobs]
-        return [future.result() for future in futures]</pre><pre>python3 workshop.py check 3
-python3 workshop.py run 3</pre><small>Predict the group's finish time and each request's wait.</small><aside class="notes">The starter calls job() one at a time and ignores workers. Submit every job first; collecting results later preserves input order without preventing overlap. future.result propagates failures. max_workers bounds concurrent jobs. Submitting and immediately waiting in the same loop would remain serial. The offline check verifies overlap, worker bound, output order and failure propagation. Recorded mode does not execute the attendee scheduler; --source live measures the edited implementation. Use down for the results and the server-capacity explanation.</aside></section>
-<section><h3>Exercise 3 · Recorded results</h3><h2>Four clients did not improve group throughput.</h2><table><thead><tr><th>Client workers</th><th>Group finish (ms)</th><th>Group tokens/s</th></tr></thead><tbody><tr><td>1</td><td>609.63 / 612.01</td><td>209.96 / 209.15</td></tr><tr><td>4</td><td>634.26 / 610.97</td><td>201.81 / 209.50</td></tr></tbody></table><p>The recorded server had one execution slot.</p><small>128 output tokens per group; two saved repetitions.<br>With four clients, some submitted requests waited hundreds of milliseconds.</small><aside class="notes">Do not generalize the result to other server configurations. More client concurrency mostly moved waiting into the server queue. First-text time with one worker was roughly 7–8 ms after submission; some four-worker requests waited hundreds of milliseconds. The request timer excludes time waiting behind earlier jobs in the client. Compare group_ms for the full workload, and each request's end_ms for completion relative to group start. Group tokens/s divides all output tokens by elapsed group time; it is not per-user decoding speed. Recorded mode loads these groups without running the scheduler; check 3 verifies the edit and live mode measures it.</aside></section>
-<section><h3>Exercise 3 · Explain the result</h3><h2>Client concurrency needs server capacity.</h2><p>Your thread pool overlaps submissions.</p><p>The serving engine determines how requests share execution.</p><p>Measure group throughput and each user's wait.</p><small class="reference">Kiely, <em>Inference Engineering</em> (2026)<br>Ch. 7 §7.2.1, pp. 186–188; Fig. 7.8: Concurrency and Batch Sizing<br>Ch. 1 §1.4, pp. 35–37: Measuring Latency and Throughput</small><aside class="notes">Printed pages; the examined PDF counter is two ahead. The book distinguishes static batching (wait for a full batch), dynamic batching (full batch or time cutoff), and continuous batching (admit requests as capacity becomes available). Figure 7.8 illustrates token-level continuous batching. A Python thread pool does not implement this or increase model-server capacity. Ask what server capacity to investigate next and whether the user's objective is an interactive response or batch completion. Chapter 1 distinguishes per-user token speed, total throughput, and end-to-end timing including queueing and networking. Attendees should state the objective and limits of their evidence in the worksheet.</aside></section>
-</section>
-<section><h3>45–50 · Apply it</h3><h2>What would you change in your agent?</h2><p>Choose a user outcome and a quality floor.</p><p>Use a measurement to support one change.</p><p>Write what your evidence cannot tell you.</p><aside class="notes">Open docs/WORKSHEET.md. Take two examples and ask whether they optimize first response or total batch time. Quality and failed work matter alongside token speed.</aside></section>
-<section><h3>50–55 · Read for mechanisms</h3><h2>Which bottleneck does the paper address?</h2><p><a href="https://arxiv.org/abs/2205.14135">FlashAttention</a> · attention and memory traffic</p><p><a href="https://arxiv.org/abs/2309.06180">PagedAttention / vLLM</a> · KV-cache memory management</p><p>What would you measure before adopting either?</p><aside class="notes">Keep this to five minutes. These local exercises do not benchmark either research implementation. Ask attendees to identify a resource, mechanism and test rather than repeat a speedup number.</aside></section>
-<section><h3>55–60 · Close</h3><h2>Leave with an experiment.</h2><p>Keep the prompt and settings.<br>Keep the text and measurements.<br>State the next controlled change.</p><pre>python3 workshop.py check all</pre><small>Continue in <code>docs/WORKSHEET.md</code>; answers are in <code>solutions/</code>.</small><small class="reference">Kiely, <em>Inference Engineering</em> · Ch. 4 §4.5.2, p. 114<br>Preserve the baseline and change one variable at a time.</small><aside class="notes">Book reference: Philip Kiely, Inference Engineering, Baseten Books, 2026. Printed p. 114 (PDF counter 116) discusses consistent baselines, enough traffic, and changing one variable at a time. The book is optional reading; docs/EXERCISES.md contains the full reading map. Call out the limits: one device, two repetitions, fixed order and active prefix cache. Ask each attendee for one metric they will add to their own application. Leave time for questions and handoff.</aside></section>
-</div></div><script src="vendor/reveal.js"></script><script src="vendor/notes.js"></script><script>Reveal.initialize({hash:true,slideNumber:"h.v",transition:matchMedia('(prefers-reduced-motion: reduce)').matches?'none':'slide',width:1100,height:760,margin:.08,plugins:[RevealNotes]});</script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Danial Hasan · Inference engineering</title>
+  <link rel="stylesheet" href="vendor/reveal.css">
+  <style>
+    :root{--paper:#f6f4ed;--ink:#18352f;--green:#1e6657}
+    body{background:var(--paper)}
+    .reveal{font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);font-size:32px}
+    .reveal .slides{text-align:left}
+    .reveal h1{font-size:100px;line-height:1.05;font-weight:750;letter-spacing:-.055em;margin:0 0 35px}
+    .reveal p{font-size:32px;line-height:1.5;margin:0}
+    .reveal a{color:var(--green);text-decoration:none}
+    .reveal .website{font-size:23px;margin-top:70px}
+    .reveal .controls{color:var(--green)}
+    .reveal .progress{color:var(--green)}
+    .session-phase{position:fixed;left:24px;bottom:18px;z-index:20;color:#52645e;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:12px;letter-spacing:.04em;pointer-events:none}
+    @media print{.session-phase{display:none}}
+    .reveal .slides section,.reveal .slide-background,.reveal .progress span,.reveal .fragment{transition-duration:100ms}
+    .reveal .bio h1{font-size:64px;margin-bottom:34px}
+    .reveal .bio ul{display:grid;gap:22px;font-size:27px;line-height:1.4;margin:0;padding-left:30px}
+    .reveal .bio strong{font-weight:700}
+    .bio-layout{display:grid;grid-template-columns:1fr 1.15fr;gap:55px;align-items:center}
+    .reveal .bio-layout img{display:block;width:100%;height:auto;margin:0}
+    .reveal .bio-layout ul{font-size:29px;gap:30px}
+    .bio-later{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}
+    .reveal .bio-later ul{font-size:26px;gap:26px}
+    .bio-photos{display:grid;grid-template-columns:0.85fr 1.2fr;gap:14px;height:390px}
+    .reveal .bio-photos img{width:100%;height:100%;object-fit:cover;object-position:center;margin:0}
+    .reveal .title-slide h1{font-size:62px;line-height:1.12;white-space:nowrap}
+    .reveal .title-slide p{font-size:28px;margin-top:48px}
+    .reveal .fields h1{font-size:58px;margin-bottom:60px}
+    .field-columns{display:grid;grid-template-columns:1fr 1fr;gap:90px}
+    .reveal .fields h2{font-size:38px;margin:0 0 25px;letter-spacing:-.025em}
+    .reveal .fields p{font-size:31px;line-height:1.5;margin-bottom:24px}
+    .reveal .fields .example{font-size:24px;color:var(--green);margin-top:32px}
+    .reveal .workloads h1{font-size:58px;margin-bottom:28px}
+    .reveal .workload-table{width:100%;border-collapse:collapse;font-size:23px;line-height:1.25}
+    .reveal .workload-table th{text-align:left;font-size:24px;font-weight:650;padding:0 16px 18px;border-bottom:2px solid #18352f}
+    .reveal .workload-table td{padding:9px 16px;border-bottom:1px solid #cdd5d0;vertical-align:middle}
+    .reveal .workflow-companies .workload-table{font-size:23px;line-height:1.4;table-layout:fixed}
+    .reveal .workflow-companies th:nth-child(1){width:18%}
+    .reveal .workflow-companies th:nth-child(2){width:27%}
+    .reveal .workflow-companies th:nth-child(3){width:27%}
+    .reveal .workflow-companies th:nth-child(4){width:28%}
+    .reveal .workflow-companies td{padding:16px 16px;vertical-align:top}
+    .reveal .workflow-companies td small{display:block;font-size:20px;line-height:1.35;color:#52645e;margin-top:7px}
+    .company-brand{display:flex;align-items:center;gap:16px;font-weight:650;white-space:nowrap}
+    .reveal .company-brand img{width:28px;height:28px;object-fit:contain;margin:0}
+    .reveal .workload-note{font-size:21px;color:#52645e;margin-top:24px}
+    .reveal .workload-bridge h1{font-size:68px;margin-bottom:48px}
+    .bridge-flow{display:grid;grid-template-columns:1fr 50px 1fr 50px 1fr;gap:20px;align-items:start}
+    .reveal .bridge-flow h2{font-size:34px;margin:0 0 22px;letter-spacing:-.025em}
+    .reveal .bridge-flow p{font-size:28px;line-height:1.45}
+    .bridge-arrow{font-size:40px;color:var(--green)}
+    .reveal .book-quote{margin:56px 0 0;padding-top:28px;border-top:1px solid #aebeb5;font-size:29px;line-height:1.5}
+    .reveal .book-cite{font-size:20px;margin-top:12px;color:#52645e}
+    .reveal .workload-examples h1{font-size:62px;margin-bottom:28px}
+    .reveal .examples-table{width:100%;border-collapse:collapse;font-size:24px;line-height:1.35}
+    .reveal .examples-table th{text-align:left;font-size:23px;padding:10px 14px;border-bottom:2px solid var(--ink)}
+    .reveal .examples-table td{padding:15px 14px;vertical-align:top;border-bottom:1px solid #cdd5d0}
+    .reveal .examples-table small{display:block;font-size:19px;color:#52645e;margin-top:5px}
+    .reveal .audience-examples td{padding:10px 14px}
+    .reveal .requirements h1,.reveal .sla h1{font-size:60px;margin-bottom:30px}
+    .reveal .sla h1{font-size:52px}
+    .reveal .requirements td{padding:15px 14px}
+    .reveal .source-line{font-size:18px;color:#52645e;margin-top:24px;line-height:1.4}
+    .sla-columns{display:grid;grid-template-columns:1fr 1fr;gap:65px}
+    .reveal .sla h2{font-size:31px;margin:0 0 20px}
+    .reveal .sla p{font-size:27px;line-height:1.45;margin-bottom:20px}
+    .reveal .sla .scenario{font-size:24px;margin-bottom:30px;color:#52645e}
+    .reveal .sla .sla-foot{font-size:22px;margin-top:25px;padding-top:22px;border-top:1px solid #aebeb5}
+    .reveal .sla .source-line{font-size:18px;line-height:1.4}
+    .time-budget{display:flex;height:52px;margin:24px 0 26px;gap:3px}
+    .time-budget span{display:flex;align-items:center;justify-content:center;background:#d9e5df;color:var(--ink);font-size:22px;font-weight:650}
+    .time-budget .model-time{background:#1e6657;color:white}
+    .time-budget .reserve-time{background:#eee9dc}
+    .reveal .budget-table td{padding:8px 14px}
+    .reveal .budget-caption{font-size:24px;line-height:1.4;margin-bottom:15px}
+    .workflow-scope{border:2px solid #8ba89b;padding:22px 24px 18px;margin:25px 0 35px}
+    .reveal .workflow-scope h2{font-size:28px;margin:0 0 22px}
+    .workflow-stages{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:stretch}
+    .workflow-stages>div{text-align:center;padding:20px 8px;background:#e9eeeb;font-size:25px}
+    .workflow-stages .inference-stage{background:#1e6657;color:white}
+    .inference-scope{grid-column:3 / 5;border-bottom:3px solid #1e6657;text-align:center;padding:12px 0 8px;font-size:24px;font-weight:650}
+    .reveal .scope-levers h2{font-size:29px;margin:0 0 15px}
+    .reveal .scope-levers p{font-size:25px;line-height:1.45}
+    .system-flow{display:flex;gap:12px;align-items:center;margin:25px 0 32px}
+    .system-flow .system-node{flex:1;border:1px solid #8ba89b;padding:20px 12px;text-align:center;font-size:26px;line-height:1.3}
+    .system-flow .system-arrow{font-size:30px;color:var(--green)}
+    .reveal .ontology-table td{padding:13px 14px}
+    .reveal .levers-table{font-size:23px}
+    .reveal .levers-table td{padding:11px 14px}
+    .reveal .slide-subheader{font-size:25px;line-height:1.4;margin:-10px 0 28px;color:var(--green)}
+    .reveal .lever-kind{position:absolute;top:-30px;left:0;font-size:18px;font-weight:650;line-height:1.2;color:var(--green)}
+    .reveal .lever-kind.applied-kind{color:#865d35}
+    .reveal .lever-detail h1,.reveal .hardware-detail h1{font-size:58px;margin-bottom:28px}
+    .reveal .lever-intro{font-size:28px;line-height:1.45;margin-bottom:30px}
+    .lever-panel{border:1px solid #aebeb5;padding:24px;margin:16px 0}
+    .reveal .lever-panel h2{font-size:25px;margin:0 0 20px;color:#52645e}
+    .operation-flow{display:flex;align-items:center;gap:14px;font-size:26px;line-height:1.35}
+    .operation-flow .operation{padding:16px 20px;background:#1e6657;color:white;text-align:center;flex:1}
+    .operation-flow .memory{padding:16px 18px;background:#e5ebe7;text-align:center;flex:1}
+    .operation-flow .arrow{color:#1e6657}
+    .reveal .lever-result{font-size:27px;line-height:1.45;margin-top:26px}
+    .reveal .lever-tradeoff{font-size:23px;line-height:1.45;margin-top:15px;color:#52645e}
+    .precision-number{font-size:42px;font-weight:650;color:#1e6657;white-space:nowrap}
+    .token-row{display:flex;gap:8px;align-items:center;font-size:28px;margin:14px 0;flex-wrap:wrap}
+    .token-row .token{padding:14px 20px;background:#e5ebe7}
+    .token-row .shared,.token-row .accepted{background:#1e6657;color:white}
+    .token-row .rejected{background:#efd9cd;color:#703b25}
+    .token-row .discarded{background:#efefeb;color:#77817c;text-decoration:line-through}
+    .reveal .diagram-label{font-size:23px;color:#52645e;margin:16px 0 8px}
+    .batch-comparison{display:grid;grid-template-columns:1fr 1fr;gap:38px}
+    .reveal .batch-comparison h2{font-size:29px;margin:0 0 15px}
+    .batch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;font-size:25px;text-align:center}
+    .batch-grid span{padding:17px 6px;background:#e5ebe7}
+    .batch-grid .new-request{background:#1e6657;color:white}
+    .batch-grid .empty-slot{background:#f4f3ee;color:#8d9792}
+    .reveal .batch-caption{font-size:22px;margin-top:14px;line-height:1.4}
+    .phase-budget td:nth-child(2){white-space:nowrap}
+    .capacity-row{margin:22px 0}
+    .reveal .capacity-label{font-size:25px;margin-bottom:12px}
+    .capacity-bar{display:flex;height:60px;font-size:23px;text-align:center;align-items:stretch}
+    .capacity-bar span{display:flex;align-items:center;justify-content:center}
+    .capacity-bar .weights{background:#1e6657;color:white}
+    .capacity-bar .free-memory{background:#e5ebe7}
+    .reveal .application-link{font-size:24px;line-height:1.45;padding-top:20px;margin-top:24px;border-top:1px solid #aebeb5;color:var(--green)}
+    .reveal .lever-panel .example-copy{font-size:27px;line-height:1.5}
+    .parallel-branches{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
+    .parallel-branches span{padding:20px 10px;background:#1e6657;color:white;text-align:center;font-size:25px}
+    .reveal .state-example{font-size:26px;line-height:1.6;margin:0}
+    .reveal .contents h1{font-size:72px;margin-bottom:48px}
+    .contents-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+    .reveal .contents ol{margin:0;padding-left:42px;font-size:30px;line-height:1.4}
+    .reveal .contents li{padding-left:8px;margin-bottom:22px}
+    .reveal .contents li::marker{color:var(--green);font-weight:650}
+    .reveal .contents a{color:inherit;text-decoration:none;text-underline-offset:6px}
+    .reveal .contents a:hover,.reveal .contents a:focus-visible{color:var(--green);text-decoration:underline}
+    .reveal .contents .workshop-next{font-size:27px;margin-top:32px;padding-top:24px;border-top:1px solid #aebeb5}
+    .reveal .metrics-slide h1,.reveal .ultrafast-question h1{font-size:60px;margin-bottom:30px}
+    .reveal .metrics-definitions{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin-bottom:28px}
+    .reveal .metrics-definitions h2{font-size:32px;margin:0 0 12px}
+    .reveal .metrics-definitions p{font-size:27px;line-height:1.4}
+    .batch-why{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:28px}
+    .reveal .batch-why h2{font-size:27px;line-height:1.25;margin:0 0 12px}
+    .reveal .batch-why p{font-size:24px;line-height:1.4}
+    .reveal .quiz-facts{font-size:27px;line-height:1.5;margin-bottom:34px}
+    .reveal .quiz-line{font-size:30px;line-height:1.7;margin:18px 0}
+    .quiz-slot{display:inline-grid;min-width:160px;text-align:center;border-bottom:2px solid #1e6657;color:var(--green);font-weight:650}
+    .quiz-slot>span{grid-area:1/1}
+    .reveal .quiz-explanation{font-size:25px;line-height:1.4;margin-top:28px;padding-top:22px;border-top:1px solid #aebeb5}
+    .request-chips{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:12px 0 22px}
+    .request-chips span{padding:12px 4px;background:#e5ebe7;text-align:center;font-size:23px}
+    .reveal .hardware-batch h1,.reveal .disaggregation h1{font-size:56px}
+    .reveal .hardware-batch .examples-table{font-size:23px}
+    .reveal .disaggregation .lever-intro{font-size:26px;margin-bottom:22px}
+    .reveal .disaggregation .lever-panel{padding:18px 22px}
+    .reveal .disaggregation .lever-result{font-size:26px}
+    .reveal .serving-sla h1{font-size:52px}
+    .reveal .serving-sla .examples-table{font-size:24px}
+    .reveal .serving-sla .examples-table td:first-child{font-weight:650;width:15%}
+    .reveal .serving-sla .lever-result{font-size:26px}
+    .reveal .serving-sla .workload-note{font-size:22px}
+    .reveal .bitter-lesson h1{font-size:68px;margin-bottom:26px}
+    .reveal .bitter-lesson blockquote{font-size:31px;line-height:1.45;margin:0;max-width:1120px}
+    .reveal .bitter-lesson .bitter-principle{font-size:26px;line-height:1.4;margin-top:24px}
+    .reveal .bitter-lesson h2{font-size:32px;letter-spacing:-.025em;margin:32px 0 20px}
+    .reveal .bitter-lesson .system-flow{margin:0 0 26px;gap:10px}
+    .reveal .bitter-lesson .system-node{font-size:23px;padding:22px 10px;background:#e5ebe7;border:0}
+    .reveal .bitter-lesson .bitter-example{font-size:26px;line-height:1.45}
+    .reveal .bitter-lesson .source-line{margin-top:14px}
+    .reveal .bitter-lesson .bitter-role{font-size:27px;font-weight:650;color:var(--green);margin-top:22px;padding-top:18px;border-top:1px solid #aebeb5}
+  </style>
+</head>
+<body>
+  <div class="reveal"><div class="slides">
+    <section class="title-slide">
+      <h1>Inference Engineering × Applied AI</h1>
+      <p>Presented by Danial Hasan × Pillars Network</p>
+    </section>
+    <section>
+      <h1>Danial Hasan</h1>
+      <p>Member of Technical Staff · Appear</p>
+    </section>
+    <section class="bio">
+      <h1>Who I am</h1>
+      <div class="bio-layout"><div>
+      <ul>
+        <li>Started programming at <strong>13</strong>.</li>
+        <li>Turned down a Waterloo offer to work full time at <strong>Compass Digital</strong>, building software for restaurant operators to manage logistics and operations.</li>
+      </ul>
+      </div><img src="assets/kitchen-display.jpg" alt="Restaurant worker using a kitchen display to manage orders"></div>
+    </section>
+    <section class="bio">
+      <h1>Who I am</h1>
+      <div class="bio-later"><div>
+      <ul>
+        <li>Moved to downtown Toronto about three years ago.</li>
+        <li>Led workshops on Claude Code, agent orchestration, harness engineering, and mechanistic interpretability; collaborated with <strong>AWS in 2025</strong>.</li>
+        <li>Built <strong>2 startups</strong>, started an <strong>AI consulting business</strong>.</li>
+        <li>Now <strong>Member of Technical Staff at Appear</strong>, a growth engineering startup.</li>
+      </ul>
+      </div><div class="bio-photos">
+        <img src="assets/rootly-workshop.webp" alt="Danial presenting Context Engineering for Agent Swarms at Rootly">
+        <img src="assets/buildfuture-stage.webp" alt="Danial presenting Using Codex for Product and Harness Engineering at BuildFuture">
+      </div></div>
+      <aside class="notes">Career details supplied by Danial. Workshop history: https://luma.com/user/danialhasan . AWS collaboration: https://luma.com/m67l61pa . Rootly and BuildFuture photographs identified on https://www.danialh.com/ and selected by Danial.</aside>
+    </section>
+    <section class="contents">
+      <h1>What we’ll cover</h1>
+      <div class="contents-grid">
+        <ol>
+          <li><a href="#/workloads">Workloads</a></li>
+          <li><a href="#/service-commitments">Service commitments ($$$)</a></li>
+          <li><a href="#/ontologies">Ontologies</a></li>
+          <li><a href="#/hardware">Hardware</a></li>
+        </ol>
+        <ol start="5">
+          <li><a href="#/prefill-and-decode">Prefill and decode</a></li>
+          <li><a href="#/inference-engineering-levers">Inference engineering levers</a></li>
+          <li><a href="#/applied-ai-levers">Applied AI levers</a></li>
+          <li><a href="#/putting-it-together">Putting it together</a></li>
+        </ol>
+      </div>
+      <p class="workshop-next">Then, we’ll apply these ideas in the workshop.</p>
+    </section>
+    <section class="section-divider" data-phase="Lecture">
+      <h1>Lecture</h1>
+      <p>Workloads, systems, and engineering decisions.</p>
+    </section>
+    <section class="fields">
+      <h1>Inference engineering and applied AI</h1>
+      <div class="field-columns">
+        <div>
+          <h2>Inference engineering</h2>
+          <p>Build the systems that run trained AI models.</p>
+          <p>Make model responses fast, reliable, and efficient.</p>
+          <p class="example">Example: the server that runs a model.</p>
+        </div>
+        <div>
+          <h2>Applied AI</h2>
+          <p>Use AI models to solve a problem.</p>
+          <p>Build the application, connect its tools, and check its results.</p>
+          <p class="example">Example: a coding agent.</p>
+        </div>
+      </div>
+    </section>
+    <section class="workloads">
+      <h1>Inference engineering and applied AI</h1>
+      <table class="workload-table">
+        <thead><tr><th>Company</th><th>Inference engineering</th><th>Applied AI</th></tr></thead>
+        <tbody>
+          <tr><td><span class="company-brand"><img src="assets/logos/baseten.png" alt="">Baseten</span></td><td>Model serving</td><td>—</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/modal.svg" alt="">Modal</span></td><td>GPU compute and model serving</td><td>—</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/groq.svg" alt="">Groq</span></td><td>Inference hardware and API</td><td>—</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/together.png" alt="">Together AI</span></td><td>Shared and dedicated model serving</td><td>—</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/fireworks.ico" alt="">Fireworks</span></td><td>Model serving and optimization</td><td>—</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/cursor.svg" alt="">Cursor</span></td><td>Composer serving</td><td>Editor and coding agent</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/opencode.svg" alt="">OpenCode</span></td><td>Zen · managed model access</td><td>OpenCode · coding agent</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/factory.svg" alt="">Factory</span></td><td>Managed inference</td><td>Droid · coding agent</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/coderabbit.png" alt="">CodeRabbit</span></td><td>—</td><td>Code review</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/harvey.png" alt="">Harvey</span></td><td>—</td><td>Legal research and document work</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Selected workloads. One company can work in both areas.</p>
+      <aside class="notes">Classify the illustrated workloads, not every activity in each company. Managed model access can route to external inference providers; it does not establish ownership of GPU infrastructure. OpenCode Zen describes itself as a gateway working with providers. Sources: https://opencode.ai/docs/zen/ ; https://docs.factory.com/models ; https://docs.factory.com/droid-cli/settings ; https://cursor.com/resources/Composer2.pdf ; https://www.baseten.co/ ; https://modal.com/ . Additional sources: https://groq.com/ ; https://www.together.ai/serverless-inference ; https://fireworks.ai/inference ; https://www.coderabbit.ai/ide ; https://www.harvey.ai/ . A dash means no workload example is shown in that column, not that the company does no work in that area. Logos are from the official company sites. Reviewed November 10, 2026.</aside>
+    </section>
+    <section id="workloads" class="section-divider" data-subsection="Workloads">
+      <h1>Workloads</h1>
+      <p>The work people need done determines what the system must deliver.</p>
+    </section>
+    <section class="workload-bridge">
+      <h1>It's all about the workload</h1>
+      <div class="bridge-flow">
+        <div><h2>Applied AI</h2><p>Define the task.<br>Check the result.</p></div>
+        <span class="bridge-arrow" aria-hidden="true">→</span>
+        <div><h2>The workload</h2><p>What inputs?<br>How much output?<br>How many requests?</p></div>
+        <span class="bridge-arrow" aria-hidden="true">→</span>
+        <div><h2>Inference engineering</h2><p>Run that work within its time, cost, and quality requirements.</p></div>
+      </div>
+      <blockquote class="book-quote">“Every inference engineering decision you make will be downstream of your use case.”</blockquote>
+      <p class="book-cite">Philip Kiely, <em>Inference Engineering</em> (2026), §1.2 “About Your App,” p. 27</p>
+      <aside class="notes">Direct quote transcribed from the supplied book, printed page 27. The diagram is our explanation, not a quotation. Chapter 4 §4.5, pp. 112–113 expands workload characterization to sequence lengths, traffic volume and pattern, request contents, and input parameters. Distinguish the requests being processed from the time, quality and cost requirements imposed on the system. Source: Philip Kiely, Inference Engineering, Baseten Books, 2026.</aside>
+    </section>
+    <section class="workloads workflow-companies">
+      <h1>Workloads in the industry</h1>
+      <table class="workload-table">
+        <thead><tr><th>Company</th><th>Workload</th><th>Input → output</th><th>What matters?</th></tr></thead>
+        <tbody>
+          <tr><td><span class="company-brand"><img src="assets/logos/baseten.png" alt="">Baseten</span></td><td><strong>Model serving</strong><small>An app asks a model to summarize a document.</small></td><td>Model requests → generated responses</td><td>Response time, capacity, and cost.</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/modal.svg" alt="">Modal</span></td><td><strong>Batch inference</strong><small>Classify 10,000 support tickets overnight.</small></td><td>Many input records → model results</td><td>Finish by the deadline at a low cost.</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/cursor.svg" alt="">Cursor</span></td><td><strong>Coding agent</strong><small>Fix a login bug and run the tests.</small></td><td>Task + code + tool results → code changes</td><td>Complete the task correctly across many calls.</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/coderabbit.png" alt="">CodeRabbit</span></td><td><strong>Code review</strong><small>Check a proposed code change for bugs.</small></td><td>Code changes + context → review findings</td><td>Find real problems with few false alarms.</td></tr>
+          <tr><td><span class="company-brand"><img src="assets/logos/harvey.png" alt="">Harvey</span></td><td><strong>Legal research</strong><small>Find when a customer can cancel a contract.</small></td><td>Question + sources → answer with citations</td><td>Use the right sources and support the answer.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">One application workflow can make many model requests.</p>
+      <aside class="notes">Illustrative workflows, not measured traffic or exhaustive descriptions of each company. Two inference-focused examples, two application-focused examples, and Cursor spanning both. A dash means no example is shown, not that the company does no work in that area. Baseten: https://docs.baseten.co/inference/model-apis/overview . Modal: https://modal.com/ . Cursor model and agent: https://cursor.com/resources/Composer2.pdf and https://cursor.com/ . CodeRabbit: https://www.coderabbit.ai/ . Harvey research: https://www.harvey.ai/ . Workload characterization: Philip Kiely, Inference Engineering (2026), §4.5, pp. 112–113. Reviewed November 10, 2026.</aside>
+    </section>
+    <section class="workload-examples audience-examples">
+      <h1>Workloads in this room</h1>
+      <table class="examples-table">
+        <thead><tr><th>Audience project</th><th>Possible model workload</th><th>What matters?</th></tr></thead>
+        <tbody>
+          <tr><td>RAG pipeline on AWS</td><td>Question + retrieved text → answer</td><td>Relevant sources and response time</td></tr>
+          <tr><td>Enterprise AI research</td><td>Documents → report with sources</td><td>Long inputs and supported claims</td></tr>
+          <tr><td>UN contract scraper</td><td>Contract pages → structured fields</td><td>Accurate extraction at volume</td></tr>
+          <tr><td>AI damage assessment</td><td>Images → damage assessment</td><td>Image detail and accuracy</td></tr>
+          <tr><td>IDS anomaly detection</td><td>Network activity → anomaly score</td><td>Rare threats and false alarms</td></tr>
+          <tr><td>Calendar, Notion, and home agents</td><td>Request + tool results → next action</td><td>Correct actions across repeated calls</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">MCP servers and the 900 GB streaming platform provide infrastructure.<br>Any model calls they make create an inference workload.</p>
+      <aside class="notes">Source: organizer-provided audience summary, WhatsApp Image 2026-11-03 at 10.30.23.jpeg, based on 41 registrations. Project names are reported by the organizer. Model workloads and requirements here are proposed examples for discussion, not verified implementations. In particular the contract scraper may be deterministic, IDS need not use a language model, and a streaming platform or MCP server does not necessarily perform inference. Ask participants how their actual systems work. The reported $3k/month saving is not independently verified and is not reproduced here.</aside>
+    </section>
+    <section id="latency-throughput" class="metrics-slide">
+      <h1>Latency and throughput</h1>
+      <div class="metrics-definitions">
+        <div><h2>Latency</h2><p>How long one request takes.<br>For streaming, also measure when tokens arrive.</p></div>
+        <div><h2>Throughput</h2><p>How much work the whole system completes per second.</p></div>
+      </div>
+      <table class="examples-table">
+        <thead><tr><th>Same processor capacity</th><th>Tokens per second, per user</th><th>Tokens per second, total</th></tr></thead>
+        <tbody>
+          <tr><td>Serve 1 request at a time</td><td>100</td><td>100</td></tr>
+          <tr><td>Serve 8 requests together</td><td>40</td><td>320</td></tr>
+        </tbody>
+      </table>
+      <div class="batch-why">
+        <div><h2>Why each user gets tokens more slowly</h2><p>A larger batch does more work in each generation step, so the step can take longer.</p></div>
+        <div><h2>Why the system produces more tokens</h2><p>One read of the model weights serves several requests. Each step produces a token for each request.</p></div>
+      </div>
+      <p class="source-line">Illustrative numbers, not a benchmark. Kiely, <em>Inference Engineering</em> (2026), §1.2.2, pp. 29–30; §1.4, pp. 35–37.</p>
+      <aside class="notes">The same allocated processor capacity is assumed in both constructed examples. Compare generation rate after the first token: one active request at 100 tokens/s versus eight active requests at 40 each, totaling 320. This is a teaching example, not a guarantee that batching produces this ratio. With the same output length, slower per-user generation increases generation time, but total request latency also includes queueing, prefill and application work. More batching can improve weight reuse and aggregate throughput while increasing per-user delay; hardware, runtime, model and workload determine the result. At a fixed processor cost, higher useful throughput can reduce infrastructure cost per token. Faster kernels can improve both latency and throughput, so they are not always opposing outcomes. Requests in flight is concurrency, not requests per second. Connect the definitions to the 30-second complete-report requirement.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>One user: response time and quality</h1>
+      <p class="budget-caption">Does this person get a useful result soon enough?</p>
+      <table class="examples-table">
+        <thead><tr><th>Workload</th><th>What the user needs</th><th>What we measure</th></tr></thead>
+        <tbody>
+          <tr><td>Code completion</td><td>A useful suggestion before they type past it.</td><td>Time to a complete suggestion; acceptance rate.</td></tr>
+          <tr><td>Chat</td><td>A correct answer that starts promptly and streams smoothly.</td><td>Time to first token; gaps between tokens; answer quality.</td></tr>
+          <tr><td>Coding agent</td><td>A correct code change that passes the checks.</td><td>Total task time; task success.</td></tr>
+          <tr><td>Document research</td><td>A supported report within 30 seconds.</td><td>Complete-report time; source support.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Follow one request from start to useful result.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.4, pp. 35–37. Examples adapted to our workloads.</p>
+      <aside class="notes">This slide takes the user's perspective on the same four workloads that appear on the next slide. Latency can mean time to first token, gaps between tokens, or time to a complete useful result, depending on the task. Quality still matters: a fast incorrect result is not success. The 30-second report is our illustrative service requirement, not a measured vendor guarantee. A coding task can contain several model and tool calls.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1 style="font-size:52px">Many users: throughput, reliability, and cost</h1>
+      <p class="budget-caption">Can we deliver the same experience as demand grows?</p>
+      <table class="examples-table">
+        <thead><tr><th>Same workload</th><th>What the service must do</th><th>What we measure across requests</th></tr></thead>
+        <tbody>
+          <tr><td>Code completion</td><td>Keep suggestions fast during busy periods.</td><td>Useful suggestions per second; response-time percentiles; cost.</td></tr>
+          <tr><td>Chat</td><td>Keep many conversations responsive at once.</td><td>Total output tokens per second; delays; errors; cost per conversation.</td></tr>
+          <tr><td>Coding agent</td><td>Complete many tasks without long queues.</td><td>Successful tasks per hour; queue time; failure rate; cost per task.</td></tr>
+          <tr><td>Document research</td><td>Keep the 30-second promise as requests arrive.</td><td>Reports per minute; share within 30 seconds; failure rate; cost per report.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">More work per second helps only if users still get correct results on time.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.2.2, pp. 29–30; §1.4, pp. 35–37; §4.5, pp. 112–114.</p>
+      <aside class="notes">Use exactly the same four workloads as the previous slide to change perspective, not topic. Throughput is completed work per unit of time; concurrency is work in progress and is not a throughput measurement. Measure throughput together with per-request response-time distributions, quality, failures and cost under representative load. Percentiles describe a distribution across requests; one fast request does not prove service performance. Useful suggestions, successful tasks and supported reports are application outcomes, while total output tokens per second is a model-serving measure. Increasing batching may increase total token throughput while increasing individual delays. This leads into business promises and the illustrative enterprise service level agreement.</aside>
+    </section>
+    <section id="service-commitments" class="section-divider" data-subsection="Service commitments">
+      <h1>Service commitments</h1>
+      <p>Turn customer needs into measurable promises, costs, and consequences.</p>
+    </section>
+    <section class="sla">
+      <h1>An example enterprise service level agreement</h1>
+      <div class="sla-columns">
+        <div>
+          <h2>The work covered</h2>
+          <p><strong>One request = one report job:</strong><br>one question + source documents → one report with citations.</p>
+          <p>Each job: up to <strong>16,000 input tokens</strong> and <strong>1,000 output tokens</strong>.</p>
+          <p>The application handles up to <strong>20 report jobs at once</strong>, including queued jobs.</p>
+          <p>Example fee: <strong>US$20,000 per month</strong>.</p>
+        </div>
+        <div>
+          <h2>The monthly commitments</h2>
+          <p><strong>95%</strong> of eligible requests return a complete report within <strong>30 seconds</strong>.</p>
+          <p><strong>99.9%</strong> of eligible requests succeed within the <strong>60-second timeout</strong>.</p>
+          <p>If either target is missed, a <strong>5% service credit</strong> means <strong>US$1,000</strong> toward a future bill.</p>
+        </div>
+      </div>
+      <p class="sla-foot">The measurement is the service level indicator (SLI), and its target is the service level objective (SLO).<br>The agreement and its consequences form the service level agreement (SLA).</p>
+      <p class="source-line">Terminology: Google, <a href="https://sre.google/sre-book/service-level-objectives/">Site Reliability Engineering, chapter 4</a>. Terms and fee above are illustrative.</p>
+      <aside class="notes">This simplified teaching example is not legal advice or an actual vendor SLA. Eligible means valid requests within the stated input, output and concurrency limits. Measure from receipt at the service boundary until the complete response is sent, including queueing, retrieval and inference; do not describe this as browser-observed latency. All eligible requests form the monthly denominator, including service rejections and failures. Failures count as latency misses. Success means a complete report response with citation fields and no service error within 60 seconds; it does not establish factual correctness. A result after 30 but within 60 seconds can pass the success target and miss the latency target. A single 5% credit applies if either or both targets are missed. Keep answer quality as a separate explicit release gate. A production contract would need fuller definitions and remedies. An internal SLO can be tighter than the contractual target; do not conflate them. Source for terminology, not numerical promises: https://sre.google/sre-book/service-level-objectives/ .</aside>
+    </section>
+    <section class="sla">
+      <h1>Real prices and service credits</h1>
+      <div class="sla-columns">
+        <div>
+          <h2>OpenAI · GPT-6.1 Sol</h2>
+          <p><strong>Standard pricing per million tokens:</strong><br>US$2 input · US$10 output.</p>
+          <p>Our 16,000-input + 1,000-output job:<br><strong>US$0.042 per report</strong>.</p>
+          <p>100,000 reports per month:<br><strong>US$4,200 in model usage</strong>.</p>
+        </div>
+        <div>
+          <h2>Baseten · published credit tiers</h2>
+          <p>For an illustrative <strong>US$100,000 monthly bill</strong> for the affected service:</p>
+          <table class="examples-table budget-table">
+            <thead><tr><th>Monthly availability</th><th>Credit</th></tr></thead>
+            <tbody>
+              <tr><td>99.5% to below 99.9%</td><td><strong>US$10,000</strong> · 10%</td></tr>
+              <tr><td>99.0% to below 99.5%</td><td><strong>US$15,000</strong> · 15%</td></tr>
+              <tr><td>Below 99.0%</td><td><strong>US$30,000</strong> · 30%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="sla-foot">These are different providers' terms. Neither promises our complete application will respond in 30 seconds.</p>
+      <p class="source-line">Sources: OpenAI <a href="https://developers.openai.com/api/docs/pricing">Standard pricing</a> · <a href="https://www.baseten.co/service-level-agreement">Baseten service level agreement</a>, checked November 10, 2026.<br>US dollars. Model-cost example excludes caching, tools, retries, taxes, and other application costs. Baseten bill size is assumed.</p>
+      <aside class="notes">GPT-6.1 Sol Standard only. Published short-context rates are $2 per million input tokens and $10 per million output tokens. With one call per report, 16,000 uncached input tokens and 1,000 total billable output tokens, cost is 0.016*2+0.001*10=$0.042. At 100,000 identical reports this is $4,200 in model usage. Job count and token volumes are illustrative, not measured. Reasoning tokens, when generated, are billable output and must fit the assumed 1,000 total here; additional reasoning increases cost. Caching, tool calls, retries, retrieval, storage, networking, support and taxes are excluded. This is a usage estimate, not reserved capacity or an all-inclusive enterprise quote, and it does not guarantee the application's 30-second response. Source checked November 10, 2026: https://developers.openai.com/api/docs/pricing . Baseten's September 15, 2026 terms cover eligible managed Dedicated Inference and Model APIs, target 99.9% monthly system availability, and list credits of 10%, 15% and 30% in the shown bands. The $100,000 affected-service bill is assumed to translate percentages into dollars. Credits apply to future service, subject to exclusions and the claim process, including its 24-hour request window. Availability does not cover scaling beyond reserved capacity. These examples are separate provider terms. The preceding $20,000 application fee and 5% credit remain fictional.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>What does that promise require?</h1>
+      <table class="examples-table">
+        <thead><tr><th>Requirement</th><th>Engineering decision</th><th>Evidence we need</th></tr></thead>
+        <tbody>
+          <tr><td>A complete report in 30 seconds</td><td>Budget time for retrieval, queues, and generation.</td><td>End-to-end latency, including the slowest 5%.</td></tr>
+          <tr><td>Long inputs and 20 requests in flight</td><td>Size memory and capacity; tune batching against queue delay.</td><td>A load test with these input and output sizes.</td></tr>
+          <tr><td>99.9% successful responses</td><td>Plan spare capacity, failover, and bounded retries.</td><td>Failure tests and monthly service measurements.</td></tr>
+          <tr><td>Supported answers at a viable cost</td><td>Evaluate model choice, retrieval, and caching together.</td><td>Answer quality and cost per successful report.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">A faster model call helps only if the complete service meets its requirements.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.4.2, p. 37; §4.5, pp. 112–114.<br>Engineering choices are proposed responses to the fictional SLA, not measured guarantees.</p>
+      <aside class="notes">Start with a measured baseline. Break down the 30-second service budget before choosing an optimization. Test the stated workload envelope and realistic arrival patterns, not only 20 synchronized requests once. Long inputs and concurrent sequences affect cache memory and capacity. Larger batches can improve throughput but increase waiting time, so measure whether they help this latency objective. A single benchmark does not prove a monthly 99.9% service commitment. Failure recovery must fit the timeout and preserve correctness; fallback models need separate quality evaluation. The book's §1.4.2 distinguishes inference-only and end-to-end time and says infrastructure deserves attention when generation is fast but end-to-end time is slow. §4.5 explains representative benchmarking. Supported answers and cost are additional product and business requirements in this example, not silently added SLA terms.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Where do the 30 seconds go?</h1>
+      <p class="budget-caption">An example budget: 24 seconds of work, with 6 seconds of headroom.</p>
+      <div class="time-budget" role="img" aria-label="Example 30-second budget: retrieve sources 3, queue 2, process input 4, generate report 14, validate and send 1, headroom 6 seconds.">
+        <span style="flex:3">3</span><span style="flex:2">2</span><span class="model-time" style="flex:4">4</span><span class="model-time" style="flex:14">14</span><span style="flex:1">1</span><span class="reserve-time" style="flex:6">6</span>
+      </div>
+      <table class="examples-table budget-table">
+        <thead><tr><th>Stage</th><th>Budget</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td>Retrieve sources</td><td>3 seconds</td><td>Find the documents needed for the answer.</td></tr>
+          <tr><td>Wait for model capacity</td><td>2 seconds</td><td>The request waits in a queue.</td></tr>
+          <tr><td>Process the input</td><td>4 seconds</td><td>The model reads the prompt and sources: prefill.</td></tr>
+          <tr><td>Generate the report</td><td>14 seconds</td><td>The model produces the output tokens: decode.</td></tr>
+          <tr><td>Validate and send</td><td>1 second</td><td>Check the response format and return the report.</td></tr>
+          <tr><td>Headroom</td><td>6 seconds</td><td>Allow for variation across requests.</td></tr>
+        </tbody>
+      </table>
+      <p class="source-line">Illustrative allocation, not a measurement. Time runs from service receipt to complete response.<br>Kiely, <em>Inference Engineering</em> (2026), §1.4.2, p. 37.</p>
+      <aside class="notes">Continue the same fictional document-research service: up to 16,000 input tokens, 1,000 output tokens and 20 requests in flight. Assume sources are already indexed and this request uses retrieval followed by one model call, with no agent tool loop. The numbers allocate a possible engineering budget and do not establish that any chosen model or hardware can meet it. Prefill and decode are simplified labels: tokenization, transfer, sampling and internal scheduler waits must be assigned consistently in the actual trace. The final one-second allowance covers format checking and response transmission to the service boundary, not proof of factual correctness or the user's network. Headroom is unused allowance, not an actual processing stage or permission to sleep. Stage percentile values do not add to an end-to-end percentile; trace whole requests and check the overall 95% target directly. A client could see the first streamed token much earlier while still waiting too long for the complete report. Book source: §1.4.2, p.37 on end-to-end measurement.</aside>
+    </section>
+    <section id="ontologies" class="section-divider" data-subsection="Ontologies">
+      <h1>Ontologies</h1>
+      <p>The parts of inference systems, AI applications, and the businesses around them.</p>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Two layers, different levers</h1>
+      <div class="workflow-scope">
+        <h2>Applied AI owns the complete application workflow</h2>
+        <div class="workflow-stages">
+          <div>Retrieve<br>sources</div><div>Wait for<br>capacity</div><div class="inference-stage">Process<br>input</div><div class="inference-stage">Generate<br>report</div><div>Validate<br>and send</div>
+          <span class="inference-scope">Inference engineering runs the model</span>
+        </div>
+      </div>
+      <div class="field-columns scope-levers">
+        <div><h2>Applied AI levers</h2><p>Choose sources, shape the prompt, coordinate calls, and check the result.</p></div>
+        <div><h2>Inference engineering levers</h2><p>Manage model memory, reuse computation, tune batching, and improve execution.</p></div>
+      </div>
+      <p class="workload-note">Both affect the 30-second result. Queue time also depends on serving capacity.</p>
+      <aside class="notes">This is a teaching view of two overlapping layers, not an exclusive division of engineering jobs. Applied AI includes the full application flow, including how it calls the model and consumes its result. Inference engineering specializes in executing that model workload and serving it at the required quality, speed, reliability and cost. Input processing and generation are highlighted as the model execution stages. Serving capacity, scheduling, batching and warm workers also influence waiting time, so the unhighlighted queue is not outside inference engineering's remit. Prompt length and output requirements are set at the application layer but directly affect execution cost and latency. Retrieval may itself use embedding or reranking inference; the simplified diagram treats retrieval as one application stage without claiming it contains no models. Based on the prior illustrative 30-second workflow. Framing is our explanation, not a direct book quote; see Philip Kiely, Inference Engineering (2026), §1.2, pp.27–30; §1.4.2, p.37.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Inside an inference system</h1>
+      <div class="system-flow">
+        <div class="system-node">Requests</div><span class="system-arrow">→</span><div class="system-node">Queue and<br>scheduler</div><span class="system-arrow">→</span><div class="system-node">Model execution</div><span class="system-arrow">→</span><div class="system-node">Outputs</div>
+      </div>
+      <table class="examples-table ontology-table">
+        <thead><tr><th>Part</th><th>How it connects</th></tr></thead>
+        <tbody>
+          <tr><td>Model</td><td>Its learned weights define the computation needed for a response.</td></tr>
+          <tr><td>Runtime</td><td>Runs that computation using optimized operations on the hardware.</td></tr>
+          <tr><td>Hardware and memory</td><td>Hold model weights and request state, and perform the computation.</td></tr>
+          <tr><td>Cache</td><td>Stores reusable computation, which can reduce repeated work.</td></tr>
+          <tr><td>Serving system</td><td>Routes requests across model replicas and manages available capacity.</td></tr>
+        </tbody>
+      </table>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), chapters 2–5 and 7.<br>A simplified map of the parts and their relationships.</p>
+      <aside class="notes">This is an ontology in the practical sense: what things exist and how they relate. Distinguish model (weights and architecture), runtime (software that executes the model), hardware (compute and memory), transient per-request state, cache and serving deployment. A replica is another running copy of a model service, not a different trained model. Scheduling chooses which waiting requests participate in an execution step; batching groups work. Routing chooses a replica. Measurements across these components identify the bottleneck before selecting a lever. The pipeline is simplified: scheduling and execution interleave during generation. Book references: chapters 2 neural networks, 3 hardware, 4 software, 5 techniques, 7 production.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Inside an applied AI system</h1>
+      <div class="system-flow">
+        <div class="system-node">User task</div><span class="system-arrow">→</span><div class="system-node">Context and<br>instructions</div><span class="system-arrow">→</span><div class="system-node">Model calls<br>and tools</div><span class="system-arrow">→</span><div class="system-node">Checked result</div>
+      </div>
+      <table class="examples-table ontology-table">
+        <thead><tr><th>Part</th><th>How it connects</th></tr></thead>
+        <tbody>
+          <tr><td>Task and success criteria</td><td>Define the useful outcome and how to judge it.</td></tr>
+          <tr><td>Context</td><td>Supplies instructions, retrieved sources, and working history.</td></tr>
+          <tr><td>Tools and state</td><td>Read or change external systems and retain progress.</td></tr>
+          <tr><td>Orchestration</td><td>Coordinates model calls, tool results, retries, and stopping.</td></tr>
+          <tr><td>Evaluation and controls</td><td>Check result quality and constrain which actions are allowed.</td></tr>
+        </tbody>
+      </table>
+      <p class="source-line">Examples: Cursor, OpenCode, and Factory coordinate coding work; CodeRabbit reviews code; Harvey supports legal work.<br>Product examples from the earlier company slide; this system map is our explanation.</p>
+      <aside class="notes">The application uses the inference system from the previous slide as a component, potentially through a provider API. The flow may loop: a tool result becomes context for the next model call. State can include code changes, a calendar event or the application's own stored progress. Evaluation judges the useful task outcome; a successful HTTP response does not prove that outcome. Tool permissions and approvals belong to application controls. The exact internal architectures of these named companies are not asserted. Sources are the official product pages in the earlier company slide. The conceptual framing extends Kiely §1.2, pp.27–30, and is not a direct book quote.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Where the businesses fit</h1>
+      <div class="system-flow">
+        <div class="system-node">Customer</div><span class="system-arrow">→</span><div class="system-node">AI product</div><span class="system-arrow">→</span><div class="system-node">Model service</div><span class="system-arrow">→</span><div class="system-node">Compute</div>
+      </div>
+      <table class="examples-table ontology-table">
+        <thead><tr><th>What is supplied</th><th>Examples from our company table</th><th>What the buyer needs</th></tr></thead>
+        <tbody>
+          <tr><td>A useful application</td><td>Cursor · OpenCode · Factory Droid<br>CodeRabbit · Harvey</td><td>The work completed well.</td></tr>
+          <tr><td>Managed model access</td><td>OpenCode Zen · Factory managed inference</td><td>Access to models through a service.</td></tr>
+          <tr><td>Model serving</td><td>Baseten · Together AI · Fireworks · Groq</td><td>Reliable model responses at the required scale.</td></tr>
+          <tr><td>Compute and infrastructure</td><td>Modal · Groq</td><td>Capacity to run the workload.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">One company can supply several layers. Cursor combines an application with its own model and serving work.</p>
+      <p class="source-line">Selected product roles, not exclusive company categories. Sources: official product pages cited on the company slide.</p>
+      <aside class="notes">Read the arrows as dependencies and service relationships, not a claim that every product buys from the next named company. Products can self-host, consume a provider API, or combine both. OpenCode is also an open-source product; using it does not imply paying for the software. Managed access may route to another provider and does not prove ownership of inference hardware. Modal supplies compute and supports serving; Groq supplies inference hardware and a hosted service. A model developer is another possible business role; Cursor's Composer is one example already present in the deck. The customer contract applies to the delivered service, while supplier commitments cover components and do not automatically guarantee the application's end-to-end promise. Sources: https://cursor.com/resources/Composer2.pdf ; https://opencode.ai/docs/zen/ ; https://docs.factory.com/models ; https://docs.factory.com/droid-cli/settings ; https://www.baseten.co/ ; https://modal.com/ ; https://groq.com/ ; https://www.together.ai/serverless-inference ; https://fireworks.ai/inference ; https://www.coderabbit.ai/ide ; https://www.harvey.ai/ .</aside>
+    </section>
+    <section id="hardware" class="section-divider" data-subsection="Hardware">
+      <h1>Hardware</h1>
+      <p>How compute, memory, and bandwidth shape what a system can do.</p>
+    </section>
+    <section class="hardware-detail">
+      <h1>What is a GPU?</h1>
+      <p class="lever-intro">A graphics processing unit is a processor built to do many similar calculations at the same time. That makes it useful for the matrix operations in AI models.</p>
+      <div class="lever-panel">
+        <h2>One operation, many pieces of data</h2>
+        <div class="operation-flow"><span class="memory">2</span><span class="memory">4</span><span class="memory">6</span></div>
+        <div class="parallel-branches" style="margin:14px 0"><span>× 3</span><span>× 3</span><span>× 3</span></div>
+        <div class="operation-flow"><span class="memory">6</span><span class="memory">12</span><span class="memory">18</span></div>
+      </div>
+      <p class="lever-result"><strong>Compute</strong> is the calculation capacity: how much arithmetic the processor can perform per second.</p>
+      <p class="lever-tradeoff">A central processing unit (CPU) handles general program logic; a GPU accelerates large amounts of parallel arithmetic.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §§3.1–3.1.1, pp. 74–75.<br>Illustrative arithmetic, not a chip diagram or benchmark.</p>
+      <aside class="notes">The book describes GPUs as performing a uniform operation over many independent data items and connects that ability to matrix multiplication in inference. Three lanes illustrate parallel work, not a literal GPU core count or timing claim. CPUs also support parallel and vector operations; this is a difference in specialization, not an absolute division. Modern GPUs include specialized matrix arithmetic units. Compute is often specified as floating-point operations per second, abbreviated FLOPS; compare the same number format and dense or sparse assumptions before comparing specifications. Do not equate more advertised compute with faster performance for every workload.</aside>
+    </section>
+    <section class="hardware-detail">
+      <h1>Memory: does the work fit?</h1>
+      <p class="lever-intro">The model's weights are the numbers learned during training. Memory must hold those weights and the working state of active requests.</p>
+      <div class="lever-panel">
+        <h2>Illustration: a model with 7 billion weights, stored at 16 bits each</h2>
+        <div class="operation-flow"><span class="memory">7 billion<br>weights</span><span class="arrow">×</span><span class="memory">2 bytes<br>per weight</span><span class="arrow">=</span><span class="operation">About 14 GB<br>for weights alone</span></div>
+      </div>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">Model weights</span><span class="arrow">+</span><span class="memory">Active request state</span><span class="arrow">+</span><span class="memory">Runtime workspace</span><span class="arrow">→</span><span class="operation">Total memory<br>needed</span></div></div>
+      <p class="lever-result">Longer context and more simultaneous requests need more working memory.</p>
+      <p class="lever-tradeoff">More memory can hold a larger batch, but the batch must still meet each user’s time limit.</p>
+      <p class="source-line">Adapted from the book's sizing rule: Kiely, <em>Inference Engineering</em> (2026), §3.1.2, pp. 76–77; §5.4, p. 142.<br>The 14 GB estimate excludes request state, workspace, and storage overhead.</p>
+      <aside class="notes">One byte contains eight bits, so 16-bit weights use two bytes per value. Seven billion times two bytes is 14 billion bytes, or 14 decimal GB. This is an illustrative model size, not a named model specification. The book gives the related rule that a billion 8-bit parameters requires about one GB for weights. Request state includes cached attention values used during generation. Actual memory sizing also includes activations, workspaces, metadata and fragmentation. A particular workload may fail or slow down even if its weights fit. Apple silicon shares physical memory across the system, unlike the separate onboard memory on the datacenter GPUs discussed here, so do not treat installed Mac memory as wholly available to one model.</aside>
+    </section>
+    <section class="hardware-detail">
+      <h1>Bandwidth: can data arrive fast enough?</h1>
+      <p class="lever-intro">Memory capacity tells us how much fits. Memory bandwidth tells us how many bytes can move between memory and computation each second.</p>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">Weights and<br>request state</span><span class="arrow">→</span><span class="operation">Memory bandwidth<br>carries the data</span><span class="arrow">→</span><span class="memory">Compute units<br>use the data</span></div></div>
+      <table class="examples-table">
+        <thead><tr><th>The book's example</th><th>H100</th><th>H200</th></tr></thead>
+        <tbody>
+          <tr><td>Memory capacity</td><td>80 GB</td><td>141 GB</td></tr>
+          <tr><td>Memory bandwidth</td><td>3.35 TB per second</td><td>4.8 TB per second</td></tr>
+          <tr><td>8-bit dense compute</td><td>1,979 trillion operations per second</td><td>1,979 trillion operations per second</td></tr>
+        </tbody>
+      </table>
+      <p class="lever-result">More bandwidth can speed up each request; batching can reuse weight reads to serve more requests.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §3.1.2, pp. 76–77; §3.2.1, p. 79.<br>Book configuration specifications, not measured model speeds. GB = gigabytes; TB = terabytes.</p>
+      <aside class="notes">These numbers reproduce the book's H100/H200 table for 8-bit floating-point dense tensor compute, not every hardware variant sold under these names. Peak memory bandwidth is distinct from achieved bandwidth, and neither is network bandwidth. The table intentionally shows equal listed compute alongside higher capacity and bandwidth. That can help a workload limited by memory movement, but does not guarantee an application speedup. A faster connection does not enlarge memory, and larger memory does not necessarily make that connection faster.</aside>
+    </section>
+    <section id="hardware-batching" class="hardware-detail hardware-batch">
+      <h1>One GPU, many requests</h1>
+      <p class="lever-intro">Batching lets one graphics processing unit (GPU) work on several requests together.</p>
+      <div class="lever-panel">
+        <h2>One generation step for eight active requests</h2>
+        <div class="request-chips"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span></div>
+        <div class="operation-flow"><span class="memory">Read shared<br>model weights</span><span class="arrow">→</span><span class="operation">Compute for<br>all eight requests</span><span class="arrow">→</span><span class="memory">One next token<br>per request</span></div>
+      </div>
+      <table class="examples-table">
+        <thead><tr><th>Hardware resource</th><th>What batching changes</th><th>Effect on the service</th></tr></thead>
+        <tbody>
+          <tr><td>Compute and bandwidth</td><td>Reuse weights across more calculations.</td><td>More total tokens per second.</td></tr>
+          <tr><td>Memory capacity</td><td>Keep separate state for every request.</td><td>Limits how large the batch can be.</td></tr>
+          <tr><td>Time per step</td><td>Do more work before the step finishes.</td><td>Each user can receive tokens more slowly.</td></tr>
+        </tbody>
+      </table>
+      <p class="source-line">Simplified decode example, not a benchmark. Kiely, <em>Inference Engineering</em> (2026), §2.4, pp. 61–66; §7.2.1, pp. 186–188.</p>
+      <aside class="notes">This batches requests on one GPU; it does not mean combining GPUs. The same principle applies inside a multi-GPU serving group. Ordinary autoregressive decode produces one next token for each active sequence in a step; speculative decoding is a later exception. Model weights are shared, while attention state and outputs belong to each sequence. Batched matrix operations can reuse weight data and improve arithmetic intensity, increasing aggregate throughput. Reads are a conceptual simplification, not a claim that all weights are loaded in one physical transaction. Step time can rise with batch size; it need not rise in direct proportion, and small increases in batch size may barely change it. Separate waiting to form a batch from execution time. More context and more active sequences increase memory pressure. Measure throughput at the required per-request latency and quality; maximum throughput alone does not satisfy our 30-second report promise.</aside>
+    </section>
+    <section class="hardware-detail">
+      <h1>Find what the processor is waiting for</h1>
+      <p class="lever-intro">The useful lever depends on whether the workload needs more calculation, faster data movement, or more space.</p>
+      <table class="examples-table">
+        <thead><tr><th>Limit</th><th>What happens</th><th>Relevant levers</th></tr></thead>
+        <tbody>
+          <tr><td>Compute</td><td>The arithmetic units are busy.</td><td>Efficient kernels, lower precision, or more suitable compute.</td></tr>
+          <tr><td>Memory bandwidth</td><td>Arithmetic waits for data to arrive.</td><td>Reduce data movement, reuse work, or improve bandwidth.</td></tr>
+          <tr><td>Memory capacity</td><td>Weights and active requests do not fit.</td><td>Reduce memory use or spread the model across devices.</td></tr>
+        </tbody>
+      </table>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">Process input<br><strong>Prefill</strong></span><span class="arrow">→</span><span class="operation">Generate output<br><strong>Decode</strong></span></div><p class="batch-caption">Prefill often needs substantial compute. Decode at low batch sizes often waits on memory bandwidth.</p></div>
+      <p class="lever-tradeoff">These are starting hypotheses. Measure the actual model, hardware, context, and request load.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §2.4, pp. 61–66; §3.1, pp. 74–77.</p>
+      <aside class="notes">The book connects typical prefill to compute limits and typical low-to-moderate-batch decode to memory-bandwidth limits. These are not universal laws. Input length, model architecture, batch size, cache hits, hardware and implementation can change the bottleneck. Increasing batching may improve reuse and make computation more limiting while increasing per-request delay or memory requirements. Queueing, network and tool waits are separate service-level bottlenecks: if the processor is idle while a request waits elsewhere, buying a faster processor may not address the cause. This slide supplies the causal foundation for the levers that follow.</aside>
+    </section>
+    <section id="prefill-and-decode" class="section-divider" data-subsection="Prefill and decode">
+      <h1>Prefill and decode</h1>
+      <p>How the model processes an input and produces an answer.</p>
+    </section>
+    <section class="hardware-detail">
+      <h1>Prefill: process the input</h1>
+      <p class="lever-intro">Before answering, the model processes the question and source documents. It can work on many input tokens together.</p>
+      <div class="lever-panel">
+        <div class="operation-flow"><span class="memory">Question +<br>source documents</span><span class="arrow">→</span><span class="operation">Model computation<br>using its weights</span><span class="arrow">→</span><span class="memory">Stored input state<br>+ first output token</span></div>
+      </div>
+      <table class="examples-table">
+        <thead><tr><th>Resource</th><th>What prefill needs</th></tr></thead>
+        <tbody>
+          <tr><td>Compute</td><td>Many calculations across the input tokens.</td></tr>
+          <tr><td>Memory</td><td>Room for the weights, working data, and key-value cache.</td></tr>
+          <tr><td>Bandwidth</td><td>Movement of weights and working data through memory.</td></tr>
+        </tbody>
+      </table>
+      <p class="lever-result">The key-value cache stores intermediate state that generation can reuse.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §2.2, pp. 47–49; §2.4.2, pp. 63–66.<br>Prefill is often compute-limited; the actual workload and implementation determine the bottleneck.</p>
+      <aside class="notes">Tokenization converts the question, instructions and documents into model input tokens before this phase. Prefill processes their representations through the trained model and builds the key-value cache, which holds attention state rather than a ready-made answer. Causal attention still restricts which positions can use other positions; processing input positions in parallel does not mean ignoring token order. The final prompt position supplies the distribution used to select the first output token, although engine accounting of that sampling step can vary. Weights are already resident on the accelerator in steady-state serving; do not confuse a forward pass with loading the model from disk. Prefix-cache hits can skip recomputation for reusable input. Larger uncached inputs create more work and state, but time does not scale by one universal formula.</aside>
+    </section>
+    <section class="hardware-detail">
+      <h1>Decode: produce the answer</h1>
+      <p class="lever-intro">After the first output token, ordinary generation repeats: use the existing context, choose the next token, and extend the stored state.</p>
+      <div class="lever-panel">
+        <div class="operation-flow"><span class="memory">Weights +<br>cached context</span><span class="arrow">→</span><span class="operation">Compute and select<br>the next token</span><span class="arrow">→</span><span class="memory">Add the token<br>and update state</span></div>
+        <p class="batch-caption">Repeat until the answer ends or a limit is reached.</p>
+      </div>
+      <table class="examples-table">
+        <thead><tr><th>Resource</th><th>What decode needs</th></tr></thead>
+        <tbody>
+          <tr><td>Compute</td><td>Run the model for each new token.</td></tr>
+          <tr><td>Memory</td><td>Keep the weights and growing state of active requests.</td></tr>
+          <tr><td>Bandwidth</td><td>Keep supplying weights and cached state to the computation.</td></tr>
+        </tbody>
+      </table>
+      <p class="lever-result">At small batch sizes, moving data can dominate. Larger batches reuse weights, but each request keeps its own state.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §2.2, pp. 48–49; §2.4.2, pp. 63–66.<br>Batching and speculative decoding change how much useful work each execution step does.</p>
+      <aside class="notes">For one ordinary autoregressive sequence, a newly chosen token becomes input to the next generation step, creating a sequential dependency. The model's learned weights remain unchanged. Cached attention state lets it avoid recomputing the entire earlier sequence, but reading that state still costs bandwidth. Repeated weight reads refer to accelerator memory traffic, not downloading or reloading the model from disk for each token. Batching shares execution across sequences and improves reuse; speculation can commit several verified output tokens per target-model pass. The claim about bandwidth applies especially to low-batch steady-state decode, not every model or hardware configuration.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Both phases sit inside our 30 seconds</h1>
+      <table class="examples-table phase-budget">
+        <thead><tr><th>Our example budget</th><th>Time</th><th>Which levers matter?</th></tr></thead>
+        <tbody>
+          <tr><td>Retrieve, queue, validate, and send</td><td>6 seconds</td><td>Retrieval, orchestration, ready capacity, and application code.</td></tr>
+          <tr><td>Prefill: process the input</td><td>4 seconds</td><td>Relevant context, prefix reuse, and efficient computation.</td></tr>
+          <tr><td>Decode: generate the report</td><td>14 seconds</td><td>Required output length, memory bandwidth, batching, and speculation.</td></tr>
+          <tr><td>Headroom for variation</td><td>6 seconds</td><td>Check slow requests and the full workload under load.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Producing about 1,000 tokens in 14 seconds requires about <strong>71 tokens per second</strong> for that response.<br>A quick first token is useful, but our promise concerns the <strong>complete report</strong>.</p>
+      <p class="source-line">Illustrative budget, not measured performance. 6 + 4 + 14 = 24 seconds of work, plus 6 seconds of headroom.<br>Kiely, <em>Inference Engineering</em> (2026), §1.4, pp. 35–37; §2.4, pp. 61–66.</p>
+      <aside class="notes">This preserves our original allocation: retrieval 3 seconds, serving queue 2 seconds, input processing 4 seconds, generation 14 seconds, validation/transmission 1 second. The first and last stages total six seconds. The model stages total eighteen seconds, and six more seconds remain before the thirty-second threshold. Approximately 1,000/14=71.4 tokens per second; the first token can be accounted to prefill, so this is a rounded planning estimate rather than an exact engine metric. All generated tokens, including any reasoning tokens, must fit the output-work assumption; a visible 1,000-token report plus additional reasoning needs a larger budget. Test this per-response rate with up to twenty report jobs in progress, realistic context and output distributions, and both cache hits and misses. A sum of stage budgets does not prove that 95% of complete requests will finish within thirty seconds. Prefix caching mainly reduces prefill work; it does not eliminate generation. Retain quality checks while changing either phase.</aside>
+    </section>
+    <section id="inference-engineering-levers" class="section-divider" data-subsection="Inference engineering levers">
+      <h1>Inference engineering levers</h1>
+      <p>Change how the model runs while preserving useful results.</p>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>The levers of inference engineering</h1>
+      <table class="examples-table levers-table">
+        <thead><tr><th>Lever</th><th>What it changes</th><th>What can limit the benefit</th></tr></thead>
+        <tbody>
+          <tr><td>Runtime and kernels</td><td>How efficiently the hardware executes operations.</td><td>Model and hardware support.</td></tr>
+          <tr><td>Numerical precision</td><td>Memory use and computation through quantization.</td><td>Quality loss and hardware support.</td></tr>
+          <tr><td>Caching</td><td>How much existing computation can be reused.</td><td>Cache misses and memory pressure.</td></tr>
+          <tr><td>Batching and scheduling</td><td>Which requests run together and when.</td><td>Queue delay and memory limits.</td></tr>
+          <tr><td>Speculative decoding</td><td>Drafts tokens, then verifies them with the target model.</td><td>Rejected drafts and verification overhead.</td></tr>
+          <tr><td>Hardware and model placement</td><td>Compute, memory, and how work is split across devices.</td><td>Cost and communication between devices.</td></tr>
+          <tr><td>Prefill/decode disaggregation</td><td>Run the two phases on separate workers.</td><td>State transfer, extra capacity, and queues.</td></tr>
+          <tr><td>Replicas and routing</td><td>Serving capacity and where each request runs.</td><td>Startup time, idle cost, and load imbalance.</td></tr>
+        </tbody>
+      </table>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), chapters 3–5 and 7.<br>Choose a lever for a measured bottleneck, then check quality, time, and cost again.</p>
+      <aside class="notes">Introduce names and purposes here; deeper token mechanics can follow when needed to explain one lever. Quantization reduces precision and may reduce memory and execution cost, but quality and actual speed must be measured. Prefix caching reuses matching prompt computation, not arbitrary answers. Speculative decoding drafts candidates and verifies them with the target model; it may not accelerate every workload. Model parallelism splits a model across devices; replicas run separate copies for capacity. Disaggregation can place input processing and generation on different workers, introducing another placement and communication tradeoff. Batching can improve aggregate throughput while harming per-request waiting time. Model selection, prompt/context design and output length span the applied AI and inference boundary rather than belonging exclusively to one. Source sections: §4.1 kernels, §4.3 runtimes, §5.1 quantization, §5.2 speculative decoding, §5.3 caching, §5.4 parallelism, §5.5 disaggregation, chapter 7 production. No universal speedup is claimed.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Which parts can we improve?</h1>
+      <p class="slide-subheader">This is called inference optimization, and it is in high demand.<br>As AI usage grows, products need fast, reliable responses at a sustainable cost.</p>
+      <table class="examples-table">
+        <thead><tr><th>Where time is spent</th><th>What we can change</th><th>What we must check</th></tr></thead>
+        <tbody>
+          <tr><td>Waiting for capacity</td><td>Keep workers ready; adjust capacity and batching.</td><td>Queue delay under normal and peak demand.</td></tr>
+          <tr><td>Processing the input</td><td>Reuse shared prompt computation; send only relevant sources.</td><td>Cache misses and answer quality with less context.</td></tr>
+          <tr><td>Generating the report</td><td>Test a faster model or runtime; reduce unnecessary output.</td><td>Complete-report time and quality at the agreed load.</td></tr>
+          <tr><td>Retrieving, validating, sending</td><td>Improve search, application code, and network paths.</td><td>The complete service trace, not just model time.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">1,000 output tokens in 14 seconds requires about <strong>71 tokens per second per response</strong>.<br>We must test that rate while serving the agreed workload.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), preface, pp. 12–13; §1.4, pp. 35–37; §4.5, pp. 112–114.<br>These are changes to test, not guaranteed savings.</p>
+      <aside class="notes">The demand statement is our qualitative interpretation of the book, not a measured hiring statistic. In the preface, pp.12–13, Kiely connects wider production adoption of AI to the need for control over latency, availability and economics. Page 25 states: “Inference engineering adds speed and scale to AI products by optimizing production serving of generative models.” Do not repeat the preface’s vendor-specific uptime or percentage cost comparisons as universal current facts. Inference engineering directly addresses model processing, serving queues, runtime efficiency and capacity. Prompt selection and output design overlap with applied AI; search and transport require broader systems work. Reuse of prompt computation refers to prefix caching, not returning a previous answer to a different question. It only helps when the exact reusable prefix is available in cache; test cold and warm paths. Reducing sources or output must preserve the product's quality requirements. 1,000 / 14 = 71.43 output tokens per second for an individual response, not total server throughput. Do not assume 20 requests in flight means 20 simultaneous decode streams, or multiply this rate into a proven capacity claim. Measure mixed prefill and decode under realistic arrivals. Tune batching against both throughput and queueing, preserving per-response latency. More hardware is not automatically the first intervention; use the measured bottleneck and cost budget. Compare full-request traces before and after each change, including slow requests. Do not sum per-stage 95th percentiles and claim the sum is the end-to-end 95th percentile.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Runtime and kernels: move less data</h1>
+      <p class="lever-intro">A kernel performs an operation on the processor. Kernel fusion combines operations so intermediate results do not need a round trip to memory.</p>
+      <div class="lever-panel">
+        <h2>Separate operations</h2>
+        <div class="operation-flow"><span class="memory">Read</span><span class="arrow">→</span><span class="operation">× 2</span><span class="arrow">→</span><span class="memory">Write + read</span><span class="arrow">→</span><span class="operation">× 3</span><span class="arrow">→</span><span class="memory">Write</span></div>
+      </div>
+      <div class="lever-panel">
+        <h2>One fused operation</h2>
+        <div class="operation-flow"><span class="memory">Read</span><span class="arrow">→</span><span class="operation">× 6</span><span class="arrow">→</span><span class="memory">Write</span></div>
+      </div>
+      <p class="lever-result">The book's example has the same result: [1, 2, 3] → [6, 12, 18].</p>
+      <p class="lever-tradeoff">What changes: memory traffic and execution overhead. Check that the runtime supports the model and hardware.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §4.1.3, pp. 100–101. Diagram redrawn from the book's example.</p>
+      <aside class="notes">Introduce the runtime as the software that runs the model and chooses implementations of its operations. A kernel is a processor function for one or more operations. The book's toy example multiplies an input vector by two then by three; fusion replaces the intermediate memory write and read with multiply by six. This illustrates eliminating memory traffic, not reducing the required mathematical result. Real fusion involves more complex operations such as matrix multiplication, bias and activation. No measured speedup is claimed. Hardware-specific optimization still requires numerical correctness checks.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Quantization: use fewer bits</h1>
+      <p class="lever-intro">Represent model values with fewer bits, so they take less memory and can require less data movement.</p>
+      <div class="lever-panel">
+        <h2>The book illustrates the risk with repeated multiplication</h2>
+        <div class="operation-flow"><span class="precision-number">3.14159</span><span class="arrow">→</span><span class="memory">Cube the number</span><span class="arrow">→</span><span class="precision-number">31.006198</span></div>
+        <div class="operation-flow" style="margin-top:24px"><span class="precision-number">3.14</span><span class="arrow">→</span><span class="memory">Cube the number</span><span class="arrow">→</span><span class="precision-number">30.959144</span></div>
+      </div>
+      <p class="lever-result">Small precision errors can grow through repeated computation.</p>
+      <p class="lever-tradeoff">What changes: model size, memory traffic, and supported arithmetic.<br>Compare answer quality and speed with the original model before adopting it.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §5.1, pp. 120–121; §5.1.3, p. 128.<br>Decimal rounding illustrates error; it is not a diagram of an actual quantized number format.</p>
+      <aside class="notes">The two cube values are rounded as printed in the book's table. Actual quantization maps weights and possibly activations or cached values to lower-precision representations with scaling and other format-specific details. It is not simply truncating decimal digits. For an intuition about storage, moving from 16 to 8 bits halves the raw storage per value, before metadata; it does not guarantee a twofold speedup or half of total server memory. Benefits depend on kernels, hardware, workload and numerical quality. Use the same task-specific evaluations and comparable traffic against the original precision.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Caching: reuse a shared beginning</h1>
+      <p class="lever-intro">Prefix caching reuses work for the identical beginning of a prompt.</p>
+      <div class="lever-panel">
+        <h2>First request: process the full prompt and retain its state</h2>
+        <div class="token-row"><span class="token shared">Weather in</span><span class="token">Toronto?</span></div>
+        <h2 style="margin-top:28px">Next request: reuse the shared prefix, then process what changed</h2>
+        <div class="token-row"><span class="token shared">Weather in</span><span class="token">Waterloo?</span></div>
+      </div>
+      <p class="lever-result">For our research service, shared instructions or document context can avoid repeated input processing.</p>
+      <p class="lever-tradeoff">What changes: work done before generation starts.<br>The matching prefix must be cached; changed input and cache misses still need processing.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §5.3.1, pp. 136–138.<br>Adapted from the book's “Weather in” example; boxes show text segments, not exact tokens.</p>
+      <aside class="notes">The book shows weather prompts sharing the first two tokens and explains that a match ends at the first different token, even if later text matches. We adapt the place names for this audience without asserting tokenizer boundaries. A prefix cache stores reusable attention state, not a previously generated answer. Shared system instructions, code or source documents can make the saved prefix much longer than this toy example. Cache memory is finite; requests must reach a replica with the needed state or access a shared cache. Respect isolation and cache eligibility rules. Measure both cold and warm cases so a cache-hit demo does not stand in for the whole service objective.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Batching: fill slots as work finishes</h1>
+      <p class="lever-intro">The processor can serve several requests together. Continuous batching lets new requests join when a slot becomes free.</p>
+      <div class="batch-comparison">
+        <div class="lever-panel"><h2>Fixed batch</h2><div class="batch-grid" role="img" aria-label="Three request lanes over four steps. A ends after step two, C after step three, B after step four; finished slots stay empty."><span>A</span><span>A</span><span class="empty-slot">—</span><span class="empty-slot">—</span><span>B</span><span>B</span><span>B</span><span>B</span><span>C</span><span>C</span><span>C</span><span class="empty-slot">—</span></div><p class="batch-caption">New requests wait for the batch to finish.</p></div>
+        <div class="lever-panel"><h2>Continuous batch</h2><div class="batch-grid" role="img" aria-label="The same lanes and steps, with new request D replacing completed request A and E replacing completed request C."><span>A</span><span>A</span><span class="new-request">D</span><span class="new-request">D</span><span>B</span><span>B</span><span>B</span><span>B</span><span>C</span><span>C</span><span>C</span><span class="new-request">E</span></div><p class="batch-caption">D and E enter the freed slots.</p></div>
+      </div>
+      <p class="lever-result">Each row is a request slot; each column is an execution step.</p>
+      <p class="lever-tradeoff">What changes: how requests share the processor.<br>More work per second can come with slower responses for each user.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §7.2.1, pp. 186–188.<br>Simplified illustration of the book's fixed and continuous batching examples; no measured times.</p>
+      <aside class="notes">A, B and C have different output lengths. Static batching also waits for the batch to fill before it starts; this diagram focuses on empty slots after shorter requests finish. Dynamic batching uses a timeout for filling a batch. Continuous batching schedules at the token level, so completed requests can be replaced. The fixed grid is illustrative, not a trace or guarantee of equal-duration steps, and real engines also manage input processing and memory limits. More active requests consume more cached state. Measure total throughput and per-user latency together at the intended concurrency, including queue time.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Speculation: draft, then verify</h1>
+      <p class="lever-intro">A cheaper draft process proposes several tokens. The target model verifies the draft in one pass.</p>
+      <div class="lever-panel">
+        <p class="diagram-label">Draft proposal</p>
+        <div class="token-row"><span class="token">The</span><span class="token">cat</span><span class="token">ran</span><span class="token">home</span></div>
+        <p class="diagram-label">Target accepts the beginning, rejects the next token, and replaces it</p>
+        <div class="token-row"><span class="token accepted">The</span><span class="token accepted">cat</span><span class="token rejected">ran</span><span class="token discarded">home</span><span style="padding:0 12px">→</span><span class="token accepted">The cat sat</span></div>
+      </div>
+      <p class="lever-result">The book compares generating a token to solving a puzzle, and verification to checking a solution.</p>
+      <p class="lever-tradeoff">What changes: how many tokens each target-model pass can commit.<br>The draft must be cheap and accepted often enough to repay its overhead.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §5.2, pp. 129–132.<br>Toy text illustrates the book's draft-and-verify mechanism.</p>
+      <aside class="notes">The book uses a Sudoku analogy for generation versus verification. This token sequence is our illustration, not quoted model output. After a rejection, later draft tokens must be discarded because they depend on the rejected token. The target supplies a corrected token, and drafting continues from the committed prefix. Verification checks consistency with the target model's generation distribution; it does not fact-check whether a sentence is true. Exact speculative sampling uses acceptance and correction rules to preserve that distribution. This illustration is a simple deterministic case. Benefit depends on draft cost, accepted prefix length and available compute. Measure accepted tokens and end-to-end generation time; do not assume more proposed tokens always help.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Model placement: make room to work</h1>
+      <p class="lever-intro">A model needs memory for both its weights and the state of active requests. Splitting it across processors can provide more room.</p>
+      <div class="lever-panel">
+        <div class="capacity-row"><p class="capacity-label">Book example: four B200 processors · 720 GB total memory</p><div class="capacity-bar"><span class="weights" style="width:93.2%">About 671 GB of weights</span><span class="free-memory" style="width:6.8%"></span></div></div>
+        <div class="capacity-row"><p class="capacity-label">Eight B200 processors · 1,440 GB total memory</p><div class="capacity-bar"><span class="weights" style="width:46.6%">Same weights</span><span class="free-memory" style="width:53.4%">More room for request state</span></div></div>
+      </div>
+      <p class="lever-result">The book's DeepSeek-V3.1 example fits the weights on four processors, but uses eight to serve a practical workload.</p>
+      <p class="lever-tradeoff">What changes: memory capacity and how computation is shared.<br>Processors must exchange results; communication can erase the speed benefit.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §5.4, pp. 142–145.<br>Book example at 8-bit weight precision; remaining memory must also cover runtime overhead.</p>
+      <aside class="notes">The book's concrete example is DeepSeek-V3.1 with 671 billion parameters at approximately one byte per weight and B200 processors with 180 GB each. The totals use the book's decimal GB convention and are approximate, not a measured deployment plan. Bars are fractions of each configuration's own total, not equal absolute scales. Remaining space is not all usable request cache: activations, workspaces, communication buffers and fragmentation also need room. Tensor parallelism divides work within model layers across processors, with communication to combine results; the book illustrates this on pp.144–145. Separate copies of the whole model are replicas; separating its prefill and decode phases is another placement choice. A smaller model may fit on one processor and gain nothing from splitting.</aside>
+    </section>
+    <section id="disaggregation" class="lever-detail disaggregation">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Disaggregation: separate the two phases</h1>
+      <p class="lever-intro">Under heavy load, a new long prompt can compete with requests already generating answers. Separate workers can reduce that interference.</p>
+      <div class="lever-panel">
+        <h2>Shared workers</h2>
+        <div class="operation-flow"><span class="memory">New prompts</span><span class="arrow">→</span><span class="operation">Prefill + decode<br>share the same resources</span><span class="arrow">→</span><span class="memory">Streaming answers</span></div>
+      </div>
+      <div class="lever-panel">
+        <h2>Separate workers</h2>
+        <div class="operation-flow"><span class="operation">Prefill workers<br>process inputs</span><span class="arrow">→</span><span class="memory">Transfer cached<br>attention state</span><span class="arrow">→</span><span class="operation">Decode workers<br>generate answers</span></div>
+      </div>
+      <p class="lever-result">Tune and scale each pool separately to protect response times while serving more requests.</p>
+      <p class="lever-tradeoff">The cost: extra workers and state transfer. It can lose to shared workers at low load or with short, cached inputs.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §5.5, pp. 148–151.<br>Book example: many coding-assistant requests with large code contexts.</p>
+      <aside class="notes">Prefill/decode disaggregation places the two phases in separate inference engines on separate GPUs or nodes. Both use the same model, but can use different parallelism, batching and resource allocations. Prefill computes the first output token and cached key/value attention state; that state is transferred over an interconnect to the decode worker, which produces subsequent tokens. Separating phases can reduce interference and let each pool scale independently, but transfer consumes time and bandwidth and two pools can be underutilized. Prefill queues and decode memory can become new bottlenecks. The book recommends this especially for high traffic, large models and long uncached inputs; its numerical rules of thumb are not universal thresholds. Conditional disaggregation can keep short or already-cached inputs on decode workers. Its coding-assistant example does not establish a particular company's deployment. For our report service, test the whole path under mixed arrivals: transfer and new queues must fit the existing 30-second budget. Do not assume twenty in-flight report jobs justify disaggregation or that gains will exceed overhead. This is distinct from splitting model layers across GPUs and from adding full-service replicas.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind">Levers of inference engineering</p>
+      <h1>Replicas and routing: send work wisely</h1>
+      <p class="lever-intro">A replica is another running copy of the model. Routing decides which copy gets each request.</p>
+      <div class="batch-comparison">
+        <div class="lever-panel"><h2>Replica A · four requests</h2><div class="operation-flow"><span class="memory">4 × 100<br>input tokens</span></div><p class="batch-caption">400 input tokens to process.</p></div>
+        <div class="lever-panel"><h2>Replica B · four requests</h2><div class="operation-flow"><span class="operation">3 × 100 + 10,000<br>input tokens</span></div><p class="batch-caption">10,300 input tokens to process.</p></div>
+      </div>
+      <p class="lever-result">Equal request counts do not mean equal work. Route with workload size, queue state, and cached context in mind.</p>
+      <p class="lever-tradeoff">What changes: where requests run and how much capacity is available.<br>New replicas take time to start, and idle replicas still cost money.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §7.2, pp. 183–191; §5.3.3, pp. 140–141.<br>Adapted from the book's four-request and 100-versus-10,000-token routing example.</p>
+      <aside class="notes">The book warns that three replicas with twelve requests are not necessarily balanced by placing four on each, because request sizes vary. The displayed 400 and 10,300 sums make that example concrete; input tokens alone are still an incomplete work estimate because output lengths, cache hits and model behavior matter. Cache-aware routing can prefer a replica holding a matching prompt prefix, while avoiding overloading that replica. Autoscaling changes how many copies are running as demand changes. The book's cold-start stages include hardware allocation, image loading, weight loading and runtime startup. For the 30-second service, capacity must be ready in time; adding a replica after its queue has already exhausted the budget does not rescue those requests. Balance latency, availability and idle capacity cost.</aside>
+    </section>
+    <section id="applied-ai-levers" class="section-divider" data-subsection="Applied AI levers">
+      <h1>Applied AI levers</h1>
+      <p>Change the work the application asks the model to do.</p>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Context: send the useful evidence</h1>
+      <p class="lever-intro">Choose which information reaches the model. Retrieval finds relevant material before the model writes its answer.</p>
+      <div class="lever-panel"><h2>Send everything</h2><div class="operation-flow"><span class="memory">50 contracts</span><span class="arrow">→</span><span class="operation">Model</span><span class="arrow">→</span><span class="memory">Answer</span></div></div>
+      <div class="lever-panel"><h2>Retrieve for the question</h2><div class="operation-flow"><span class="memory">50 contracts</span><span class="arrow">→</span><span class="memory">Find relevant<br>passages</span><span class="arrow">→</span><span class="operation">Model</span><span class="arrow">→</span><span class="memory">Answer</span></div></div>
+      <p class="lever-result">Example: a question about cancellation needs the applicable cancellation terms and their source references.</p>
+      <p class="application-link">Inference connection: fewer input tokens can reduce input processing and memory use. Missing evidence can still make the answer wrong.</p>
+      <p class="source-line">Illustrative contract example. Context selection: Anthropic, <a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a>.<br>Workload effects: Kiely, <em>Inference Engineering</em> (2026), §4.5, pp. 112–114.</p>
+      <aside class="notes">Fifty contracts is an invented teaching example, not a measured benchmark. Context selection determines the information supplied to a particular call. Retrieval introduces its own work and latency, and must preserve permissions, applicable versions, exceptions and citations. The right comparison is task quality and complete response time, not input length alone. Embedding or reranking models, if used, add inference workloads of their own. Prompt caching can reuse a stable common prefix; it cannot recover evidence the application omitted.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Instructions: define the result needed</h1>
+      <p class="lever-intro">State the task, the evidence to use, and the output the application needs.</p>
+      <div class="batch-comparison">
+        <div class="lever-panel"><h2>Vague request</h2><p class="example-copy">“Tell me about this contract.”</p><p class="batch-caption">The model must guess the scope and level of detail.</p></div>
+        <div class="lever-panel"><h2>Task-specific request</h2><p class="example-copy">“Find the cancellation deadline. Cite the clause. If it is absent, say ‘not found.’”</p><p class="batch-caption">The application asks for a result it can use and check.</p></div>
+      </div>
+      <p class="lever-result">What changes: the requested behavior, answer shape, and stopping point.</p>
+      <p class="application-link">Inference connection: output length changes generation work. Stable instructions can also form a reusable prompt prefix.</p>
+      <p class="source-line">Illustrative prompts. Anthropic, <a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a>.<br>Prefix reuse: Kiely, <em>Inference Engineering</em> (2026), §5.3.1, pp. 136–138.</p>
+      <aside class="notes">This example makes an already chosen task explicit; it does not claim the two prompts serve identical user intentions. If the customer needs a full report, a short field extraction is not a substitute. Examples and output structures can clarify expected behavior, but task-specific evaluation must confirm the effect. Structured-output constraints can enforce a schema; neither a schema nor a citation field establishes factual correctness. An output token cap should prevent runaway generation without cutting off necessary content. Stable instructions only benefit prefix caching when matching computation is available on the selected serving path.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Model choice: match the task</h1>
+      <p class="lever-intro">Choose a model that meets the quality requirement, then compare how much it costs to run.</p>
+      <div class="lever-panel"><h2>The book's example: turn a question into a database query</h2><div class="operation-flow"><span class="memory">Question +<br>database structure</span><span class="arrow">→</span><span class="operation">Task-specific<br>model</span><span class="arrow">→</span><span class="memory">Database query</span></div></div>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">General model</span><span class="arrow">→</span><span class="operation">Same task tests</span><span class="arrow">←</span><span class="memory">Smaller model<br>tuned for the task</span></div><p class="batch-caption">Compare both candidates on representative questions and difficult cases.</p></div>
+      <p class="lever-result">The book describes a small, fine-tuned model matching a much larger model on a narrow text-to-query task.</p>
+      <p class="application-link">Inference connection: model size and architecture change memory needs, compute, and available optimizations.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §§1.3–1.3.2, pp. 31–33.<br>The book's narrow-task example does not establish that a small model fits every workload.</p>
+      <aside class="notes">The book uses text-to-SQL, where SQL means Structured Query Language. Fine-tuning adapts model weights using task data; it is different from adding examples to a prompt and different from serving-time quantization. Use separate training and evaluation examples to test generalization. The model-choice lever belongs at the boundary between application quality and inference cost. If a smaller candidate fails the quality requirement, faster serving does not make it an acceptable replacement. For actions against a real database, read-only access and query validation would be separate application controls.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Orchestration: change the order of work</h1>
+      <p class="lever-intro">Run independent steps together. Keep a step sequential when it needs an earlier result.</p>
+      <div class="lever-panel"><h2>Sequential document summaries</h2><div class="operation-flow"><span class="operation">Document A</span><span class="arrow">→</span><span class="operation">Document B</span><span class="arrow">→</span><span class="operation">Document C</span><span class="arrow">→</span><span class="memory">Combine</span></div></div>
+      <div class="lever-panel"><h2>Independent summaries in parallel</h2><div class="parallel-branches"><span>Document A</span><span>Document B</span><span>Document C</span></div><div class="operation-flow"><span class="arrow">↓</span><span class="memory">Combine after all three finish</span><span class="arrow">↓</span></div></div>
+      <p class="lever-result">What changes: the longest chain of dependent work, not necessarily the number of model calls.</p>
+      <p class="application-link">Inference connection: parallel calls create more simultaneous demand. Queueing can consume the time you hoped to save.</p>
+      <p class="source-line">Illustrative document workflow. Pattern: Anthropic, <a href="https://www.anthropic.com/research/building-effective-agents">Building effective agents</a>, “Parallelization.”<br>Serving tradeoff: Kiely, <em>Inference Engineering</em> (2026), §7.2.1, pp. 186–188.</p>
+      <aside class="notes">Independent model calls can run in parallel, with their outputs combined afterwards. This example assumes each document can be summarized independently before cross-document synthesis; tasks requiring intermediate results cannot be parallelized this way. Without contention, the sequential summary time is approximately the sum of the three calls while parallel summary time follows the slowest, before combination and coordination costs. There is no promised speedup. Both workflows still make three summary calls and a combination call. Test under the same serving capacity and quality criteria. Bound concurrency to avoid overload.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Tools: do precise work outside the model</h1>
+      <p class="lever-intro">Give the model a clear operation that retrieves or changes exactly what the task needs.</p>
+      <div class="lever-panel"><h2>Return a whole address book</h2><div class="operation-flow"><span class="memory">Find Sam</span><span class="arrow">→</span><span class="memory">List every<br>contact</span><span class="arrow">→</span><span class="operation">Model searches<br>the returned text</span></div></div>
+      <div class="lever-panel"><h2>Search in the tool</h2><div class="operation-flow"><span class="memory">Find Sam</span><span class="arrow">→</span><span class="operation">Search contacts<br>by name</span><span class="arrow">→</span><span class="memory">Matching<br>records</span></div></div>
+      <p class="lever-result">What changes: where filtering happens and how much information returns to the model.</p>
+      <p class="application-link">Inference connection: focused tool results can reduce the next prompt. Clear tool interfaces can also reduce failed calls and retries.</p>
+      <p class="source-line">Adapted from the address-book example in Anthropic, <a href="https://www.anthropic.com/research/writing-tools-for-agents">Writing effective tools for agents</a>.<br>Input workload effects: Kiely, <em>Inference Engineering</em> (2026), §4.5, pp. 112–114.</p>
+      <aside class="notes">Tools can filter data before returning relevant records rather than sending an entire collection to the model. Sam is an invented name. Handle multiple matches explicitly instead of assuming a unique person. Return identifiers needed for subsequent operations as well as enough information to select the right record. Distinguish read operations from external mutations; changing or messaging a contact needs the product's authorization rules. Clear parameter definitions, error messages and bounded results should be evaluated against realistic tasks. Time spent inside the tool remains part of the total application latency.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>State: preserve progress between calls</h1>
+      <p class="lever-intro">Store completed work and its evidence so the next call can continue from the right place.</p>
+      <div class="batch-comparison">
+        <div class="lever-panel"><h2>Repeat the full history</h2><p class="example-copy">Old prompts, repeated searches, raw documents, and every intermediate response.</p><p class="batch-caption">The next call must find the current task state again.</p></div>
+        <div class="lever-panel"><h2>Keep a task record and source links</h2><p class="state-example">Completed: contracts A and B<br>Pending: contract C<br>Evidence: clause references<br>Next: compare the deadlines</p></div>
+      </div>
+      <p class="lever-result">What changes: the information carried forward and the work that must be repeated.</p>
+      <p class="application-link">Inference connection: a focused working context can reduce input processing. Preserve critical facts and measure cache reuse after changes.</p>
+      <p class="source-line">Illustrative task record. State and compaction: Anthropic, <a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a>.<br>Cache behavior: Kiely, <em>Inference Engineering</em> (2026), §5.3.1, pp. 136–138.</p>
+      <aside class="notes">A durable application record and a model's prompt context serve different purposes. Store authoritative results and source references outside the context window, then supply relevant facts and recent observations for the next call. Summary or compaction can lose important details; retain original evidence and a way to retrieve it. A note claiming an action completed is not proof that the external system changed. This application state is not the inference engine's attention cache. Changing the prompt prefix may reduce prefix-cache reuse, so shorter context and cache savings must be considered together rather than assumed additive.</aside>
+    </section>
+    <section class="lever-detail">
+      <p class="lever-kind applied-kind">Levers of applied AI</p>
+      <h1>Evaluation: check the useful outcome</h1>
+      <p class="lever-intro">Define what success means, then test changes against it before judging speed or cost.</p>
+      <div class="lever-panel"><div class="operation-flow"><span class="memory">Representative<br>tasks</span><span class="arrow">→</span><span class="operation">Candidate<br>application</span><span class="arrow">→</span><span class="memory">Check results<br>and evidence</span><span class="arrow">→</span><span class="memory">Compare with<br>baseline</span></div></div>
+      <table class="examples-table ontology-table"><thead><tr><th>Task</th><th>What success requires</th></tr></thead><tbody><tr><td>Contract research</td><td>The correct deadline, supported by the applicable clause.</td></tr><tr><td>Book a meeting</td><td>The intended event exists with the correct people and time.</td></tr><tr><td>Review code</td><td>Real issues found, with acceptable false alarms.</td></tr></tbody></table>
+      <p class="application-link">Inference connection: a quality baseline lets us test smaller models, quantization, and other optimizations without silently breaking the task.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §1.3.1, pp. 31–32; §5.1.3, p. 128.<br>Task criteria are workshop examples; a successful response alone is not proof of a successful action.</p>
+      <aside class="notes">Evaluate on representative and difficult cases, keeping held-out cases separate from prompt development where possible. Use the appropriate evidence: source review for a claim, tests and human assessment for code, and authoritative system readback for actions. Format checks are useful but do not establish semantic correctness. Production controls can block invalid actions or route uncertain cases for review; those controls must be enforced in application code, not only requested in the prompt. Count retries, failed attempts and review work in task time and cost. Compare quality as well as latency distributions at representative load.</aside>
+    </section>
+    <section id="putting-it-together" class="section-divider" data-subsection="Putting it together">
+      <h1>Putting it together</h1>
+      <p>Use both sets of levers to meet the same time, quality, and cost requirements.</p>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>The two sets of levers work together</h1>
+      <table class="examples-table"><thead><tr><th>Applied AI decision</th><th>Changes the workload</th><th>Inference engineering response</th></tr></thead><tbody>
+        <tr><td>Retrieve focused evidence</td><td>Input length and repeated context.</td><td>Measure input processing and cache hits.</td></tr>
+        <tr><td>Request a useful output format</td><td>Output length and completion rules.</td><td>Measure generation time and memory use.</td></tr>
+        <tr><td>Run independent calls together</td><td>Concurrent requests and arrival patterns.</td><td>Tune capacity, batching, and queueing.</td></tr>
+        <tr><td>Choose a task-qualified model</td><td>Architecture and model size.</td><td>Select hardware, runtime, and precision.</td></tr>
+        <tr><td>Check task success</td><td>Which results count as useful.</td><td>Optimize time and cost per successful task.</td></tr>
+      </tbody></table>
+      <p class="workload-note">For our 30-second promise, measure the full workflow again after changing either layer.</p>
+      <p class="source-line">Synthesis for this workshop. Kiely, <em>Inference Engineering</em> (2026), §§1.2–1.4 and §4.5.</p>
+      <aside class="notes">This table reconnects application decisions to the serving system and the business promise. The dependency runs both ways: measured capacity and latency can constrain which application workflow is viable. Avoid optimizing each layer in isolation and assuming the gains add together. More focused prompts can change cache hit rates; parallel calls can create queueing; added quality checks can introduce more model calls. Test full-task quality, end-to-end time, failures and total cost under the agreed demand. These are causal relationships and proposed measurement points, not benchmark results.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Back to the 30-second promise</h1>
+      <p class="budget-caption">Suppose a request takes 32 seconds. Where should we intervene?</p>
+      <table class="examples-table budget-table">
+        <thead><tr><th>Stage</th><th>Example time</th><th>What we investigate</th></tr></thead>
+        <tbody>
+          <tr><td>Retrieve sources</td><td>3 seconds</td><td>Did we find the evidence the report needs?</td></tr>
+          <tr><td>Wait for capacity</td><td>7 seconds</td><td>Were workers busy or still starting?</td></tr>
+          <tr><td>Process the input</td><td>6 seconds</td><td>How much context was sent? Was any prefix reused?</td></tr>
+          <tr><td>Generate the report</td><td>15 seconds</td><td>How much output was needed? How fast did it arrive?</td></tr>
+          <tr><td>Validate and send</td><td>1 second</td><td>Was the report complete and correctly formed?</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">A 32-second request misses the latency target. One request does not determine the monthly result.</p>
+      <p class="source-line">Illustrative timings, not benchmark data. Same service limits: 16,000 input tokens, 1,000 output tokens, 20 requests in flight.<br>Kiely, <em>Inference Engineering</em> (2026), §1.4, pp. 35–37; §4.5, pp. 112–114.</p>
+      <aside class="notes">This is a constructed trace for teaching, not a measurement from the local labs or a real customer. It totals 32 seconds: 3+7+6+15+1. The earlier 24-second allocation remains our candidate operating budget with six seconds of headroom. Under the fictional SLA, 95% of all eligible requests must complete within 30 seconds each month and 99.9% must succeed within 60 seconds. A single 32-second success is a latency miss, not an availability failure. We first capture traces across the workload, including slow requests, before concluding which stage is a recurring bottleneck. Do not add independently calculated stage percentiles to infer an end-to-end percentile.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Pair the two sets of levers</h1>
+      <table class="examples-table">
+        <thead><tr><th>Problem</th><th>Applied AI change</th><th>Inference engineering change</th></tr></thead>
+        <tbody>
+          <tr><td>Too much input work</td><td>Retrieve relevant clauses; put stable instructions before changing content.</td><td>Reuse matching prefixes and profile input processing.</td></tr>
+          <tr><td>Long queue waits</td><td>Remove redundant calls; limit simultaneous internal calls.</td><td>Keep enough capacity ready; tune routing and batching.</td></tr>
+          <tr><td>Slow report generation</td><td>Define the required report; evaluate smaller models on the same task.</td><td>Test efficient runtimes, precision, and speculative decoding.</td></tr>
+          <tr><td>Fast but unreliable answers</td><td>Check source support, missing facts, and actual task success.</td><td>Reject optimizations that break the quality baseline.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Change one cause at a time, then test the selected changes together.</p>
+      <p class="source-line">Worked example using Kiely, <em>Inference Engineering</em> (2026), §§1.3–1.4, chapters 4–5, and §7.2.</p>
+      <aside class="notes">The application determines the useful work and the serving system executes it. Context selection and prefix reuse interact, so their savings are not independent. Internal fan-out is the number of downstream calls spawned by an application request; bounding it must not evade the contract's external concurrency commitment. This example still admits the same 20 eligible requests in flight. If the current application makes only one model call, removing internal fan-out is not an available improvement; use the measured trace, not every lever listed. A concise report must still meet the same customer need. Model changes require evaluation of the same task, and precision or speculation requires matching runtime support. Parallel work may worsen serving contention. Candidate changes are hypotheses until measured.</aside>
+    </section>
+    <section id="batching-sla" class="workload-examples requirements serving-sla">
+      <h1>Batching within the 30-second promise</h1>
+      <p class="budget-caption"><strong>Use when:</strong> several report jobs overlap and the processor has room to serve them together.</p>
+      <table class="examples-table">
+        <thead><tr><th>Measure</th><th>What can improve</th><th>What can go wrong</th></tr></thead>
+        <tbody>
+          <tr><td>Latency</td><td>Higher capacity can shorten the queue.</td><td>Waiting to fill a batch or slower generation can delay each report.</td></tr>
+          <tr><td>Throughput</td><td>Shared weight reads can produce more tokens per second overall.</td><td>A batch that is too large can exhaust memory or miss the time limit.</td></tr>
+          <tr><td>Cost</td><td>More completed reports per processor-hour can lower cost per report.</td><td>Extra retries or late reports can erase the saving.</td></tr>
+        </tbody>
+      </table>
+      <p class="lever-result">Start with continuous batching, then tune the active batch and queue limits under the agreed load.</p>
+      <p class="workload-note"><strong>Our check:</strong> retain the 24-second operating target and 6-second margin; measure complete reports with up to 20 jobs in flight.</p>
+      <p class="source-line">Candidate strategy, not measured savings. Kiely, <em>Inference Engineering</em> (2026), §1.4, pp. 35–37; §7.2.1, pp. 186–188.</p>
+      <aside class="notes">Return to the same fictional service: up to 16,000 input tokens, 1,000 total output tokens and 20 report jobs in flight. Concurrency is not a required batch size: do not wait for all 20 jobs before serving them. Continuous batching replaces finished sequences with waiting work at scheduling boundaries. It can increase useful throughput by reusing weights, but active batch size changes execution time, memory use and queue behavior. A higher-capacity configuration can reduce queue delay even if its per-sequence token rate is lower, so compare complete-request latency rather than token rate alone. Baseline budget remains retrieval 3 + queue 2 + prefill 4 + decode 14 + validate/send 1 = 24 seconds, with 6 seconds headroom. Batch waiting and slower generation must fit the whole budget; independent stage percentiles do not add. Select the highest useful throughput configuration that preserves quality, the 95% within 30 seconds target and 99.9% success within 60 seconds. Cost savings refer to infrastructure cost per successful report when managing serving; batching does not automatically change hosted API token prices. The provider controls batching on our GPT-6.1 Sol Standard API example.</aside>
+    </section>
+    <section id="disaggregation-sla" class="workload-examples requirements serving-sla">
+      <h1>When would we separate prefill and decode?</h1>
+      <p class="budget-caption"><strong>Use when:</strong> long new inputs repeatedly slow ongoing generation, and traffic is high enough to keep both worker pools useful.</p>
+      <table class="examples-table">
+        <thead><tr><th>Measure</th><th>What can improve</th><th>What can go wrong</th></tr></thead>
+        <tbody>
+          <tr><td>Latency</td><td>Protect the report’s generation from competing input processing.</td><td>State transfer and two queues can add more time than they save.</td></tr>
+          <tr><td>Throughput</td><td>Batch, tune, and scale each phase for its share of the work.</td><td>Too few workers in either pool can limit the whole service.</td></tr>
+          <tr><td>Cost</td><td>Better use of busy workers can lower cost per report at scale.</td><td>Extra workers, idle capacity, and data transfer can cost more.</td></tr>
+        </tbody>
+      </table>
+      <p class="lever-result">Our 4-second prefill and 14-second decode budgets must also absorb the new transfer and queues.</p>
+      <p class="workload-note"><strong>Decision:</strong> compare shared workers against separate pools under the same traffic. Twenty jobs in flight alone is not a reason to split.</p>
+      <p class="source-line">Kiely, <em>Inference Engineering</em> (2026), §5.5, pp. 148–151. With a hosted model, compare provider offerings; these are serving-side controls.</p>
+      <aside class="notes">Disaggregation and batching are complementary, not mutually exclusive: each prefill and decode pool can batch work. Use measured contention under representative input lengths, output lengths, cache hit rates and arrival patterns to decide whether splitting is worthwhile. Long uncached input is a stronger candidate than short input or frequent prefix-cache hits. Retain one total 30-second service boundary; transfer is not outside the promise. Reallocate stage budgets if needed without quietly enlarging the total. A possible gain in decode stability does not establish that prefill queue time, state transfer and end-to-end tail latency improve. Retain the 95% within 30 seconds, 99.9% success within 60 seconds and quality criteria. Match pool capacity and monitor memory on decode workers. Compare total hardware and transfer cost per successful, on-time report. The book recommends high-volume, large-model, prefill-heavy cases; its specific sizing rules are not universal break-even thresholds. On the hosted GPT-6.1 Sol Standard example we cannot directly configure these pools or claim savings against the $4,200 API bill. We can evaluate a provider/deployment offering that exposes the appropriate service properties. Use this slide to connect architecture choices to the same customer promise, not to claim the fictional service must be self-hosted.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Aim for 24 seconds, then test</h1>
+      <table class="examples-table budget-table">
+        <thead><tr><th>Stage</th><th>Slow example</th><th>Candidate budget</th></tr></thead>
+        <tbody>
+          <tr><td>Retrieve sources</td><td>3 seconds</td><td>3 seconds</td></tr>
+          <tr><td>Wait for capacity</td><td>7 seconds</td><td>2 seconds</td></tr>
+          <tr><td>Process the input</td><td>6 seconds</td><td>4 seconds</td></tr>
+          <tr><td>Generate the report</td><td>15 seconds</td><td>14 seconds</td></tr>
+          <tr><td>Validate and send</td><td>1 second</td><td>1 second</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>32 seconds</strong></td><td><strong>24 seconds + 6 seconds of headroom</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Test representative inputs, cache hits and misses, and demand up to the agreed limit.<br>Keep answer quality intact, then monitor the monthly 95% and 99.9% commitments.</p>
+      <p class="source-line">Illustrative budget, not a claimed speedup. A passing load test supports readiness; monthly measurements determine compliance.<br>Kiely, <em>Inference Engineering</em> (2026), §4.5, pp. 112–114; §7.4, pp. 199–203.</p>
+      <aside class="notes">The candidate times reproduce the earlier operating budget. They are targets for testing, not measured post-optimization times or predicted savings from particular techniques. We cannot say the SLA is met based on this table. Load-test the full service with representative input/output distributions, up to 16,000 input and 1,000 output tokens, the agreed concurrency, real arrival patterns, cold starts and cache misses. Measure whole-request latency and success, plus task-specific answer quality and cost per useful report. For the contract, include every eligible request in the denominator, including errors and rejected requests. At least 95% must finish within 30 seconds, and at least 99.9% must succeed within 60 seconds over the month. Headroom does not mathematically guarantee a tail percentile. Measure the combined configuration and keep monitoring after release; changes in traffic or cache hit rate can invalidate an earlier benchmark.</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Reduce cost with both sets of levers</h1>
+      <p class="budget-caption">Same GPT-6.1 Sol model, 100,000 reports per month, and 1,000 output tokens per report.</p>
+      <div class="system-flow">
+        <div class="system-node"><strong>US$4,200</strong><br>Original input</div><span class="system-arrow">→</span><div class="system-node"><strong>US$2,600</strong><br>Focused input</div><span class="system-arrow">→</span><div class="system-node"><strong>US$1,604</strong><br>Reused prefix</div>
+      </div>
+      <table class="examples-table">
+        <thead><tr><th>Step</th><th>What changes</th><th>Lever</th></tr></thead>
+        <tbody>
+          <tr><td>Original request</td><td>16,000 input tokens for every report.</td><td>Our pricing baseline.</td></tr>
+          <tr><td>Keep relevant evidence</td><td>8,000 input tokens, with the same required answer.</td><td>Applied AI: retrieval and context design.</td></tr>
+          <tr><td>Reuse a shared beginning</td><td>6,000 stable tokens + 2,000 changing tokens; 90% of requests reuse the prefix.</td><td>Applied AI arranges the prompt; inference serving reuses its computation.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note">Potential model-usage saving: <strong>US$2,596 per month</strong>. The report still has to be correct and on time.</p>
+      <p class="source-line">Illustrative workload and cache reuse, not measured savings. Includes 30-minute cache writes.<br>Rates: <a href="https://developers.openai.com/api/docs/pricing">OpenAI Standard pricing</a> · <a href="https://developers.openai.com/api/docs/guides/prompt-caching">Prompt caching</a>, checked November 10, 2026.</p>
+      <aside class="notes">This is a conditional model-usage estimate, not a claim that the service has been optimized or that reducing context preserves quality. Keep one call and 1,000 total billable output tokens per report, including any reasoning tokens. Baseline: 100,000*(16,000*2+1,000*10)/1,000,000=$4,200. Focused context without caching: 100,000*(8,000*2+1,000*10)/1,000,000=$2,600. Cache case assumes an exact 6,000-token common prefix, 2,000 changing tokens, 90,000 prefix reads and 10,000 prefix writes at the 30-minute rate, with no other cache writes. Monthly cache reads: 540 million tokens at $0.10/million=$54. Writes: 60 million at $2.50/million=$150. Changing input: 200 million at $2/million=$400. Output: 100 million at $10/million=$1,000. Total=$1,604; saving=$2,596. This assumes cache eligibility and reuse within each permitted account/context boundary. Use an eligible prefix boundary and avoid writing the changing suffix; exact billing depends on real usage counters. Storage, retrieval, tools, retries, hosting, taxes and implementation effort are excluded. A different hit rate changes the savings. Sources: https://developers.openai.com/api/docs/pricing ; https://developers.openai.com/api/docs/guides/prompt-caching .</aside>
+    </section>
+    <section class="workload-examples requirements">
+      <h1>Keep the 30-second commitment</h1>
+      <table class="examples-table">
+        <thead><tr><th>Cost-saving change</th><th>What could go wrong</th><th>What we test</th></tr></thead>
+        <tbody>
+          <tr><td>Retrieve less context</td><td>A needed clause or exception is omitted.</td><td>The same report-quality checks, plus retrieval time.</td></tr>
+          <tr><td>Reuse a cached prefix</td><td>The cache is cold or the shared content changes.</td><td>Complete-report latency on both cache hits and misses.</td></tr>
+          <tr><td>Coordinate simultaneous calls</td><td>A burst creates a long queue.</td><td>Up to 20 report jobs at once, including the largest allowed inputs.</td></tr>
+        </tbody>
+      </table>
+      <p class="workload-note"><strong>Keep the same promise:</strong> 95% complete within 30 seconds; 99.9% succeed within 60 seconds.<br>Accept savings only when quality and the complete service still meet their requirements.</p>
+      <p class="source-line">With a hosted model, we control the application and service choice; the provider controls the underlying model execution.<br>Kiely, <em>Inference Engineering</em> (2026), §1.3.1, pp. 31–32; §4.5, pp. 112–114.</p>
+      <aside class="notes">The cost example changes the assumed typical input, not the contractual maximum: still support up to 16,000 input and 1,000 output tokens and 20 report jobs in progress. Load-test the full path, including retrieval, queueing, generation and validation, under realistic arrivals and cache reuse. If exactly 90% of requests hit cache, the remaining 10% can still determine whether the 95% latency target passes, so do not test only warm cache. Do not change the denominator by silently rejecting valid work. Count errors and retries, and add non-model costs before claiming total savings. On hosted Standard pricing, kernel fusion, hardware placement and provider batching do not automatically lower our per-token price; they affect our costs only through published pricing, service choice, or a different deployment model. In self-hosted serving, those provider-side levers instead affect capacity and infrastructure cost directly. A passing pre-release test is readiness evidence; monthly operational measurements establish whether the fictional agreement was met.</aside>
+    </section>
+    <section class="section-divider" data-phase="Workshop">
+      <h1>Workshop</h1>
+      <p>Test a workload, change one lever, and measure the result.</p>
+    </section>
+    <section id="bitter-lesson" class="bitter-lesson">
+      <h1>The Bitter Lesson</h1>
+      <blockquote>“We want AI agents that can discover like we can, not which contain what we have discovered.”</blockquote>
+      <p class="source-line">Richard Sutton, <a href="https://bitterlesson.ai/">The Bitter Lesson</a>, March 13, 2019.</p>
+      <p class="bitter-principle">General search and learning methods can improve with more computation.</p>
+      <h2>If the agent can write the code, what is your role?</h2>
+      <div class="system-flow">
+        <div class="system-node">Define the goal<br>and success checks</div><span class="system-arrow">→</span><div class="system-node">Give the agent<br>tools and context</div><span class="system-arrow">→</span><div class="system-node">Let it try<br>and test a change</div><span class="system-arrow">→</span><div class="system-node">Use feedback<br>to try again ↻</div>
+      </div>
+      <p class="bitter-example"><strong>Example:</strong> give the agent a reproducible login bug, expected behavior, and a test runner. Let it find and check the fix.</p>
+      <p class="bitter-role">You define the problem, design the system, and verify that it works for the user.</p>
+      <aside class="notes">Sutton's original claim concerns general search and learning methods that scale with computation, compared with approaches built around hand-encoded domain knowledge. The quotation is exact from the essay's final paragraph. The coding-agent loop is our workshop application, not a direct claim from the 2019 essay or proof that every agent workflow is more effective than manual work. Shift effort toward a reusable environment where an agent can explore, execute, receive evidence and revise its approach. Avoid prescribing a brittle sequence of exact edits when the goal and checks can guide search. Domain understanding remains useful for defining the problem, recognizing bad tests and judging the result. Passing one test does not prove correctness: include relevant regression checks and inspect the change. Iteration during a coding task is not necessarily model training or a change to model weights. Bound runtime, cost and permissions; more attempts help only if feedback is useful. Connect to the earlier lecture: inference engineering makes repeated attempts practical within time and cost limits; applied AI supplies tools, context and evaluation. Source: Richard Sutton, The Bitter Lesson, March 13, 2019, original https://incompleteideas.net/IncIdeas/BitterLesson.html . Read from https://bitterlesson.ai/ , which identifies itself as reproduced with permission; original host returned an error at retrieval.</aside>
+    </section>
+    <section id="ultrafast-question" class="ultrafast-question">
+      <h1>Same model. Why pay for speed?</h1>
+      <p class="quiz-facts">GPT-6 Astra Ultrafast: up to <strong>8× faster token generation</strong> in Codex.<br><strong>8× included allowance</strong>, or <strong>6× paid credits</strong>, compared with Standard.</p>
+      <p class="quiz-line">If we serve fewer requests together, per-user latency can
+        <span class="quiz-slot"><span class="fragment fade-out" data-fragment-index="0">_____</span><span class="fragment fade-in" data-fragment-index="0">decrease</span></span>.</p>
+      <p class="quiz-line">Throughput per processor can
+        <span class="quiz-slot"><span class="fragment fade-out" data-fragment-index="0">_____</span><span class="fragment fade-in" data-fragment-index="0">decrease</span></span>, so cost per token can
+        <span class="quiz-slot"><span class="fragment fade-out" data-fragment-index="0">_____</span><span class="fragment fade-in" data-fragment-index="0">increase</span></span>.</p>
+      <p class="quiz-explanation fragment" data-fragment-index="1">Smaller batches can share memory reads across fewer requests.<br>This is one possible tradeoff, not a confirmed account of OpenAI’s implementation.</p>
+      <p class="source-line">Published speed and usage: <a href="https://learn.chatgpt.com/docs/agent-configuration/speed">OpenAI, Speed</a> · <a href="https://learn.chatgpt.com/docs/pricing">Pricing</a>, checked November 10, 2026.</p>
+      <aside class="notes">Ask the audience why the same model can be faster and more expensive, then invite answers for the three blanks. Advance once to reveal decrease, decrease, increase; advance again for the mechanism and limitation. The smaller-batch scenario is conditional: in bandwidth-limited decode, each step can distribute weight-reading cost over fewer sequences, giving a request a faster step but reducing total tokens per processor-second. This is lower serving efficiency per token, not necessarily a less busy GPU. Faster hardware, optimized kernels, speculative decoding, different parallelism and reserved headroom are other possible contributors. Do not claim OpenAI uses a particular batching or GPU strategy: the cited public documentation does not establish its implementation or cost breakdown. Price is not proof of provider cost. OpenAI publishes up to 8x token generation speed for GPT-6 Astra, not a guarantee of 8x faster whole tasks or the same speedup for GPT-6.1 Sol. Both support Ultrafast; included usage multiplier is 8x, purchased credits and Enterprise pay-as-you-go 6x; API rates are separate and also 6x Standard for these models. General tradeoff source: Kiely, Inference Engineering, §1.2.2 pp.29–30, §1.4 pp.35–37, §7.2.1 pp.186–188.</aside>
+    </section>
+  </div></div>
+  <div class="session-phase" aria-label="Current session portion" aria-live="polite">Lecture</div>
+  <script src="vendor/reveal.js"></script>
+  <script src="vendor/notes.js"></script>
+  <script>
+    Reveal.initialize({width:1280,height:720,margin:0.12,hash:true,controls:true,controlsLayout:'edges',controlsTutorial:false,progress:true,transition:'slide',navigationMode:'default',scrollActivationWidth:null,plugins:[RevealNotes]});
+    const phaseLabel = document.querySelector('.session-phase');
+    function updatePhaseLabel() {
+      const currentSlide = Reveal.getCurrentSlide();
+      const slides = [...document.querySelectorAll('.slides > section')];
+      const sectionStart = slides.slice(0, slides.indexOf(currentSlide) + 1).reverse().find(slide => slide.dataset.phase);
+      phaseLabel.textContent = currentSlide?.closest('[data-phase]')?.dataset.phase || sectionStart?.dataset.phase || 'Lecture';
+    }
+    Reveal.on('ready', updatePhaseLabel);
+    Reveal.on('slidechanged', updatePhaseLabel);
+  </script>
+</body>
+</html>

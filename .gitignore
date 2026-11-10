@@ -6,3 +6,6 @@ results/*
 .DS_Store
 .env
 .env.*
+
+# Local workshop measurements and model-server logs
+.workshop/

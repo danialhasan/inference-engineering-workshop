@@ -1,125 +1,87 @@
-# What happens after your agent calls the model?
+# Inference Engineering × Applied AI
 
-A one-hour, code-editing inference workshop. Make one controlled change, inspect
-the generated text and measurements, and decide whether it helps your use case.
+A local workshop by Danial Hasan × Pillars Network. Use your coding agent to set up the project, then use the dashboard to operate a small model, change real settings, and compare results against a business promise.
 
-Start with **Python 3.10+ and a text editor**. Git is needed only for cloning.
-Live exercises additionally need Ollama and the local `qwen3:0.6b` model.
-There are no Python packages, API keys, accounts, cloud calls or npm steps.
+**Model:** Qwen2.5 1.5B, approximately 986 MB to download. **Runtime:** Ollama. **Dashboard:** Python 3.10 or newer, standard library only. No API key, cloud inference, Python packages, or npm install is needed.
 
-## 1. Get your own working copy
+## Ask your coding agent
 
-This release includes a Git bundle and an attendee ZIP. No public remote has been
-configured. Put `inference-workshop.bundle` in your Downloads folder, open a
-terminal there, and run:
+Open this repository in Codex, Claude Code, Cursor, or another coding agent and send:
 
-```sh
-git clone inference-workshop.bundle inference-workshop
-cd inference-workshop
-git switch -c my-workshop
-```
+> Read AGENTS.md and docs/DASHBOARD.md. Set up and start this workshop on my machine. Detect my operating system and available Python/Ollama first. Prepare Qwen2.5 1.5B, preserve my existing services, verify the dashboard and model health, and give me the local dashboard URL. Do not change the exercise targets or fake results. Help me understand the measurements as I make one change at a time.
 
-If you do not have Git, extract `inference-workshop-attendee.zip`, then open a
-terminal in the extracted `inference-workshop` folder. You can edit and run all
-exercises without Git. Do not try to execute files from inside the ZIP viewer.
+The agent uses [AGENTS.md](AGENTS.md) as the setup entry point. If it cannot install software under your machine's permissions, follow the manual steps below.
 
-## 2. Prove readiness before installing a model
+## Start manually
 
-On **macOS or Linux**, run:
+1. Install [Python 3.10+](https://www.python.org/downloads/) and [Ollama](https://ollama.com/download) for your operating system. Reopen your terminal after installation so both are on PATH.
+2. Clone the repository and enter it:
 
-```sh
-python3 --version
-python3 workshop.py doctor
-python3 workshop.py run 0 --source recorded --repeat 1
-```
+   ```sh
+   git clone https://github.com/danialhasan/inference-engineering-workshop.git
+   cd inference-engineering-workshop
+   ```
 
-On **Windows PowerShell**, run:
+3. Check and start the dashboard:
 
-```powershell
-py -3 --version
-py -3 workshop.py doctor
-py -3 workshop.py run 0 --source recorded --repeat 1
-```
+   **macOS / Linux**
+   ```sh
+   python3 dashboard.py --check
+   python3 dashboard.py
+   ```
 
-Success means you see `READY for recorded exercises`, generated text, timing and
-token measurements, and a new JSON file in `results/`. These are genuine saved
-measurements from another computer, not a benchmark of yours.
+   **Windows PowerShell**
+   ```powershell
+   py -3 dashboard.py --check
+   py -3 dashboard.py
+   ```
 
-All commands below use `python3`; **Windows users substitute `py -3`**. You do not
-need a virtual environment because this repo installs nothing. If you use one,
-select its Python interpreter in your editor and terminal consistently.
+   If `py` is unavailable but `python --version` reports 3.10+, use `python` instead.
 
-## 3. Choose the live or recorded track
+4. Open **http://127.0.0.1:8876/** and click **Prepare model**. It downloads Qwen2.5 1.5B only if it is missing. Prepare before leaving reliable internet; live exercises then run offline.
+5. Run the default configuration, inspect the outputs, and click **Use as baseline**. Change one lever and run again.
 
-Follow [SETUP.md](docs/SETUP.md) for OS-specific installation and recovery. If you
-already have Ollama running, prepare the local model before the event:
+Keep the terminal open. Ctrl+C stops the dashboard and its own model-server child. It does not stop your normal Ollama service.
 
-```sh
-ollama pull qwen3:0.6b
-python3 workshop.py doctor --source live
-python3 workshop.py run 0 --source live --repeat 1
-```
+## Three business scenarios
 
-The model download is approximately 523 MB. Allow time and disk space before
-arriving; download size is not a RAM requirement. Use recorded mode immediately
-if setup is slow or your laptop cannot run the model. Both tracks complete the
-same code exercises, but only live mode measures your edited scheduler on your
-machine.
+| Exercise | Business problem | Levers to investigate |
+|---|---|---|
+| Make the report correct | Extract the correct reference, agency, date and source | Context, JSON schema, output token budget |
+| Keep up with the morning rush | Complete correct reports during a burst | Client concurrency versus real Ollama server slots |
+| Protect the waiting user | Run a background batch while answering live questions | Background concurrency, shared capacity, per-user versus total throughput |
 
-## 4. Work through the exercises
+Every exercise shows its fictional contract, quality requirement and cost objective. The targets are teaching examples, not vendor guarantees. They stay fixed while you change configuration.
 
-Open [EXERCISES.md](docs/EXERCISES.md) beside your editor. Predict each outcome
-before running the comparison, and keep notes in [WORKSHEET.md](docs/WORKSHEET.md).
+## What actually changes
 
-| Exercise | Edit | Run | Check |
-|---|---|---|---|
-| 0: first request | Read `workshop/runtime.py:generate` | `python3 workshop.py run 0` | Confirm text and saved JSON |
-| 1: first visible text | `exercises/ex01_stream.py` | `python3 workshop.py run 1` | `python3 workshop.py check 1` |
-| 2: output budget | `exercises/ex02_budget.py` | `python3 workshop.py run 2` | `python3 workshop.py check 2` |
-| 3: bounded concurrency | `exercises/ex03_concurrency.py` | `python3 workshop.py run 3` | `python3 workshop.py check 3` |
+The dashboard writes `.workshop/config.json`. Each run snapshots it into `.workshop/runs/`, then makes real local model requests. Server slots change `OLLAMA_NUM_PARALLEL` on a **private child process**. The CPU setting sends `num_gpu=0`; automatic mode uses Ollama's hardware selection. Inspect Runtime details and each run's manifest to see actual placement, not just the selected preference.
 
-`run` defaults to recorded mode with two saved repetitions. Add `--source live`
-to make new local measurements. The unfinished starters are intentional: checks
-1–3 should initially fail with an actionable hint. Reference implementations are
-in `solutions/`; add `--solution` to `run` or `check` to use them without changing
-your files. Save your own progress with `git add exercises docs/WORKSHEET.md` and
-`git commit -m "Complete workshop exercises"` if you use Git.
+There is no simulated speed multiplier. Correctness, complete-response time, first-token time and total throughput are calculated from actual outputs and timestamps. Machine cost is an explicitly hypothetical estimate, not an electricity measurement or bill. Short runs are not proof that an agreement will be met all month.
 
-## Where things live
+## Laptop compatibility
 
-```text
-workshop.py            CLI entry point: doctor, run, check
-exercises/            Three small functions for you to edit
-solutions/            Reference implementations (never loaded implicitly for your exercise)
-workshop/runtime.py   Local HTTP streaming, measurement, historical-data loading
-workshop/checks.py    Offline behavior checks with useful failure messages
-data/                Real saved runs, machine/settings provenance and integrity hash
-results/             Your generated JSON, excluded from Git
-docs/                Setup, exercises, worksheet, instructor guide and verification
-slides/index.html    Offline teaching deck with exact file and command references
-tests/               Runtime regressions and fresh-clone rehearsal
-```
+- macOS: Apple silicon can use Metal; Intel Macs may run on CPU. Both can use the dashboard.
+- Windows: native Python and Ollama work without WSL. GPU support depends on your installed hardware/drivers; CPU mode is available.
+- Linux: use native Python and Ollama. GPU support depends on your installed hardware/drivers; CPU mode is available.
+- A ThinkPad is a laptop family, not a runtime type: check whether it runs Windows or Linux and inspect its actual hardware.
+- On low-memory machines start with **one client, one server slot, 128 output tokens, four documents**. More slots require more memory. Avoid four-slot mode if the machine is under memory pressure.
+- If the machine cannot run the model, open the **Recorded reference lab** link. Its captured outputs are labeled recorded; it cannot measure a new configuration on your laptop.
 
-Open `slides/index.html` in a browser, or serve only the slides directory:
+Only macOS has been physically rehearsed by the presenter. Windows/Linux commands are included, but native execution on those systems is not claimed as tested.
 
-```sh
-python3 -m http.server 8000 --bind 127.0.0.1 --directory slides
-```
+## Files for you and your agent
 
-Then visit <http://127.0.0.1:8000/>. Use arrow keys to move through the deck and
-press `S` for speaker notes. The [instructor guide](docs/INSTRUCTOR.md) maps the
-60-minute session to the commands. The previous A/B comparison is separate and
-its identities are not part of this repo.
+- [AGENTS.md](AGENTS.md): setup, verification and safe operating instructions.
+- [docs/DASHBOARD.md](docs/DASHBOARD.md): control mapping, metrics, API and code map.
+- [lab/prompts.py](lab/prompts.py): the prompt-building function your coding agent can edit; reloaded before each run.
+- [lab/scenarios.py](lab/scenarios.py): fictional workloads and business requirements.
+- [slides/index.html](slides/index.html): the current lecture, also linked in the dashboard.
+- [docs/REHEARSAL.md](docs/REHEARSAL.md): what was actually checked and known limitations.
+- [docs/LEGACY-CLI.md](docs/LEGACY-CLI.md): older, separate 0.6B CLI exercises; not required for this dashboard.
 
-## Verification and limits
+Run the checks with `python3 -m unittest discover -s tests -v` (Windows: `py -3 -m unittest discover -s tests -v`). These tests use fixtures; the rehearsal separately exercises the real local model.
 
-Run `python3 -m unittest discover -s tests -v` for runtime checks, then
-`python3 workshop.py check all --solution` for reference answers. To rehearse from
-a committed fresh clone, run `python3 tests/rehearse.py`; add `--live --port 11434`
-to include the local model. See [VERIFICATION.md](docs/VERIFICATION.md) for the
-actual platform, commands, revision and limitations of the release rehearsal.
+## Sources
 
-The sample model is for studying inference behavior, not a quality recommendation.
-Two repetitions demonstrate variation but do not establish statistical significance.
-Inspect actual output length and completeness before calling a result better.
-The measurement contract and sources are in [EXERCISES.md](docs/EXERCISES.md).
+The lecture cites Philip Kiely's *Inference Engineering* (Baseten Books, 2026) by section and printed page. Obtain the book from [Baseten](https://www.baseten.co/inference-engineering/); the PDF is not redistributed here. Ollama behavior follows its [API](https://docs.ollama.com/api/generate), [concurrency configuration](https://docs.ollama.com/faq), and [running-model metadata](https://docs.ollama.com/api/ps).
