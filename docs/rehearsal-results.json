@@ -1,0 +1,336 @@
+{
+  "date": "2026-11-10",
+  "machine": "Apple M2 Pro, macOS",
+  "model": "qwen2.5:1.5b",
+  "scope": "Single short runs; not statistical or monthly SLA proof. Existing model cache reused.",
+  "runs": [
+    {
+      "id": "20261110T221128-9392af",
+      "scenario": "quality",
+      "source": "live",
+      "config": {
+        "instructions": "brief",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 1,
+        "server_parallel": 1,
+        "device": "auto",
+        "count": 12,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 13.229037541997968,
+        "reports": 12,
+        "correct": 0,
+        "successful": 12,
+        "quality": 0.0,
+        "on_time": 1.0,
+        "p95": 13.228902625000046,
+        "reports_per_minute": 0.0,
+        "tokens_per_second": 63.87463920314648,
+        "input_tokens": 1623,
+        "output_tokens": 845,
+        "estimated_cost": 0.00440967918066599,
+        "cost_per_1000": null,
+        "interactive_count": 0,
+        "interactive_on_time": 0.0,
+        "interactive_quality": 0.0,
+        "interactive_p95": null,
+        "gates": {
+          "quality": false,
+          "latency": true,
+          "cost": false,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "id": "20261110T221213-82af32",
+      "scenario": "quality",
+      "source": "live",
+      "config": {
+        "instructions": "explicit",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 1,
+        "server_parallel": 1,
+        "device": "auto",
+        "count": 12,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 11.521009500000218,
+        "reports": 12,
+        "correct": 12,
+        "successful": 12,
+        "quality": 1.0,
+        "on_time": 1.0,
+        "p95": 11.520882791999611,
+        "reports_per_minute": 62.49452359187677,
+        "tokens_per_second": 60.15097895718139,
+        "input_tokens": 2415,
+        "output_tokens": 693,
+        "estimated_cost": 0.0038403365000000728,
+        "cost_per_1000": 0.32002804166667276,
+        "interactive_count": 0,
+        "interactive_on_time": 0.0,
+        "interactive_quality": 0.0,
+        "interactive_p95": null,
+        "gates": {
+          "quality": true,
+          "latency": true,
+          "cost": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "id": "20261110T221300-3412a8",
+      "scenario": "burst",
+      "source": "live",
+      "config": {
+        "instructions": "explicit",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 1,
+        "server_parallel": 1,
+        "device": "auto",
+        "count": 12,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 10.871225249997224,
+        "reports": 12,
+        "correct": 12,
+        "successful": 12,
+        "quality": 1.0,
+        "on_time": 1.0,
+        "p95": 10.871061541998642,
+        "reports_per_minute": 66.2298851732636,
+        "tokens_per_second": 63.746264479266216,
+        "input_tokens": 2415,
+        "output_tokens": 693,
+        "estimated_cost": 0.0036237417499990743,
+        "cost_per_1000": 0.30197847916658954,
+        "interactive_count": 0,
+        "interactive_on_time": 0.0,
+        "interactive_quality": 0.0,
+        "interactive_p95": null,
+        "gates": {
+          "quality": true,
+          "latency": true,
+          "cost": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "id": "20261110T221313-868446",
+      "scenario": "burst",
+      "source": "live",
+      "config": {
+        "instructions": "explicit",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 4,
+        "server_parallel": 1,
+        "device": "auto",
+        "count": 12,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 11.305240333000256,
+        "reports": 12,
+        "correct": 12,
+        "successful": 12,
+        "quality": 1.0,
+        "on_time": 1.0,
+        "p95": 11.30460329199559,
+        "reports_per_minute": 63.68727942017327,
+        "tokens_per_second": 61.299006441916774,
+        "input_tokens": 2415,
+        "output_tokens": 693,
+        "estimated_cost": 0.0037684134443334186,
+        "cost_per_1000": 0.31403445369445154,
+        "interactive_count": 0,
+        "interactive_on_time": 0.0,
+        "interactive_quality": 0.0,
+        "interactive_p95": null,
+        "gates": {
+          "quality": true,
+          "latency": true,
+          "cost": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "id": "20261110T221324-480727",
+      "scenario": "burst",
+      "source": "live",
+      "config": {
+        "instructions": "explicit",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 4,
+        "server_parallel": 4,
+        "device": "auto",
+        "count": 12,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 5.143761832994642,
+        "reports": 12,
+        "correct": 12,
+        "successful": 12,
+        "quality": 1.0,
+        "on_time": 1.0,
+        "p95": 5.14327208299801,
+        "reports_per_minute": 139.97537665557581,
+        "tokens_per_second": 134.72630003099172,
+        "input_tokens": 2415,
+        "output_tokens": 693,
+        "estimated_cost": 0.0017145872776648805,
+        "cost_per_1000": 0.14288227313874005,
+        "interactive_count": 0,
+        "interactive_on_time": 0.0,
+        "interactive_quality": 0.0,
+        "interactive_p95": null,
+        "gates": {
+          "quality": true,
+          "latency": true,
+          "cost": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "id": "20261110T221331-c4a694",
+      "scenario": "shared",
+      "source": "live",
+      "config": {
+        "instructions": "explicit",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 4,
+        "server_parallel": 4,
+        "device": "auto",
+        "count": 12,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 5.709806500002742,
+        "reports": 12,
+        "correct": 12,
+        "successful": 12,
+        "quality": 1.0,
+        "on_time": 1.0,
+        "p95": 5.51013933300419,
+        "reports_per_minute": 126.09884415516606,
+        "tokens_per_second": 129.77672710969176,
+        "input_tokens": 2615,
+        "output_tokens": 741,
+        "estimated_cost": 0.0019032688333342472,
+        "cost_per_1000": 0.15860573611118725,
+        "interactive_count": 4,
+        "interactive_on_time": 0.0,
+        "interactive_quality": 1.0,
+        "interactive_p95": 3.7582959580031456,
+        "gates": {
+          "quality": true,
+          "latency": true,
+          "cost": true,
+          "interactive": false
+        }
+      }
+    },
+    {
+      "id": "20261110T221338-4d5542",
+      "scenario": "shared",
+      "source": "live",
+      "config": {
+        "instructions": "explicit",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 1,
+        "server_parallel": 4,
+        "device": "auto",
+        "count": 12,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 12.512019417001284,
+        "reports": 12,
+        "correct": 12,
+        "successful": 12,
+        "quality": 1.0,
+        "on_time": 1.0,
+        "p95": 12.51178875000187,
+        "reports_per_minute": 57.544667731386895,
+        "tokens_per_second": 59.223053873552345,
+        "input_tokens": 2615,
+        "output_tokens": 741,
+        "estimated_cost": 0.004170673139000427,
+        "cost_per_1000": 0.34755609491670225,
+        "interactive_count": 4,
+        "interactive_on_time": 1.0,
+        "interactive_quality": 1.0,
+        "interactive_p95": 0.04894354200223461,
+        "gates": {
+          "quality": true,
+          "latency": true,
+          "cost": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "id": "20261110T221351-b69f99",
+      "scenario": "quality",
+      "source": "live",
+      "config": {
+        "instructions": "explicit",
+        "context": "focused",
+        "structured": true,
+        "max_tokens": 128,
+        "client_parallel": 1,
+        "server_parallel": 1,
+        "device": "cpu",
+        "count": 4,
+        "hourly_rate": 1.2
+      },
+      "summary": {
+        "seconds": 7.626025291006954,
+        "reports": 4,
+        "correct": 4,
+        "successful": 4,
+        "quality": 1.0,
+        "on_time": 1.0,
+        "p95": 7.625811083002191,
+        "reports_per_minute": 31.471178083164993,
+        "tokens_per_second": 30.291008905046308,
+        "input_tokens": 805,
+        "output_tokens": 231,
+        "estimated_cost": 0.0025420084303356513,
+        "cost_per_1000": 0.6355021075839128,
+        "interactive_count": 0,
+        "interactive_on_time": 0.0,
+        "interactive_quality": 0.0,
+        "interactive_p95": null,
+        "gates": {
+          "quality": true,
+          "latency": true,
+          "cost": true,
+          "interactive": true
+        }
+      }
+    }
+  ]
+}
